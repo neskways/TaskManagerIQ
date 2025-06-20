@@ -1,0 +1,35 @@
+:root {
+  --border-radius: 5px;
+  --accent-color: hsl(203, 65%, 55%);
+  --accent-color-secondary: #1c77df;
+  --false: #e22727;
+  --true: hsl(145, 51%, 45%);
+  --transition: all 0.1s ease;
+  // Light theme
+  --bg-color: #f9f9fb;
+  --bg-color-secondary: #f1efef;
+  --bg-color-hover: #eef1f5;
+  --bg-color-hover-second: #dddddf;
+  --bg-color-tertiary: #d9d9da;
+  --bg-color-input: #f9f9fb;
+  --bg-color-primary:hsl(210, 17%, 98%);
+  --text-color: #1f1f1f;
+  --text-color-secondary: #6c757d;
+  --border-color: #e0e0e0; 
+  --border-color-secondary: #d4d6da;
+}
+
+[data-theme='dark'] {
+  // Dark theme
+  --bg-color: rgb(56, 57, 62);
+  --bg-color-secondary: hsl(230, 5%, 23%);
+  --bg-color-tertiary: #2a2b2e;
+  --bg-color-hover: rgb(24, 25, 26);
+  --bg-color-hover-second: rgb(45, 46, 49);
+  --bg-color-input: #2b2b2b;
+  --bg-color-primary: hsl(228, 5%, 22%);
+  --text-color: #e0e0e0;
+  --text-color-secondary: hsl(198, 5%, 73%);
+  --border-color: rgb(49, 49, 49);
+  --border-color-secondary: rgb(49, 49, 49);
+}

@@ -1,0 +1,45 @@
+@import url('../../styles/variabales.scss');
+
+.footer {
+    border-top: 1px solid var(--border-color);
+    margin-top: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-self: center;
+    width: 100%;
+}
+
+.footer_block {
+    flex: 1; // Каждый блок занимает равную часть доступного пространства
+    padding: 10px 25px;
+    text-align: center;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.footer_block:first-of-type {
+    border-right: 1px solid var(--border-color);
+}
+
+.footer_block img {
+  height: 40px;
+  width: 40px;
+}
+
+.profile:hover {
+  background: var(--bg-color-hover);
+}
+
+.create {
+  padding: 0;
+}
+
+.create:hover {
+  background: var(--true);
+}
+
+.active {
+  background: var(--bg-color-hover);
+}

@@ -1,0 +1,22 @@
+@import url('../../styles/variabales.scss');
+
+.button {
+    width: 100%;
+    background-color: var(--accent-color);
+    border-radius: var(--border-radius);
+    padding: 20px 30px;
+    font-size: 16px;
+    color: #fff;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: var(--accent-color-secondary);
+}
+
+.button:active {
+    background-color: var(--accent-color);
+}

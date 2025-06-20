@@ -1,0 +1,26 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modalContent {
+  background: var(--bg-color);
+  padding: 20px;
+  border-radius: 8px;
+  min-width: 1000px;
+  height: 600px;
+}
+
+.title {
+  font-size: 24px;
+  text-align: center;
+  font-weight: 500;
+}

@@ -1,0 +1,56 @@
+@import url('../../styles/variabales.scss');
+
+.block {
+    width: 230px;
+    height: 100vh;   
+    min-width: 230px;
+}
+
+.sidebar {
+    width: 230px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-color-tertiary);
+    position: fixed;
+}
+
+.menu_list {
+    padding-left: 0;
+}
+
+.menu_item {
+    border-bottom: 1px solid var(--border-color);
+    text-decoration: none;
+    list-style: none;
+}
+
+.menu_item:first-of-type {
+    border-top: 1px solid var(--border-color);
+}
+
+.menu_link {
+    text-decoration: none;
+    display: block;
+    padding: 8px 20px 8px 15px;
+    font-size: 14px;
+    color: var(--text-color);
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.menu_link img {
+    fill: green;
+    height: 25px;
+}
+
+.menu_link:not(.active):hover {
+  background: var(--bg-color-hover);
+}
+
+.active {
+  background-color: var(--accent-color);
+  color: white;
+}

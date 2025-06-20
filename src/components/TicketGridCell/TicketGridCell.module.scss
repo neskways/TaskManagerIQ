@@ -1,0 +1,26 @@
+@import url('../../styles/variabales.scss');
+
+.gridCell {
+  padding: 0 8px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  font-size: 14px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-color);
+  transition: var(--transition);
+}
+.hovered {
+  background-color: var(--bg-color-hover-second);
+  cursor: pointer;
+}
+
+.gridCell span {
+    overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
