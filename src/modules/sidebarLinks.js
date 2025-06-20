@@ -78,5 +78,5 @@ export const sidebarSecondaryItems = [
     label: "Все закрытые заявки",
     to: "/ticket/all_closed",
     exact: true,
-  },
+  }
 ];

@@ -101,6 +101,11 @@ export const AppRoutes = () => {
             element={<UniversalTicketsSheet url={"current_tasks"} 
             titleText={"Текущие задачи"}/>}
           />
+          <Route
+            path="all_open"
+            element={<UniversalTicketsSheet url={"all_open"} 
+            titleText={"Все открытые заявки"}/>}
+          />
         </Route>
         //Страница статистики пользователя по выполненым задачам
         <Route path="/statistics" element={<StatisticsPage />}>
