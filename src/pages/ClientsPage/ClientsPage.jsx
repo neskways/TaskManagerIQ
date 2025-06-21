@@ -9,6 +9,7 @@ import { ClientGridCell } from "../../components/ClientGridCell/ClientGridCell";
 import { headersTitle } from "../../modules/Arrays";
 import { ClientModal } from "../../components/ClientModal/ClientModal"; // добавь импорт
 import axios from "axios";
+import { Popup } from "../../UI/Popup/Popup";
 
 const LOCAL_STORAGE_KEY = "clients_table_col_widths";
 const defaultWidths = [40, 12, 14, 14, 14, 6];
@@ -18,6 +19,7 @@ export const ClientsPage = () => {
     getFromLocalStorage(LOCAL_STORAGE_KEY, defaultWidths)
   );
 
+  const [showPopup, setShowPopup] = useState(false);
   const [selectedClient, setSelectedClient] = useState(null); // управление модалкой
 
   const startX = useRef(0);
@@ -86,7 +88,16 @@ const parsed = JSON.parse(fixed);
       setClients(parsed); // ✅ сохраняем уже массив
     } catch (e) {
       console.error('Ошибка при парсинге JSON:', e);
+      
     }
+  }).catch(response => {
+     setShowPopup(true);
+
+      const timer = setTimeout(() => {
+        setShowPopup(false);
+      }, 3000);
+
+      return () => clearTimeout(timer);
   })
 
 }, []);
@@ -129,6 +140,7 @@ const parsed = JSON.parse(fixed);
         clientData={selectedClient}
         onClose={() => setSelectedClient(false)}
       />
+      <Popup showPopup={showPopup} text={"Ошибка при загрузке клиентов!"} />
     </div>
   );
 };
