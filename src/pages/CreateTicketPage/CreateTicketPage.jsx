@@ -3,6 +3,7 @@ import { Input } from '../../UI/Input/Input'
 import { MultipleInput } from "../../UI/MultipleInput/MultipleInput";
 import { Selector } from "../../UI/Selector/Selector";
 import { departmentsItems, prioritiesItems } from "../../modules/Arrays";
+import { Loading } from "../../UI/Loading/Loading";
 
 export const CreateTicketPage = () => {
 
@@ -18,6 +19,7 @@ export const CreateTicketPage = () => {
           <Selector items={prioritiesItems}  defaultValue={2} />
           <Selector items={departmentsItems} defaultValue={1} />
         </div>
+        <Loading/>
       </div>
     </div>
   );

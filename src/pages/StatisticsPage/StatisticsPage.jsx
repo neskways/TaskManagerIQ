@@ -4,7 +4,7 @@ import s from "./StatisticsPage.module.scss";
 
 export const StatisticsPage = () => {
   return (
-    <div>
+    <div className={s.wrapper}>
         <PageTitle titleText={"Статистика"} /> 
         <WorkImg />
     </div>

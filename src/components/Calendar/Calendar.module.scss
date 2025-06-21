@@ -1,0 +1,66 @@
+@import url("../../styles/variabales.scss");
+
+.calendar {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.monthTitle {
+  font-size: 24px;
+  font-weight: 500;
+  margin-bottom: 20px;
+  text-transform: capitalize;
+  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.daysRow {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  background-color: var(--bg-color-tertiary);
+  font-weight: bold;
+  padding: 6px 0;
+}
+
+.dayName {
+  padding: 5px 0;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.cell {
+  border: 1px solid var(--border-color);
+  padding: 8px;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 14px;
+  background-color: var(--bg-color-tertiary);
+}
+
+.disabled {
+  background-color: var(--bg-color);
+  color: var(--text-color-secondary);
+}
+
+.dataStub {
+  font-size: 16px;
+  margin-top: 4px;
+}
+
+.dateNum {
+  font-size: 18px;
+}

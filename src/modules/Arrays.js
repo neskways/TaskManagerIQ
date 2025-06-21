@@ -8,8 +8,7 @@ export const headersTitleTickets = ["Заголовок", "Клиент", "От�
 export const departmentsItems = [
     { number: 1, priority: "-" },
     { number: 2, priority: "1С" },
-    { number: 3, priority: "СА" },
-    { number: 4, priority: "Администрация" }
+    { number: 3, priority: "СА" }
 ];
 
 //Приоритеты задач

@@ -5,12 +5,14 @@ import { TicketPage } from "../pages/TicketPage/TicketPage";
 import { ProfilePage } from "../pages/ProfilePage/ProfilePage";
 import { ClientsPage } from "../pages/ClientsPage/ClientsPage";
 import { MainLayout } from "../components/MainLayout/MainLayout";
+import { SchedulePage } from "../pages/SchedulePage/SchedulePage";
+import { getFromLocalStorage } from "../modules/localStorageUtils"; 
+import { KnowledgeBase } from "../pages/KnowledgeBase/KnowledgeBase";
 import { StatisticsPage } from "../pages/StatisticsPage/StatisticsPage";
 import { ParametersPage } from "../pages/ParametersPage/ParametersPage";
 import { CreateTicketPage } from "../pages/CreateTicketPage/CreateTicketPage";
+import { TicketRedirect } from "../components/TicketRedirect/TicketRedirect";
 import { UniversalTicketsSheet } from "../pages/UniversalTicketsSheet/UniversalTicketsSheet";
-import { SchedulePage } from "../pages/SchedulePage/SchedulePage";
-import { KnowledgeBase } from "../pages/KnowledgeBase/KnowledgeBase";
 
 const PrivateRoute = ({ children }) => {
   // const { isAuthenticated } = useAuth();
@@ -18,14 +20,16 @@ const PrivateRoute = ({ children }) => {
   return isAuthenticated ? children : <Navigate to="/login" replace />;
 };
 
+
 const NavigateFromLogin = ({ children }) => {
-  // const { isAuthenticated } = useAuth();
   const isAuthenticated = true;
-  return isAuthenticated ? (
-    <Navigate to="/ticket/my_assigned" replace />
-  ) : (
-    children
-  );
+
+  if (!isAuthenticated) return children;
+
+  const defaultPath = "/ticket/my_assigned";
+  const saved = getFromLocalStorage("last_secondary_sidebar_path", defaultPath);
+
+  return <Navigate to={saved} replace />;
 };
 
 export const AppRoutes = () => {
@@ -60,57 +64,91 @@ export const AppRoutes = () => {
         <Route index element={<Navigate to="/ticket" replace />} />
         //Страница с задачами, по умолчанию показывает список задач пользователя
         <Route path="/ticket" element={<TicketPage />}>
-          <Route index element={<Navigate to="my_assigned" replace />} />
+          <Route index element={<TicketRedirect />} />
           <Route
             path="my_assigned"
-            element={<UniversalTicketsSheet url={"my_assigned"} 
-            titleText={"Назначенные мне заявки"}/>}
+            element={
+              <UniversalTicketsSheet
+                url={"my_assigned"}
+                titleText={"Назначенные мне заявки"}
+              />
+            }
           />
           <Route
             path="1с_applications"
-            element={<UniversalTicketsSheet url={"1с_applications"}
-            titleText={"Заявки 1С"}/>}
+            element={
+              <UniversalTicketsSheet
+                url={"1с_applications"}
+                titleText={"Заявки 1С"}
+              />
+            }
           />
           <Route
             path="all_open"
-            element={<UniversalTicketsSheet url={"all_open"} 
-            titleText={"Все открытые заявки"}/>}
+            element={
+              <UniversalTicketsSheet
+                url={"all_open"}
+                titleText={"Все открытые заявки"}
+              />
+            }
           />
           <Route
             path="all_closed"
-            element={<UniversalTicketsSheet url={"all_closed"} 
-            titleText={"Все закрытые заявки"}/>}
+            element={
+              <UniversalTicketsSheet
+                url={"all_closed"}
+                titleText={"Все закрытые заявки"}
+              />
+            }
           />
           <Route
             path="my_organization_tickets"
-            element={<UniversalTicketsSheet url={"my_organization_tickets"} 
-            titleText={"Заявки моей организации"}/>}
+            element={
+              <UniversalTicketsSheet
+                url={"my_organization_tickets"}
+                titleText={"Заявки моей организации"}
+              />
+            }
           />
           <Route
             path="all_tickets"
-            element={<UniversalTicketsSheet url={"all_tickets"} 
-            titleText={"Все заявки"}/>}
+            element={
+              <UniversalTicketsSheet
+                url={"all_tickets"}
+                titleText={"Все заявки"}
+              />
+            }
           />
           <Route
             path="closed_today"
-            element={<UniversalTicketsSheet url={"closed_today"} 
-            titleText={"Закрытые сегодня"}/>}
+            element={
+              <UniversalTicketsSheet
+                url={"closed_today"}
+                titleText={"Закрытые сегодня"}
+              />
+            }
           />
           <Route
             path="current_tasks"
-            element={<UniversalTicketsSheet url={"current_tasks"} 
-            titleText={"Текущие задачи"}/>}
+            element={
+              <UniversalTicketsSheet
+                url={"current_tasks"}
+                titleText={"Текущие задачи"}
+              />
+            }
           />
           <Route
             path="all_open"
-            element={<UniversalTicketsSheet url={"all_open"} 
-            titleText={"Все открытые заявки"}/>}
+            element={
+              <UniversalTicketsSheet
+                url={"all_open"}
+                titleText={"Все открытые заявки"}
+              />
+            }
           />
         </Route>
         //Страница статистики пользователя по выполненым задачам
-        <Route path="/statistics" element={<StatisticsPage />}>
-          {" "}
-        </Route>
+        <Route path="/statistics" element={<StatisticsPage />}></Route>
         //Страница создания заявки
         <Route path="/create" element={<CreateTicketPage />}></Route>
         //Страница со списком всех клиентов

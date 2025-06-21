@@ -1,9 +1,14 @@
-import s from "./SidebarSecondary.module.scss";
 import { NavLink } from "react-router-dom";
 import { sidebarSecondaryItems } from "../../modules/sidebarLinks";
+import { saveToLocalStorage } from "../../modules/localStorageUtils";
+import s from "./SidebarSecondary.module.scss";
 
 export const SidebarSecondary = () => {
   const count = 0;
+
+  const handleLinkClick = (path) => {
+    saveToLocalStorage("last_secondary_sidebar_path", path);
+  };
 
   return (
     <>
@@ -19,6 +24,7 @@ export const SidebarSecondary = () => {
                     `${s.menu_link} ${isActive ? s.active : ""}`
                   }
                   end={link.exact}
+                  onClick={() => handleLinkClick(link.to)}
                 >
                   <span>{link.label}</span>
                   <span className={s.count}>{count}</span>

@@ -1,11 +1,11 @@
+import s from "./KnowledgeBase.module.scss";s
 import { PageTitle } from "../../components/PageTitle/PageTitle";
 import { WorkImg } from "../../components/WorkImg/WorkImg";
-import s from "./KnowledgeBase.module.scss";
 
 export const KnowledgeBase = () => {
   
   return (
-    <div>
+    <div className={s.wrapper}>
       <PageTitle titleText={"База знаний"} />
       <WorkImg/>
     </div>

@@ -23,6 +23,6 @@
 }
 
 .input:focus {
-    border-color: var(--accent-color); /* Цвет обводки */
-    box-shadow: 0 0 3px 1px var(--accent-color); /* Легкий светящийся эффект */
+    border-color: var(--accent-color); 
+    box-shadow: 0 0 3px 1px var(--accent-color); 
 }

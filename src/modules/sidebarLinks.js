@@ -7,7 +7,7 @@ import { BookIcon } from "../UI/BookIcon/BookIcon";
 export const sidebarItems = [
   {
     label: "Списки",
-    path: "/ticket/my_assigned",
+    path: "/ticket",
     isActive: (currentPath) => currentPath.startsWith("/ticket"),
     Icon: ListIcon,
   },
