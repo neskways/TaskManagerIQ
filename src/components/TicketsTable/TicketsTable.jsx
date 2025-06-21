@@ -1,5 +1,5 @@
-import s from "./TicketsTable.module.scss";
 import { useEffect, useRef, useState } from "react";
+import s from "./TicketsTable.module.scss";
 import { headersTitleTickets } from "../../modules/Arrays";
 import {
   getFromLocalStorage,
@@ -8,7 +8,7 @@ import {
 import { TicketGridCell } from "../TicketGridCell/TicketGridCell";
 
 const LOCAL_STORAGE_KEY_TICKETS = "tickets_table_col_widths";
-const defaultWidths = [25, 15, 10, 10, 10, 10, 10, 10];
+const DEFAULT_WIDTHS = [25, 15, 10, 10, 10, 10, 10, 10];
 
 const mockTickets = [
   {
@@ -45,33 +45,36 @@ const mockTickets = [
 
 export const TicketsTable = () => {
   const [colWidths, setColWidths] = useState(() =>
-    getFromLocalStorage(LOCAL_STORAGE_KEY_TICKETS, defaultWidths)
+    getFromLocalStorage(LOCAL_STORAGE_KEY_TICKETS, DEFAULT_WIDTHS)
   );
 
-  const startX = useRef(0);
   const tableRef = useRef(null);
+  const startX = useRef(0);
   const isResizing = useRef(false);
   const startWidths = useRef([0, 0]);
   const resizingColIndex = useRef(null);
+
   const gridTemplateColumns = colWidths.map((w) => `${w}%`).join(" ");
-  console.log(gridTemplateColumns)
+
   useEffect(() => {
     saveToLocalStorage(LOCAL_STORAGE_KEY_TICKETS, colWidths);
   }, [colWidths]);
 
   const handleMouseDown = (e, index) => {
     e.preventDefault();
+
     isResizing.current = true;
     startX.current = e.clientX;
     resizingColIndex.current = index;
     startWidths.current = [colWidths[index], colWidths[index + 1]];
+
     document.body.style.cursor = "col-resize";
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
   };
 
   const handleMouseMove = (e) => {
-    if (!isResizing.current) return;
+    if (!isResizing.current || !tableRef.current) return;
 
     const dx = e.clientX - startX.current;
     const tableWidth = tableRef.current.offsetWidth;
@@ -79,9 +82,9 @@ export const TicketsTable = () => {
 
     let left = startWidths.current[0] + deltaPercent;
     let right = startWidths.current[1] - deltaPercent;
+    const MIN_WIDTH = 5;
 
-    const minPercent = 5;
-    if (left < minPercent || right < minPercent) return;
+    if (left < MIN_WIDTH || right < MIN_WIDTH) return;
 
     const newWidths = [...colWidths];
     newWidths[resizingColIndex.current] = left;
@@ -98,26 +101,28 @@ export const TicketsTable = () => {
   };
 
   return (
-  <div className={s.gridTableWrapper}>
-    <div
-      ref={tableRef}
-      className={s.gridTable}
-      style={{ gridTemplateColumns }} // <-- обязательно!
-    >
-      {headersTitleTickets.map((header, i) => (
-        <div key={i} className={s.gridHeader}>
-          <span className={s.header_span}>{header}</span>
-          {i < headersTitleTickets.length - 1 && (
-            <div className={s.resizer} onMouseDown={(e) => handleMouseDown(e, i)} />
-          )}
-        </div>
-      ))}
+    <div className={s.gridTableWrapper}>
+      <div
+        ref={tableRef}
+        className={s.gridTable}
+        style={{ gridTemplateColumns }}
+      >
+        {headersTitleTickets.map((header, index) => (
+          <div key={index} className={s.gridHeader}>
+            <span className={s.header_span}>{header}</span>
+            {index < headersTitleTickets.length - 1 && (
+              <div
+                className={s.resizer}
+                onMouseDown={(e) => handleMouseDown(e, index)}
+              />
+            )}
+          </div>
+        ))}
 
-      {mockTickets.map((ticket, index) => (
-        <TicketGridCell key={index} ticketData={ticket} />
-      ))}
+        {mockTickets.map((ticket, index) => (
+          <TicketGridCell key={index} ticketData={ticket} />
+        ))}
+      </div>
     </div>
-  </div>
-);
-
+  );
 };
