@@ -5,10 +5,15 @@ export const ThemeToggle = () => {
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <div class={s.toggle_switch}>
-      <label class={s.switch_label}>
-        <input type="checkbox" class={s.checkbox} onClick={toggleTheme} checked={theme === 'light'} />
-        <span class={s.slider}></span>
+    <div className={s.toggle_switch}>
+      <label className={s.switch_label}>
+        <input 
+          type="checkbox" 
+          className={s.checkbox} 
+          onChange={toggleTheme} 
+          checked={theme === 'light'} 
+        />
+        <span className={s.slider}></span>
       </label>
     </div>
   );

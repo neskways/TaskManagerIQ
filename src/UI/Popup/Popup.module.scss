@@ -14,6 +14,10 @@
   animation: fadeInOut 3s ease forwards;
 }
 
+.true {
+  background-color: var(--true);
+}
+
 @keyframes fadeInOut {
   0% {
     opacity: 0;

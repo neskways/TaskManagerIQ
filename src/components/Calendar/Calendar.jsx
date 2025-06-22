@@ -61,7 +61,6 @@ export const Calendar = () => {
   return (
     <div className={s.calendar}>
       <h3 className={s.monthTitle}> 
-        <span>График дежурств</span> 
         <span>{format(currentMonth, "LLLL yyyy", { locale: ru })}</span> 
       </h3>
       {renderDays()}

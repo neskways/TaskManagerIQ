@@ -2,20 +2,32 @@
 @import url("./styles/variabales.scss");
 @import url("./styles/fonts.scss");
 
-
 body {
-    font-family: 'Fira Sans', sans-serif;
-    font-weight: 400; 
-    background-color: var(--bg-color-primary);
-    color: var(--text-color);
-    margin: 0;
+  font-family: "Fira Sans", sans-serif;
+  font-weight: 400;
+  background-color: var(--bg-color-primary);
+  color: var(--text-color);
+  margin: 0;
 }
-
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: var(--bg-color);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--border-color);
+    border-radius: 5px;
+    padding: 5px;
+  }
 }
 
 ul {
