@@ -1,23 +1,25 @@
 :root {
-  --border-radius: 5px;
+  --border-radius: 6px;
   --accent-color: hsl(203, 65%, 55%);
   --accent-color-secondary: #1c77df;
-  --false: #e22727;
-  --true: hsl(145, 51%, 45%);
-  --transition: all 0.1s ease;
+  --false: hsl(0, 70%, 55%);
+  --true: hsl(145, 63%, 40%); 
+  --transition: all 0.15s ease;
   // Light theme
-  --bg-color: #f9f9fb;
-  --bg-color-secondary: #f1efef;
-  --bg-color-hover: #eef1f5;
-  --bg-color-hover-second: #dddddf;
-  --bg-color-tertiary: #d9d9da;
-  --bg-color-input: #f9f9fb;
-  --bg-color-primary:hsl(210, 17%, 98%);
-  --text-color: #1f1f1f;
-  --text-color-secondary: #6c757d;
-  --border-color: #e0e0e0; 
-  --border-color-secondary: #d4d6da;
+  --bg-color: #ffffff; 
+  --bg-color-secondary: #f4f6f8;
+  --bg-color-hover: #e8ecf1; 
+  --bg-color-hover-second: #dce3eb;
+  --bg-color-tertiary: #e5ebf3;
+  --bg-color-input: #fdfdfd;
+  --bg-color-primary: #f9fafb;
+
+  --text-color: #1e1e1e; 
+  --text-color-secondary: #5a5f66;
+  --border-color: #d8dce1;
+  --border-color-secondary: #c3c8cf;
 }
+
 
 [data-theme='dark'] {
   // Dark theme
@@ -32,67 +34,4 @@
   --text-color-secondary: hsl(198, 5%, 73%);
   --border-color: rgb(49, 49, 49);
   --border-color-secondary: rgb(49, 49, 49);
-}
-/* From Uiverse.io by andrew-demchenk0 */ 
-.button {
-  --main-focus: #2d8cf0;
-  --font-color: #dedede;
-  --bg-color-sub: #222;
-  --bg-color: #323232;
-  --main-color: #dedede;
-  position: relative;
-  width: 150px;
-  height: 40px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  border: 2px solid var(--main-color);
-  box-shadow: 4px 4px var(--main-color);
-  background-color: var(--bg-color);
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.button, .button__icon, .button__text {
-  transition: all 0.3s;
-}
-
-.button .button__text {
-  transform: translateX(33px);
-  color: var(--font-color);
-  font-weight: 600;
-}
-
-.button .button__icon {
-  position: absolute;
-  transform: translateX(109px);
-  height: 100%;
-  width: 39px;
-  background-color: var(--bg-color-sub);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.button .svg {
-  width: 20px;
-  fill: var(--main-color);
-}
-
-.button:hover {
-  background: var(--bg-color);
-}
-
-.button:hover .button__text {
-  color: transparent;
-}
-
-.button:hover .button__icon {
-  width: 148px;
-  transform: translateX(0);
-}
-
-.button:active {
-  transform: translate(3px, 3px);
-  box-shadow: 0px 0px var(--main-color);
 }

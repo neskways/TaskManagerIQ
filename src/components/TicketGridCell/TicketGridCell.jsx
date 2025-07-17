@@ -1,5 +1,6 @@
 import s from "./TicketGridCell.module.scss";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export const TicketGridCell = ({ ticketData }) => {
   const [hovered, setHovered] = useState(false);
@@ -9,16 +10,35 @@ export const TicketGridCell = ({ ticketData }) => {
 
   const cellClass = hovered ? `${s.gridCell} ${s.hovered}` : s.gridCell;
 
+  const cellProps = {
+    onMouseEnter: onEnter,
+    onMouseLeave: onLeave,
+    className: cellClass,
+  };
+
+  const cells = [
+    ticketData.title,
+    ticketData.client,
+    ticketData.department,
+    ticketData.status,
+    ticketData.priority,
+    ticketData.timeSpent,
+    ticketData.createdBy,
+    ticketData.createdAt,
+  ];
+
   return (
     <>
-      <div className={cellClass} onMouseEnter={onEnter} onMouseLeave={onLeave}><span>{ticketData.title}</span></div>
-      <div className={cellClass} onMouseEnter={onEnter} onMouseLeave={onLeave}><span>{ticketData.client}</span></div>
-      <div className={cellClass} onMouseEnter={onEnter} onMouseLeave={onLeave}><span>{ticketData.department}</span></div>
-      <div className={cellClass} onMouseEnter={onEnter} onMouseLeave={onLeave}><span>{ticketData.status}</span></div>
-      <div className={cellClass} onMouseEnter={onEnter} onMouseLeave={onLeave}><span>{ticketData.priority}</span></div>
-      <div className={cellClass} onMouseEnter={onEnter} onMouseLeave={onLeave}><span>{ticketData.timeSpent}</span></div>
-      <div className={cellClass} onMouseEnter={onEnter} onMouseLeave={onLeave}><span>{ticketData.createdBy}</span></div>
-      <div className={cellClass} onMouseEnter={onEnter} onMouseLeave={onLeave}><span>{ticketData.createdAt}</span></div>
+      {cells.map((text, i) => (
+        <Link
+          to={`/ticket_form/${ticketData.id}`}
+          {...cellProps}
+          key={i}
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
+          <span>{text}</span>
+        </Link>
+      ))}
     </>
   );
 };

@@ -18,3 +18,10 @@ export const prioritiesItems = [
     { number: 3, priority: "Высокий" },
     { number: 4, priority: "Критический" }
 ];
+
+//Состояние задач
+export const stateTaskItems = [
+    { number: 1, priority: "Открыто" },
+    { number: 2, priority: "В работе" },
+    { number: 3, priority: "Закрыто" },
+];

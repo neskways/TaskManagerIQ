@@ -1,12 +1,14 @@
+import s from "./StatisticsPage.module.scss";
 import { PageTitle } from "../../components/PageTitle/PageTitle";
 import { WorkImg } from "../../components/WorkImg/WorkImg";
-import s from "./StatisticsPage.module.scss";
 
 export const StatisticsPage = () => {
   return (
-    <div className={s.wrapper}>
-        <PageTitle titleText={"Статистика"} /> 
+     <div className={s.wrapper}>
+      <div className={s.inner}>
+        <PageTitle titleText={"Статистика"} center={true} /> 
         <WorkImg />
+      </div>
     </div>
   );
 }

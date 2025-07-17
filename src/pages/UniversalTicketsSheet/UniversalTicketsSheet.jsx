@@ -2,18 +2,27 @@ import s from "./UniversalTicketsSheet.module.scss";
 import { PageTitle } from "../../components/PageTitle/PageTitle";
 import { TicketsTable } from "../../components/TicketsTable/TicketsTable";
 import { SidebarFilter } from "../../components/SidebarFilter/SidebarFilter";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import {
+  getFromLocalStorage,
+  saveToLocalStorage,
+} from "../../modules/localStorageUtils";
 
 export const UniversalTicketsSheet = ({ url, titleText }) => {
+  const [showFilter, setShowFilter] = useState(() => getFromLocalStorage("showFilter", false));
 
-  const [showFilter, setShowFilter] = useState(false);
+  useEffect(() => {
+    saveToLocalStorage("showFilter", showFilter);
+  }, [showFilter]);
 
   return (
     <div className={s.wrapper}>
       <PageTitle titleText={titleText} />
-      <button onClick={() => setShowFilter(!showFilter)}>sdf</button>
-      <TicketsTable />
-      <SidebarFilter showFilter={showFilter} />
+      <div className={s.btn_wrapper}>
+        <button className={s.filter_btn} onClick={() => setShowFilter(prev => !prev)}>Фильтр</button>
+      </div>
+      <TicketsTable showFilter={showFilter} />
+      <SidebarFilter showFilter={showFilter} setShowFilter={setShowFilter} />
     </div>
   );
 };

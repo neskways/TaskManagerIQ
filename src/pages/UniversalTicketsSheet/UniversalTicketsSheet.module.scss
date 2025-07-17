@@ -2,5 +2,12 @@
     margin: 35px 40px;
     width: 100%;
     overflow: hidden;
-    position: relative;
+}
+
+.filter_btn {
+    color: white;
+    background-color: var(--accent-color);
+    padding: 5px 20px;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    font-size: 16px;
 }

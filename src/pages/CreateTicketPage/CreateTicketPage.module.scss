@@ -13,6 +13,7 @@
   border-radius: var(--border-radius);
   height: 100%;
   padding: 30px 20px;
+  position: relative;
 }
 
 .title {
@@ -22,3 +23,23 @@
   margin-bottom: 20px;
 }
 
+.filling_data_inner {
+  display: flex;
+  gap: 30px;
+  margin-bottom: 20px;
+}
+
+.button_wrap {
+  position: absolute;
+  width: 240px;
+  bottom: 30px;
+  right: 20px;
+}
+
+.return_button {
+  text-decoration: underline;
+  position: absolute;
+  color: var(--text-color-secondary);
+  left: 20px;
+  bottom: 30px;
+}

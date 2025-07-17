@@ -1,0 +1,17 @@
+@import '../../styles/variabales.scss';
+
+.svg {
+    fill: black; /* Начальный цвет */
+    height: 30px;
+    width: 30px;
+    transition: var(--transition);
+}
+
+.svg g path {
+    stroke:var(--text-color);
+    transition: var(--transition);
+}
+
+.svg:hover g path {
+    stroke: var(--false);
+}

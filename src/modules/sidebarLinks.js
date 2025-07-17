@@ -12,16 +12,16 @@ export const sidebarItems = [
     Icon: ListIcon,
   },
   {
-    label: "Статистика",
-    path: "/statistics",
-    isActive: (currentPath) => currentPath.startsWith("/statistics"),
-    Icon: StatiscticsIcon,
-  },
-  {
     label: "Клиенты",
     path: "/clients",
     isActive: (currentPath) => currentPath.startsWith("/clients"),
     Icon: ClientsIcon,
+  },
+  {
+    label: "Статистика",
+    path: "/statistics",
+    isActive: (currentPath) => currentPath.startsWith("/statistics"),
+    Icon: StatiscticsIcon,
   },
   {
     label: "Графики",

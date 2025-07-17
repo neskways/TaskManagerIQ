@@ -3,6 +3,12 @@
 .gridTableWrapper {
   width: 100%;
   overflow-x: auto;
+  transition: all 0.3s ease; // плавное появление
+}
+
+.gridTableWrapper.active {
+  width: calc(100% - 250px);
+  overflow-x: auto;
 }
 
 .gridTable {

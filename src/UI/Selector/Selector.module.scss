@@ -1,6 +1,12 @@
+@import url('../../styles/variabales.scss');
+
+.wrapper {
+  width: 100%;
+}
+
 .select {
   width: 100%;
-  padding: 0.5em 1em;
+  padding: 0.7em 1em;
   font-size: 1rem;
   border-radius: var(--border-radius);
   border: 1.5px solid var(--border-color);
@@ -32,4 +38,10 @@
     color: var(--text-color-secondary);
     cursor: not-allowed;
   }
+}
+
+.title {
+    color: var(--text-color-secondary);
+    margin-bottom: 8px;
+    font-size: 14px;
 }

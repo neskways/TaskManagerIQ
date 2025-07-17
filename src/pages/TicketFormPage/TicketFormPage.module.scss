@@ -1,0 +1,24 @@
+@import url("../../styles/variabales.scss");
+
+.wrapper {
+  width: 100%;
+  height: 100vh; 
+  padding: 35px 40px;
+  box-sizing: border-box;
+}
+
+.inner {
+  background-color: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  overflow: hidden; // важно, чтобы не вылезало
+}
+
+.left_side {
+  padding: 30px 20px;
+  overflow-y: auto; // auto — лучше, чем scroll
+  max-height: 100%; // ИЗМЕНЕНИЕ
+}

@@ -13,6 +13,7 @@ import { ParametersPage } from "../pages/ParametersPage/ParametersPage";
 import { CreateTicketPage } from "../pages/CreateTicketPage/CreateTicketPage";
 import { TicketRedirect } from "../components/TicketRedirect/TicketRedirect";
 import { UniversalTicketsSheet } from "../pages/UniversalTicketsSheet/UniversalTicketsSheet";
+import { TicketFormPage } from "../pages/TicketFormPage/TicketFormPage";
 
 const PrivateRoute = ({ children }) => {
   // const { isAuthenticated } = useAuth();
@@ -147,6 +148,8 @@ export const AppRoutes = () => {
             }
           />
         </Route>
+        //Страница задачи
+        <Route path="/ticket_form/:id" element={<TicketFormPage />} />
         //Страница статистики пользователя по выполненым задачам
         <Route path="/statistics" element={<StatisticsPage />}></Route>
         //Страница создания заявки

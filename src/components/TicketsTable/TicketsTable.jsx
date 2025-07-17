@@ -12,6 +12,7 @@ const DEFAULT_WIDTHS = [25, 15, 10, 10, 10, 10, 10, 10];
 
 const mockTickets = [
   {
+    id: 31,
     title: "Ошибка входа в 1С",
     client: "ООО Ромашка",
     department: "1С",
@@ -22,6 +23,7 @@ const mockTickets = [
     createdAt: "2025-06-10 14:32",
   },
   {
+    id: 32,
     title: "Не печатается отчёт",
     client: "ЗАО Тест",
     department: "СА",
@@ -32,6 +34,7 @@ const mockTickets = [
     createdAt: "2025-06-12 09:10",
   },
   {
+    id: 33,
     title: "Ошибка базы данных",
     client: "ИП Сидоров",
     department: "1С",
@@ -43,7 +46,8 @@ const mockTickets = [
   },
 ];
 
-export const TicketsTable = () => {
+
+export const TicketsTable = ({ showFilter }) => {
   const [colWidths, setColWidths] = useState(() =>
     getFromLocalStorage(LOCAL_STORAGE_KEY_TICKETS, DEFAULT_WIDTHS)
   );
@@ -101,7 +105,7 @@ export const TicketsTable = () => {
   };
 
   return (
-    <div className={s.gridTableWrapper}>
+    <div className={`${s.gridTableWrapper} ${showFilter ? s.active : ''}`}>
       <div
         ref={tableRef}
         className={s.gridTable}

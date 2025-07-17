@@ -1,0 +1,7 @@
+@import url('../../styles/variabales.scss');
+
+.sidebar {
+    height: 100%;
+    background-color: var(--bg-color-tertiary);
+    border-radius: 0 var(--border-radius) var(--border-radius) 0;
+}
