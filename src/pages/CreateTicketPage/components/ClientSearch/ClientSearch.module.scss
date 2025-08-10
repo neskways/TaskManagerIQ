@@ -1,0 +1,49 @@
+.wrapper {
+  position: relative;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.input {
+    border-radius: var(--border-radius);
+    width: 100%;
+    padding: 12px 18px;
+    font-size: 16px;
+    color: var(--text-color);
+    background:  var(--bg-color-input);
+    outline: none;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.input:focus {
+    border-color: var(--accent-color); 
+    box-shadow: 0 0 3px 1px var(--accent-color); 
+}
+
+.dropdown {
+  position: absolute;
+  top: 103%;
+  left: 0;
+  right: 0;
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  max-height: 200px;
+  overflow-y: auto;
+  transition: var(--transition);
+  z-index: 10;
+}
+
+.item {
+  padding: 10px;
+  cursor: pointer;
+}
+.item:hover {
+  background: var(--bg-color-hover);
+}
+
+.text {
+    color: var(--text-color-secondary);
+    margin-bottom: 8px;
+    font-size: 14px;
+}

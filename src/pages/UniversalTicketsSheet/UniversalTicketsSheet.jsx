@@ -1,6 +1,6 @@
 import s from "./UniversalTicketsSheet.module.scss";
 import { PageTitle } from "../../components/PageTitle/PageTitle";
-import { TicketsTable } from "../../components/TicketsTable/TicketsTable";
+import { TasksTable } from "../../components/TasksTable/TasksTable";
 import { SidebarFilter } from "../../components/SidebarFilter/SidebarFilter";
 import { useState, useEffect } from "react";
 import {
@@ -21,7 +21,7 @@ export const UniversalTicketsSheet = ({ url, titleText }) => {
       <div className={s.btn_wrapper}>
         <button className={s.filter_btn} onClick={() => setShowFilter(prev => !prev)}>Фильтр</button>
       </div>
-      <TicketsTable showFilter={showFilter} />
+      <TasksTable showFilter={showFilter} />
       <SidebarFilter showFilter={showFilter} setShowFilter={setShowFilter} />
     </div>
   );

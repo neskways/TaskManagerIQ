@@ -1,7 +1,7 @@
 import s from "./HeaderSidebar.module.scss";
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { useTheme } from "../../context/ThemeContext";
+import { useTheme } from "../../../../context/ThemeContext";
 
 export const HeaderSidebar = React.memo(() => {
 

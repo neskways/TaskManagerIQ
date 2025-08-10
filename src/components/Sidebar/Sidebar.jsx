@@ -1,8 +1,8 @@
 import s from "./Sidebar.module.scss";
 import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { HeaderSidebar } from "../HeaderSidebar/HeaderSidebar";
-import { FooterSidebar } from "../FooterSidebar/FooterSidebar";
+import { HeaderSidebar } from "./components/HeaderSidebar/HeaderSidebar";
+import { FooterSidebar } from "./components/FooterSidebar/FooterSidebar";
 import { sidebarItems } from "../../modules/sidebarLinks"; // импортируем конфиг
 
 export const Sidebar = () => {

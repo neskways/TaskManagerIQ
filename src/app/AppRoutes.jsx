@@ -11,7 +11,7 @@ import { KnowledgeBase } from "../pages/KnowledgeBase/KnowledgeBase";
 import { StatisticsPage } from "../pages/StatisticsPage/StatisticsPage";
 import { ParametersPage } from "../pages/ParametersPage/ParametersPage";
 import { CreateTicketPage } from "../pages/CreateTicketPage/CreateTicketPage";
-import { TicketRedirect } from "../components/TicketRedirect/TicketRedirect";
+import { TaskRedirect } from "../components/TaskRedirect/TaskRedirect";
 import { UniversalTicketsSheet } from "../pages/UniversalTicketsSheet/UniversalTicketsSheet";
 import { TicketFormPage } from "../pages/TicketFormPage/TicketFormPage";
 
@@ -62,10 +62,10 @@ export const AppRoutes = () => {
           }
         />
         //Перенаправляет на странице /ticket по умолчанию
-        <Route index element={<Navigate to="/ticket" replace />} />
+        <Route index element={<Navigate to="/tasks" replace />} />
         //Страница с задачами, по умолчанию показывает список задач пользователя
-        <Route path="/ticket" element={<TicketPage />}>
-          <Route index element={<TicketRedirect />} />
+        <Route path="/tasks" element={<TicketPage />}>
+          <Route index element={<TaskRedirect />} />
           <Route
             path="my_assigned"
             element={

@@ -7,8 +7,8 @@ import { BookIcon } from "../UI/BookIcon/BookIcon";
 export const sidebarItems = [
   {
     label: "Списки",
-    path: "/ticket",
-    isActive: (currentPath) => currentPath.startsWith("/ticket"),
+    path: "/tasks",
+    isActive: (currentPath) => currentPath.startsWith("/tasks"),
     Icon: ListIcon,
   },
   {
@@ -41,42 +41,42 @@ export const sidebarItems = [
 export const sidebarSecondaryItems = [
   {
     label: "Назначенные мне заявки",
-    to: "/ticket/my_assigned",
+    to: "/tasks/my_assigned",
     exact: true,
   },
   {
     label: "Текущие задачи",
-    to: "/ticket/current_tasks",
+    to: "/tasks/current_tasks",
     exact: true,
   },
   {
     label: "Заявки 1С",
-    to: "/ticket/1с_applications",
+    to: "/tasks/1с_applications",
     exact: true,
   },
   {
     label: "Открытые заявки",
-    to: "/ticket/all_open",
+    to: "/tasks/all_open",
     exact: true,
   },
   {
     label: "Заявки моей организации",
-    to: "/ticket/my_organization_tickets",
+    to: "/tasks/my_organization_tickets",
     exact: true,
   },
   {
     label: "Закрытые   сегодня",
-    to: "/ticket/closed_today",
+    to: "/tasks/closed_today",
     exact: true,
   },
   {
     label: "Все заявки",
-    to: "/ticket/all_tickets",
+    to: "/tasks/all_tickets",
     exact: true,
   },
   {
     label: "Все закрытые заявки",
-    to: "/ticket/all_closed",
+    to: "/tasks/all_closed",
     exact: true,
   }
 ];

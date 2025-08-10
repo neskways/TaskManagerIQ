@@ -1,0 +1,10 @@
+/* src/components/ui/Timer/Timer.module.scss */
+.timer {
+  font-size: 1.2rem;
+  font-weight: bold;
+  padding: 10px 16px;
+  height: 90px;
+  border-bottom: 1px solid var(--border-color);
+  border-left: 1px solid var(--border-color);
+  background-color: var(--bg-color-tertiary);
+}

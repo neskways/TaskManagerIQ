@@ -1,5 +1,5 @@
 import s from "./Calendar.module.scss";
-import { PageTitle } from "../PageTitle/PageTitle";
+import { PageTitle } from "../../../../components/PageTitle/PageTitle";
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth } from "date-fns";
 import { ru } from "date-fns/locale";
 

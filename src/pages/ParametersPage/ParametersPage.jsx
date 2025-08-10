@@ -2,11 +2,11 @@ import s from "./ParametersPage.module.scss";
 import { ThemeToggle } from "../../UI/ThemeToggle/ThemeToggle";
 import { PageTitle } from "../../components/PageTitle/PageTitle";
 import { DeleteButton } from "../../UI/DeleteButton/DeleteButton";
+import { ContentWrapper } from "../../UI/ContentWrapper/ContentWrapper";
 
 export const ParametersPage = () => {
   return (
-    <div className={s.wrapper}>
-      <div className={s.inner}>
+    <ContentWrapper>
         <PageTitle titleText={"Параметры"} center={true} /> 
         <div className={s.parameters_block}>
           <h4 className={s.parameters_title}>Внешний вид</h4>
@@ -27,7 +27,6 @@ export const ParametersPage = () => {
             </div>
           </div>
         </div>
-      </div>
-    </div>
+    </ContentWrapper>
   );
 };

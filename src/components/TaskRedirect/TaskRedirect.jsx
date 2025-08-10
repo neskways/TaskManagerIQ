@@ -1,7 +1,7 @@
 import { Navigate } from "react-router-dom";
 import { getFromLocalStorage } from "../../modules/localStorageUtils";
 
-export const TicketRedirect = () => {
+export const TaskRedirect = () => {
   const defaultPath = "my_assigned";
   const fullSavedPath = getFromLocalStorage("last_secondary_sidebar_path", `/ticket/${defaultPath}`);
 

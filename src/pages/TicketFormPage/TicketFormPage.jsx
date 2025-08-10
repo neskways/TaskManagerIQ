@@ -5,13 +5,13 @@ import { TaskSidebar } from "../../components/TaskSidebar/TaskSidebar";
 import { TaskTitleAndText } from "../../components/TaskTitleAndText/TaskTitleAndText";
 import { TaskTextBlock } from "../../components/TaskTextBlock/TaskTextBlock";
 import { Input } from "./components/Input";
+import { ContentWrapper } from "../../UI/ContentWrapper/ContentWrapper";
 
 export const TicketFormPage = () => {
   const { id } = useParams();
 
   return (
-    <div className={s.wrapper}>
-      <div className={s.inner}>
+    <ContentWrapper>
         <div className={s.left_side}>
           <PageTitle titleText={`Заявка № ${id}`} center={true} />
           <TaskTitleAndText />
@@ -24,7 +24,6 @@ export const TicketFormPage = () => {
           <Input type="text"/>
         </div>
         <TaskSidebar />
-      </div>
-    </div>
+    </ContentWrapper>
   );
 };

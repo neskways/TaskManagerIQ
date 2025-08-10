@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import s from "./TicketsTable.module.scss";
+import s from "./TasksTable.module.scss";
 import { headersTitleTickets } from "../../modules/Arrays";
 import {
   getFromLocalStorage,
   saveToLocalStorage,
 } from "../../modules/localStorageUtils";
-import { TicketGridCell } from "../TicketGridCell/TicketGridCell";
+import { TaskGridCell } from "../TaskGridCell/TaskGridCell";
 
 const LOCAL_STORAGE_KEY_TICKETS = "tickets_table_col_widths";
 const DEFAULT_WIDTHS = [25, 15, 10, 10, 10, 10, 10, 10];
@@ -47,7 +47,7 @@ const mockTickets = [
 ];
 
 
-export const TicketsTable = ({ showFilter }) => {
+export const TasksTable = ({ showFilter }) => {
   const [colWidths, setColWidths] = useState(() =>
     getFromLocalStorage(LOCAL_STORAGE_KEY_TICKETS, DEFAULT_WIDTHS)
   );
@@ -123,8 +123,8 @@ export const TicketsTable = ({ showFilter }) => {
           </div>
         ))}
 
-        {mockTickets.map((ticket, index) => (
-          <TicketGridCell key={index} ticketData={ticket} />
+        {mockTickets.map((task, index) => (
+          <TaskGridCell key={index} taskData={task} />
         ))}
       </div>
     </div>
