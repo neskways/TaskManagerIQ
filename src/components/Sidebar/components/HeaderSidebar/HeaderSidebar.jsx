@@ -11,7 +11,7 @@ export const HeaderSidebar = React.memo(() => {
 
   return (
     <div className={s.header}>
-      <NavLink to="/ticket">
+      <NavLink to="/tasks">
         <img className={s.logo} src={theme === "light" ? lightLogo : darkLogo} alt="" />
       </NavLink>
     </div>

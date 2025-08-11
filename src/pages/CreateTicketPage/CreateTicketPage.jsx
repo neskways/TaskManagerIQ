@@ -16,12 +16,17 @@ import {
 } from "../../modules/Arrays";
 import { ContentWrapper } from "../../UI/ContentWrapper/ContentWrapper";
 import { ClientSearch } from "./components/ClientSearch/ClientSearch";
+import { useClients } from "./useClients";
+
+
+const url = "http://192.168.11.99/iqit/hs/iqit/ClientGetList";
 
 export const CreateTicketPage = () => {
-
   const lastSecondaryPath = getFromLocalStorage("last_secondary_sidebar_path");
+  const { clients, loading } = useClients(url);
 
- const [selectedDept, setSelectedDept] = useState("");
+  const [selectedClient, setSelectedClient] = useState(null);
+  const [selectedDept, setSelectedDept] = useState("");
   const [selectedExecutor, setSelectedExecutor] = useState("");
 
   const filteredExecutors = selectedDept
@@ -35,8 +40,11 @@ export const CreateTicketPage = () => {
         <Input text={"ЗАГОЛОВОК"} />
 
         <ClientSearch
-          clients={clientsItems}
-          onSelect={(client) => setSelectedClient(client)}
+          clients={clients}
+          onSelect={(client) => {
+            setSelectedClient(client); // теперь это определено
+            console.log("Выбран клиент:", client.name, "с кодом:", client.code);
+          }}
           text={"КЛИЕНТ"}
         />
 
@@ -46,34 +54,15 @@ export const CreateTicketPage = () => {
           <Selector
             items={departmentsItems}
             value={selectedDept}
-            title={"ОТДЕЛ"}
+            title={"Конфигурация"}
             onChange={(val) => {
               setSelectedDept(val);
-              setSelectedExecutor(""); // сброс исполнителя при смене отдела
+              setSelectedExecutor("");
             }}
           />
 
-          <Selector
-            items={filteredExecutors}
-            value={selectedExecutor}
-            title={"ИСПОЛНИТЕЛЬ"}
-            labelKey="fio"
-            onChange={setSelectedExecutor}
-            disabled={!selectedDept}
-          />
-        </div>
-
-        <div className={s.filling_data_inner}>
-          <Selector
-            items={stateTaskItems}
-            defaultValue={1}
-            title={"СОСТОЯНИЕ"}
-          />
-          <Selector
-            items={prioritiesItems}
-            defaultValue={2}
-            title={"ПРИОРИТЕТ"}
-          />
+          
+          <Input text={"КОНТАКТЫ"} />
         </div>
 
         <div className={s.button_wrap}>
