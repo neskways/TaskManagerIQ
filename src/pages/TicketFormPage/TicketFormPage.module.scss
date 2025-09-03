@@ -1,5 +1,3 @@
-@import url("../../styles/variabales.scss");
-
 .wrapper {
   width: 100%;
   height: 100vh; 
@@ -15,10 +13,17 @@
   display: grid;
   grid-template-columns: 1fr 300px;
   overflow: hidden; // важно, чтобы не вылезало
+  position: relative;
 }
 
 .left_side {
   padding: 30px 20px;
   overflow-y: auto; // auto — лучше, чем scroll
   max-height: 100%; // ИЗМЕНЕНИЕ
+}
+
+.btn_back {
+  position: absolute;
+  left: 15px;
+  top: 12px;
 }

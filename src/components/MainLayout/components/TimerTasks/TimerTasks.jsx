@@ -108,15 +108,13 @@ export const TimerTasks = () => {
   return (
     <div className={s.timer_wrapper}>
       <div className={s.current_task}>
-        <div className={s.task_title}>{currentTask?.title || "Нет задачи"}</div>
-        <div className={s.time_display}>{formatTime(getDisplaySeconds(currentTask))}</div>
         <button onClick={toggleTimer} className={s.btn}>
           {isRunning ? "⏸ Пауза" : "▶ Старт"}
         </button>
-        <button onClick={() => createTask(`Новая задача #${tasks.length + 1}`)} className={s.btn_new}>
-          + Новая
-        </button>
-      </div>
+        <div className={s.time_display}>{formatTime(getDisplaySeconds(currentTask))}</div>
+      
+        <div className={s.task_title}>{currentTask?.title || "Нет задачи"}</div>
+        </div>
 
       <div className={s.task_list}>
         {tasks.map((task) => (

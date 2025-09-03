@@ -1,0 +1,20 @@
+.svg {
+    fill: black; /* Начальный цвет */
+    height: 45px;
+    width: 50px;
+    transition: var(--transition);
+}
+
+.svg path{
+    stroke:var(--text-color);
+    transition: var(--transition);
+}
+
+.svg:hover path {
+    stroke: var(--accent-color);
+    fill: var(--accent-color);
+}
+
+.svg:hover {
+    fill: var(--accent-color);
+}

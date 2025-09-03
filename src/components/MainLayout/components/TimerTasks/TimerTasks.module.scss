@@ -3,10 +3,10 @@
   align-items: center;
   justify-content: space-between;
   padding: 8px 16px;
-  background: #f4f4f4;
-  border-bottom: 1px solid #ddd;
+  background: var(--bg-color);
+  border-bottom: 1px solid var(--border-color-secondary);
   gap: 20px;
-  height: 120px;
+  height: 116px;
 }
 
 .current_task {
@@ -18,7 +18,8 @@
 .task_title {
   font-weight: 600;
   font-size: 16px;
-  max-width: 220px;
+  width: 400px;
+  max-width: 400px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -30,13 +31,13 @@
 }
 
 .btn {
-  padding: 4px 8px;
+  padding: 8px 12px;
   background: #4cafef;
   color: #fff;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-
+  width: 80px;
   &:hover {
     background: #42a0e0;
   }

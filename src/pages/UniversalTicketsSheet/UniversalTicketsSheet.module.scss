@@ -5,8 +5,9 @@
 }
 
 .filter_btn {
-    color: white;
-    background-color: var(--accent-color);
+    color: var(--text-color);
+    background-color: var(--bg-color-tertiary);
+    border-bottom: 1px solid var(--border-color);
     padding: 5px 20px;
     border-radius: var(--border-radius) var(--border-radius) 0 0;
     font-size: 16px;

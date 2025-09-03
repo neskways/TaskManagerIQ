@@ -1,5 +1,3 @@
-@import url('../../styles/variabales.scss');
-
 .block {
     width: 230px;
     height: 100vh;   
@@ -12,6 +10,8 @@
     display: flex;
     flex-direction: column;
     background-color: var(--bg-color-tertiary);
+    border-right: 1px solid var(--border-color);
+    
     position: fixed;
 }
 
