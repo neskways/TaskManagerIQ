@@ -18,12 +18,27 @@
 
 .left_side {
   padding: 30px 20px;
-  overflow-y: auto; // auto — лучше, чем scroll
   max-height: 100%; // ИЗМЕНЕНИЕ
+  position: relative;
 }
 
 .btn_back {
   position: absolute;
   left: 15px;
   top: 12px;
+}
+
+.fixed_block {
+  position: absolute;
+  bottom: 0;
+  left: 40px;
+  right: 40px;
+}
+
+.text_place {
+  overflow: auto;
+  padding-right: 10px;
+  height: 380px;
+  padding-bottom: 20px;
+  margin-bottom: 40px;
 }

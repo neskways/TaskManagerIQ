@@ -49,30 +49,31 @@
   gap: 6px;
   max-height: 120px;
   overflow-y: scroll;
-  min-width: 450px;
+  min-width: 600px;
   padding: 4px;
-  border-left: 1px solid #ddd;
+  border-left: 1px solid var(--border-color-secondary);
 }
 
 .task_item {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 2fr 1fr 70px;
   align-items: center;
   padding: 4px;
-  background: #fff;
+  background: var(--bg-color-secondary);
   border-radius: 4px;
-  border: 1px solid #eee;
+  border: 1px solid var(--border-color-secondary);
   font-size: 14px;
 
   button {
     background: none;
     border: none;
-    color: #1976d2;
+    color: var(--text-color);
     cursor: pointer;
     padding: 2px 4px;
 
     &:hover {
       text-decoration: underline;
+      color: var(--accent-color);
     }
   }
 }

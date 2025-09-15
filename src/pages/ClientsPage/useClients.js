@@ -12,6 +12,7 @@ export const useClients = (url) => {
           const fixed = response.data.replace(/'/g, '"');
           const parsed = JSON.parse(fixed);
           setClients(parsed);
+          console.log(parsed + "  " + fixed);
         } catch (error) {
           console.error("Ошибка при парсинге JSON:", error);
         }

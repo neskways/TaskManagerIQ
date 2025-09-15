@@ -6,6 +6,8 @@ import { useResizableTable } from "./useResizableTable";
 import { PageTitle } from "../../components/PageTitle/PageTitle";
 import { ClientModal } from "./components/ClientModal/ClientModal";
 import { ClientsTable } from "./components/ClientsTable/ClientsTable";
+import { getClients } from "../../api/getClients";
+
 
 const url = "http://192.168.11.99/iqit/hs/iqit/ClientGetList";
 

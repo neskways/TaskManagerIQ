@@ -9,10 +9,7 @@ import { getFromLocalStorage } from "../../modules/localStorageUtils";
 import { useState } from "react";
 import {
   departmentsItems,
-  prioritiesItems,
-  stateTaskItems,
-  executorsItems,
-  clientsItems,
+  executorsItems
 } from "../../modules/Arrays";
 import { ContentWrapper } from "../../UI/ContentWrapper/ContentWrapper";
 import { ClientSearch } from "./components/ClientSearch/ClientSearch";
@@ -48,13 +45,13 @@ export const CreateTicketPage = () => {
           text={"КЛИЕНТ"}
         />
 
-        <MultipleInput text={"ТЕКСТ"} />
+        <MultipleInput text={"ТЕКСТ"} rows={5} />
 
         <div className={s.filling_data_inner}>
           <Selector
             items={departmentsItems}
             value={selectedDept}
-            title={"Конфигурация"}
+            title={"КОНФИГУРАЦИЯ"}
             onChange={(val) => {
               setSelectedDept(val);
               setSelectedExecutor("");

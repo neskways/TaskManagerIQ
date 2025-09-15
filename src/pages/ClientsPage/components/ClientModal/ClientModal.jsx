@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import s from "./ClientModal.module.scss";
+import { CloseIcon } from "../../../../UI/CloseIcon/CloseIcon";
 
 export const ClientModal = ({ clientData, onClose }) => {
   useEffect(() => {
@@ -23,7 +24,9 @@ export const ClientModal = ({ clientData, onClose }) => {
         <p><strong>Имя:</strong> {clientData.name}</p>
         <p><strong>Статус:</strong> {clientData.status}</p>
         <p><strong>Телефон:</strong> {clientData.phone}</p>
-        <button onClick={onClose}>Закрыть</button>
+               <button className={s.close_btn} onClick={onClose}>
+          <CloseIcon />
+        </button>
       </div>
     </div>
   );

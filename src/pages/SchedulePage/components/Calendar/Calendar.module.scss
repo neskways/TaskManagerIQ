@@ -61,3 +61,25 @@
 .dateNum {
   font-size: 18px;
 }
+
+.controls {
+  display: flex;
+  gap: 12px;
+  justify-content: left;
+  margin-bottom: 20px;
+}
+
+.select {
+  padding: 8px 12px;
+  font-size: 16px;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  background: var(--bg-color-tertiary);
+  color: var(--text-color);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  appearance: none; /* убираем дефолтную стрелку */
+  outline: none;
+  text-transform: capitalize;
+}

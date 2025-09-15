@@ -6,33 +6,8 @@ export const headersTitleTickets = ["Заголовок", "Клиент", "От�
 
 //Отделы
 export const departmentsItems = [
-    { number: 1, priority: "1С" },
-    { number: 2, priority: "СА" }
-];
-
-//Приоритеты задач
-export const prioritiesItems = [
-    { number: 1, priority: "Низкий" },
-    { number: 2, priority: "Средний" },
-    { number: 3, priority: "Высокий" },
-    { number: 4, priority: "Критический" }
-];
-
-//Состояние задач
-export const stateTaskItems = [
-    { number: 1, priority: "Открыто" },
-    { number: 2, priority: "В работе" },
-    { number: 3, priority: "Закрыто" },
-];
-
-// Массив клиентов
-export const clientsItems = [
-  { code: "CL001", name: "ООО «Альфа»" },
-  { code: "CL002", name: "ЗАО «Бета-Сервис»" },
-  { code: "CL003", name: "ИП Сидоров С.С." },
-  { code: "CL004", name: "ООО «Гамма-Строй»" },
-  { code: "CL005", name: "АО «Дельта»" },
-  { code: "CL005", name: "КАРАстылев" },
+    { number: 1, priority: "1С:Бухгалтерия" },
+    { number: 2, priority: "1С:Розница" }
 ];
 
 export const executorsItems = [
