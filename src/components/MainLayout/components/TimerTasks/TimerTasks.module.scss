@@ -32,14 +32,15 @@
 
 .btn {
   padding: 8px 12px;
-  background: #4cafef;
+  background: var(--accent-color);
   color: #fff;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   width: 80px;
+  transition: var(--transition);
   &:hover {
-    background: #42a0e0;
+    background: var(--accent-color-secondary);
   }
 }
 

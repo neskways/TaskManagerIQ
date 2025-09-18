@@ -176,7 +176,7 @@ export const Calendar = () => {
       {/* контент */}
       {initialLoading ? (
         <div className={s.centerWrapper}>
-          <Loading />
+          <Loading className={s.loading} />
         </div>
       ) : errorMessage && schedule.length === 0 ? (
         <div className={s.centerWrapper}>

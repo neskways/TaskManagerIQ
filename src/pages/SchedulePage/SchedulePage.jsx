@@ -21,8 +21,8 @@ export const SchedulePage = () => {
       <div className={s.toggleWrapper}>
         <button className={s.toggleButton} onClick={toggleView}>
           {view === "duty"
-            ? "Показать график обновлений"
-            : "Показать график дежурств"}
+            ? "График обновлений"
+            : "График дежурств"}
         </button>
       </div>
 
@@ -31,7 +31,7 @@ export const SchedulePage = () => {
           <Calendar showInitialLoadingOnly={true} />
         ) : (
           <div className={s.placeholder}>
-            Компонент "График обновлений" ещё не готов.
+            В разработке
           </div>
         )}
       </div>
