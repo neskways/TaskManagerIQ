@@ -3,7 +3,7 @@
 .popup {
   position: fixed;
   top: 20px;
-  left: 50%;
+  left: calc(50% + 110px);
   transform: translateX(-50%);
   background-color: var(--false);
   color: white;

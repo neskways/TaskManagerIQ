@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import s from "./Calendar.module.scss";
 import {
   format,
@@ -8,22 +8,73 @@ import {
   endOfWeek,
   addDays,
   isSameMonth,
-  isSameDay,
 } from "date-fns";
 import { ru } from "date-fns/locale";
 import { getSchedule } from "../../../../api/getShedule";
+import { Popup } from "../../../../UI/Popup/Popup";
+import { Loading } from "../../../../UI/Loading/Loading";
 
 export const Calendar = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [displayMonth, setDisplayMonth] = useState(new Date()); // месяц который отображаем
   const [schedule, setSchedule] = useState([]);
+  const [showPopup, setShowPopup] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [initialLoading, setInitialLoading] = useState(true);
 
-  // загрузка расписания при смене месяца/года
+  // кэш: key = "YYYY-MM", value = данные
+  const cacheRef = useRef({});
+
+  const loadSchedule = async (month, year) => {
+    const key = `${year}-${month}`;
+    if (cacheRef.current[key]) {
+      return cacheRef.current[key];
+    }
+
+    try {
+      const data = await getSchedule(month, year);
+      const normalized = data.map((item) => ({ ...item, date: new Date(item.date) }));
+      cacheRef.current[key] = normalized;
+      return normalized;
+    } catch (err) {
+      console.error("Ошибка при загрузке расписания:", err);
+      setErrorMessage("Ошибка загрузки данных");
+      setShowPopup(true);
+      setTimeout(() => setShowPopup(false), 3000);
+      return null;
+    }
+  };
+
+  // первая загрузка с лоадингом
   useEffect(() => {
-    const month = currentMonth.getMonth() + 1; // месяцы JS начинаются с 0
+    const month = currentMonth.getMonth() + 1;
     const year = currentMonth.getFullYear();
 
-    getSchedule(month, year).then((data) => setSchedule(data));
-  }, [currentMonth]);
+    loadSchedule(month, year).then((data) => {
+      if (data) {
+        setSchedule(data);
+        setDisplayMonth(new Date(currentMonth));
+      }
+      setInitialLoading(false);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // загрузка при смене месяца/года без лоадинга
+  useEffect(() => {
+    if (initialLoading) return; // первый раз уже обработан
+
+    const month = currentMonth.getMonth() + 1;
+    const year = currentMonth.getFullYear();
+
+    // показываем старый календарь, новые данные загружаются в фоне
+    loadSchedule(month, year).then((data) => {
+      if (data) {
+        setSchedule(data);
+        setDisplayMonth(new Date(currentMonth));
+      }
+    });
+  }, [currentMonth, initialLoading]);
 
   const currentYear = new Date().getFullYear();
   const years = [currentYear - 1, currentYear, currentYear + 1];
@@ -45,7 +96,7 @@ export const Calendar = () => {
   const renderDays = () => {
     const days = [];
     const dateFormat = "EEEEEE";
-    const startDate = startOfWeek(startOfMonth(currentMonth), { weekStartsOn: 1 });
+    const startDate = startOfWeek(startOfMonth(displayMonth), { weekStartsOn: 1 });
 
     for (let i = 0; i < 7; i++) {
       days.push(
@@ -59,8 +110,8 @@ export const Calendar = () => {
   };
 
   const renderCells = () => {
-    const monthStart = startOfMonth(currentMonth);
-    const monthEnd = endOfMonth(currentMonth);
+    const monthStart = startOfMonth(displayMonth);
+    const monthEnd = endOfMonth(displayMonth);
     const startDate = startOfWeek(monthStart, { weekStartsOn: 1 });
     const endDate = endOfWeek(monthEnd, { weekStartsOn: 1 });
 
@@ -70,8 +121,12 @@ export const Calendar = () => {
 
     while (day <= endDate) {
       for (let i = 0; i < 7; i++) {
-        // ищем пользователя по дате
-        const duty = schedule.find((item) => isSameDay(item.date, day));
+        const duty = schedule.find(
+          (item) =>
+            item.date.getDate() === day.getDate() &&
+            item.date.getMonth() === day.getMonth() &&
+            item.date.getFullYear() === day.getFullYear()
+        );
 
         days.push(
           <div
@@ -99,12 +154,9 @@ export const Calendar = () => {
 
   return (
     <div className={s.calendar}>
+      {/* селекторы */}
       <div className={s.controls}>
-        <select
-          className={s.select}
-          value={currentMonth.getMonth()}
-          onChange={handleMonthChange}
-        >
+        <select className={s.select} value={currentMonth.getMonth()} onChange={handleMonthChange}>
           {Array.from({ length: 12 }).map((_, i) => (
             <option key={i} value={i}>
               {format(new Date(2020, i), "LLLL", { locale: ru })}
@@ -112,11 +164,7 @@ export const Calendar = () => {
           ))}
         </select>
 
-        <select
-          className={s.select}
-          value={currentMonth.getFullYear()}
-          onChange={handleYearChange}
-        >
+        <select className={s.select} value={currentMonth.getFullYear()} onChange={handleYearChange}>
           {years.map((year) => (
             <option key={year} value={year}>
               {year}
@@ -125,8 +173,23 @@ export const Calendar = () => {
         </select>
       </div>
 
-      {renderDays()}
-      {renderCells()}
+      {/* контент */}
+      {initialLoading ? (
+        <div className={s.centerWrapper}>
+          <Loading />
+        </div>
+      ) : errorMessage && schedule.length === 0 ? (
+        <div className={s.centerWrapper}>
+          <p className={s.errorText}>{errorMessage}</p>
+        </div>
+      ) : (
+        <>
+          {renderDays()}
+          {renderCells()}
+        </>
+      )}
+
+      <Popup showPopup={showPopup} text={errorMessage} />
     </div>
   );
 };

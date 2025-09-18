@@ -83,3 +83,23 @@
   outline: none;
   text-transform: capitalize;
 }
+
+.loadingWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px; // чтобы было по центру под заголовком
+  transform: scale(1.5);
+}
+.centerWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px; // под размер календаря
+  text-align: center;
+}
+
+.errorText {
+  font-size: 20px;
+  font-weight: 500;
+}
