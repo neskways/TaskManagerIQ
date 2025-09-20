@@ -1,0 +1,54 @@
+.container {
+  padding: 16px;
+}
+
+.monthTitle {
+  text-align: left;
+  margin-bottom: 10px;
+  font-size: 20px;
+  margin-left: 6px;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+
+  th,
+  td {
+    border: 1px solid var(--border-color);
+    text-align: center;
+    padding: 4px 6px;
+  }
+
+  th {
+    background-color: var(--bg-color-tertiary);
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+
+  td {
+    background-color: var(--bg-color-secondary);
+  }
+}
+
+
+.stickyColumn {
+  position: sticky;
+  left: 0;
+  background-color: #f9f9f9;
+  font-weight: 500;
+  z-index: 1;
+  width: 320px;
+  word-wrap: break-word;
+  white-space: normal;
+  text-align: left !important;  
+  padding: 6px 10px;
+}
+

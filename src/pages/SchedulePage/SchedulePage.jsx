@@ -3,6 +3,7 @@ import s from "./SchedulePage.module.scss";
 import { Calendar } from "./components/Calendar/Calendar";
 import { PageTitle } from "../../components/PageTitle/PageTitle";
 import { ContentWrapper } from "../../UI/ContentWrapper/ContentWrapper";
+import { UpdateScheduleTable } from "./components/UpdateScheduleTable/UpdateScheduleTable";
 
 export const SchedulePage = () => {
   const [view, setView] = useState("duty"); // 'duty' или 'updates'
@@ -30,9 +31,7 @@ export const SchedulePage = () => {
         {view === "duty" ? (
           <Calendar showInitialLoadingOnly={true} />
         ) : (
-          <div className={s.placeholder}>
-            В разработке
-          </div>
+          <UpdateScheduleTable />
         )}
       </div>
     </ContentWrapper>
