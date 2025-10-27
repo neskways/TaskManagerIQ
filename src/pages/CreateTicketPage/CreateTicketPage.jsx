@@ -14,16 +14,14 @@ import {
 import { ContentWrapper } from "../../UI/ContentWrapper/ContentWrapper";
 import { ClientSearch } from "./components/ClientSearch/ClientSearch";
 import { useClients } from "./useClients";
-
-
-const url = "http://192.168.11.99/iqit/hs/iqit/ClientGetList";
+import { getClients } from "../../api/getClients";
 
 export const CreateTicketPage = () => {
   const lastSecondaryPath = getFromLocalStorage("last_secondary_sidebar_path");
-  const { clients, loading } = useClients(url);
+  const { clients, showPopup } = getClients();
 
-  const [selectedClient, setSelectedClient] = useState(null);
-  const [selectedDept, setSelectedDept] = useState("");
+  const [selectedClient,   setSelectedClient] = useState(null);
+  const [selectedDept,     setSelectedDept] = useState("");
   const [selectedExecutor, setSelectedExecutor] = useState("");
 
   const filteredExecutors = selectedDept
@@ -59,7 +57,7 @@ export const CreateTicketPage = () => {
           />
 
           
-          <Input text={"КОНТАКТЫ"} />
+          <Input text={"КОНТАКТЫ"} placeholder={"+7 999 666 99 99"} />
         </div>
 
         <div className={s.button_wrap}>

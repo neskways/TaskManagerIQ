@@ -8,12 +8,9 @@ import { ClientModal } from "./components/ClientModal/ClientModal";
 import { ClientsTable } from "./components/ClientsTable/ClientsTable";
 import { getClients } from "../../api/getClients";
 
-
-const url = "http://192.168.11.99/iqit/hs/iqit/ClientGetList";
-
 export const ClientsPage = () => {
   const [selectedClient, setSelectedClient] = useState(null);
-  const { clients, showPopup } = useClients(url);
+  const { clients, showPopup } = getClients();
   const {
     colWidths,
     tableRef,

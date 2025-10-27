@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
+import Cookies from "js-cookie";
 import axios from "axios";
 
 export const useClients = (url) => {
   const [clients, setClients] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
-
+ 
   useEffect(() => {
     axios.post(url, {}, { responseType: "text" })
       .then((response) => {
@@ -12,7 +13,6 @@ export const useClients = (url) => {
           const fixed = response.data.replace(/'/g, '"');
           const parsed = JSON.parse(fixed);
           setClients(parsed);
-          console.log(parsed + "  " + fixed);
         } catch (error) {
           console.error("Ошибка при парсинге JSON:", error);
         }

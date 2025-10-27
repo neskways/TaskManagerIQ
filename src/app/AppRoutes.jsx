@@ -1,6 +1,7 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import Cookies from 'js-cookie';
 import { LoginPage } from "../pages/LoginPage/LoginPage";
 import { ErrorPage } from "../pages/ErrorPage/ErrorPage";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { TicketPage } from "../pages/TicketPage/TicketPage";
 import { ProfilePage } from "../pages/ProfilePage/ProfilePage";
 import { ClientsPage } from "../pages/ClientsPage/ClientsPage";
@@ -8,22 +9,24 @@ import { MainLayout } from "../components/MainLayout/MainLayout";
 import { SchedulePage } from "../pages/SchedulePage/SchedulePage";
 import { getFromLocalStorage } from "../modules/localStorageUtils"; 
 import { KnowledgeBase } from "../pages/KnowledgeBase/KnowledgeBase";
+import { TaskRedirect } from "../components/TaskRedirect/TaskRedirect";
+import { TicketFormPage } from "../pages/TicketFormPage/TicketFormPage";
 import { StatisticsPage } from "../pages/StatisticsPage/StatisticsPage";
 import { ParametersPage } from "../pages/ParametersPage/ParametersPage";
 import { CreateTicketPage } from "../pages/CreateTicketPage/CreateTicketPage";
-import { TaskRedirect } from "../components/TaskRedirect/TaskRedirect";
 import { UniversalTicketsSheet } from "../pages/UniversalTicketsSheet/UniversalTicketsSheet";
-import { TicketFormPage } from "../pages/TicketFormPage/TicketFormPage";
 
 const PrivateRoute = ({ children }) => {
-  // const { isAuthenticated } = useAuth();
-  const isAuthenticated = true;
+
+  const token = Cookies.get("token");
+  const isAuthenticated = Boolean(token);
+
   return isAuthenticated ? children : <Navigate to="/login" replace />;
 };
 
-
 const NavigateFromLogin = ({ children }) => {
-  const isAuthenticated = true;
+  const token = Cookies.get("token");
+  const isAuthenticated = Boolean(token);
 
   if (!isAuthenticated) return children;
 

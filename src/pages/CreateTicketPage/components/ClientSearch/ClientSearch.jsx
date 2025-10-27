@@ -1,7 +1,7 @@
 import s from "./ClientSearch.module.scss";
 import { useState, useRef, useEffect } from "react";
 
-export const ClientSearch = ({ clients, onSelect }) => {
+export const ClientSearch = ({ clients, onSelect, text }) => {
   const [query, setQuery] = useState("");
   const [showList, setShowList] = useState(false);
   const [selectedClient, setSelectedClient] = useState(null);
@@ -73,6 +73,7 @@ export const ClientSearch = ({ clients, onSelect }) => {
 
   return (
     <div className={s.wrapper} ref={wrapperRef}>
+      <p className={`${s.text}`}> {text} </p>
       <input
         type="text"
         className={s.input}

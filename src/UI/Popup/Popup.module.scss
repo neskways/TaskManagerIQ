@@ -3,7 +3,7 @@
 .popup {
   position: fixed;
   top: 20px;
-  left: calc(50% + 110px);
+  left: calc(50%);
   transform: translateX(-50%);
   background-color: var(--false);
   color: white;
@@ -12,6 +12,10 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
   z-index: 1000;
   animation: fadeInOut 3s ease forwards;
+}
+
+.popupMargin {
+   left: calc(50% + 115px) !important;
 }
 
 .true {

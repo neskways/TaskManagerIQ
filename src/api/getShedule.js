@@ -1,19 +1,19 @@
 import { api } from "./axios";
 
 export const getSchedule = async (month, year) => {
-  console.log(month)
-  console.log(year)
+  
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   try {
     const response = await api.post(
-      "/iqit/hs/iqit/GetDutyCalendar",
-      {}, // тело пустое
+      `${BASE_URL}/GetDutyCalendar`,
+      {}, 
       {
-        params: { month, year }, // передаем через query-параметры
+        params: { month, year }, 
         responseType: "text",
       }
     );
 
-    // сервер присылает с одинарными кавычками → фиксируем
     const fixed = (response.data || "").replace(/'/g, '"');
 
     let parsed;
@@ -46,7 +46,7 @@ export const getSchedule = async (month, year) => {
     });
   } catch (error) {
     console.error("Ошибка при загрузке расписания:", error);
-    // важно: пробрасываем ошибку дальше, чтобы компонент показал попап
+    
     throw error;
   }
 };

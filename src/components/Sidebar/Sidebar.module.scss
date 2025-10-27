@@ -1,5 +1,5 @@
 .block {
-    width: 230px;
+    width: 250px;
     height: 100vh;   
     min-width: 230px;
 }
@@ -32,11 +32,12 @@
 .menu_link {
     text-decoration: none;
     display: block;
-    padding: 8px 20px 8px 15px;
+    padding: 10px 20px 10px 15px;
     font-size: 14px;
     color: var(--text-color);
     transition: var(--transition);
     display: flex;
+    font-weight: 400;
     align-items: center;
     gap: 10px;
 }

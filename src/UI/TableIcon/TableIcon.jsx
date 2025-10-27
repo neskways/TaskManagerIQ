@@ -1,17 +1,42 @@
-import s from "./TableIcon.module.scss";
+export const TableIcon = ({ isActive, theme }) => {
 
-export const TableIcon = () => {
+  const color = theme === "dark" ? "#fff" : isActive ? "#fff" : "#000";
+
   return (
     <svg
-      width="32"
-      height="32"
-      viewBox="0 0 24 24"
+      width="27"
+      height="27"
+      viewBox="0 0 27 27"
+      fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={`sidebar-icon ${s.svg}`}
     >
       <path
-        d="M9.5 16v2.5h5V16h-5zm0-1h5v-3h-5v3zM20 16h-4.5v2.5h4a.5.5 0 0 0 .5-.5v-2zm0-1v-3h-4.5v3H20zM4 16v2a.5.5 0 0 0 .5.5h4V16H4zm0-1h4.5v-3H4v3zm10.5-7h-5v3h5V8zm1 0v3H20V8h-4.5zm-7 0H4v3h4.5V8zm-4-4.5h15A1.5 1.5 0 0 1 21 5v13a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18V5a1.5 1.5 0 0 1 1.5-1.5z"
-        fill="currentColor"
+        d="M21.375 4.5H5.625C4.38236 4.5 3.375 5.50736 3.375 6.75V22.5C3.375 23.7426 4.38236 24.75 5.625 24.75H21.375C22.6176 24.75 23.625 23.7426 23.625 22.5V6.75C23.625 5.50736 22.6176 4.5 21.375 4.5Z"
+        stroke={color}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M18 2.25V6.75"
+        stroke={color}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M9 2.25V6.75"
+        stroke={color}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M3.375 11.25H23.625"
+        stroke={color}
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );

@@ -1,13 +1,27 @@
-import { NavLink } from "react-router-dom";
 import s from "./ProfileBox.module.scss";
+import { NavLink, useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 export const ProfileBox = ({ isActiveBox, setIsActiveBox }) => {
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        
+        
+        // Удаляем куки
+        Cookies.remove("token");
+        Cookies.remove("userId");
+
+        // Закрываем меню
+        setIsActiveBox(false);
+
+        // Переходим на страницу логина
+        navigate("/login");
+    };
 
     return (
         <>
-            {
-                isActiveBox === true &&
-
+            {isActiveBox && (
                 <div className={s.wrapper}>
                     <nav className={s.nav}>
                         <ul className={s.list}>
@@ -33,7 +47,7 @@ export const ProfileBox = ({ isActiveBox, setIsActiveBox }) => {
                                 <NavLink
                                     to="/login"
                                     className={`${s.menu_link} ${s.exit_link}`}
-                                    onClick={() => setIsActiveBox(false)}
+                                    onClick={handleLogout}
                                 >
                                     Выход
                                 </NavLink>
@@ -41,7 +55,7 @@ export const ProfileBox = ({ isActiveBox, setIsActiveBox }) => {
                         </ul>
                     </nav>
                 </div>
-            }
+            )}
         </>
-    )
-}
+    );
+};
