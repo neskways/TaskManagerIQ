@@ -2,22 +2,27 @@ import { useState, useEffect } from "react";
 import { api } from "./axios";
 import Cookies from "js-cookie";
 
-export const getClients = () => {
+export const getUsers = () => {
   
   const [clients, setClients] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
-    
-    const token = Cookies.get("token"); 
+    const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+    const token = Cookies.get("token"); // достаём токен из куки
+
+    if (!token) {
+      console.error("Токен отсутствует в cookies");
+      setShowPopup(true);
+      return;
+    }
 
     const loadClients = async () => {
       try {
-        const BASE_URL = import.meta.env.VITE_API_BASE_URL;
         // передаём токен в теле запроса
         const response = await api.post(
           `${BASE_URL}/ClientGetList`,
-          { Token: token },
+          { token: token },
           { responseType: "text" }
         );
 
@@ -25,7 +30,6 @@ export const getClients = () => {
         const parsed = JSON.parse(fixed);
 
         setClients(parsed || []);
-
       } catch (error) {
         console.error("Ошибка при загрузке клиентов:", error);
 

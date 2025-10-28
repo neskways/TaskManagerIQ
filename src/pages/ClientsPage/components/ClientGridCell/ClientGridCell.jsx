@@ -18,7 +18,6 @@ export const ClientGridCell = ({ clientData, setSelectedClient }) => {
 
     navigate(`/ticket/all_open?clientId=${clientId}`);
   };
-  console.log(clientData)
 
   return (
     <>

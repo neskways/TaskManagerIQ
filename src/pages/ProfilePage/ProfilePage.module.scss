@@ -12,3 +12,16 @@
   height: 100%;
   padding: 30px 20px;
 }
+
+.img_block {
+  width:  250px;
+  height: 250px;
+}
+
+.img {
+  user-select: none;
+  border-radius: 50%;
+  border: 2px solid var(--border-color);
+  height: 100%;
+  width: 100%;
+}

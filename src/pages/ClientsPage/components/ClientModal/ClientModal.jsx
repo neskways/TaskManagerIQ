@@ -1,30 +1,47 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import s from "./ClientModal.module.scss";
 import { CloseIcon } from "../../../../UI/CloseIcon/CloseIcon";
 
 export const ClientModal = ({ clientData, onClose }) => {
-  useEffect(() => {
-    // if (clientData) {
-    //   document.body.style.overflow = "hidden"; 
-    //   document.body.style.paddingRight = 15 + "px"; 
-    // }
+  const [show, setShow] = useState(false);
 
-    // return () => {
-    //   document.body.style.overflow = ""; 
-    //   document.body.style.paddingRight = ""; 
-    // };
+  // Сбрасываем анимацию при закрытии
+  useEffect(() => {
+    if (!clientData) {
+      setShow(false);
+    }
+  }, [clientData]);
+
+  // Запускаем анимацию при открытии
+  useEffect(() => {
+    if (clientData) {
+
+      const timer = setTimeout(() => setShow(true), 10);
+      return () => {
+        clearTimeout(timer);
+      };
+    } else {
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
+    }
   }, [clientData]);
 
   if (!clientData) return null;
 
   return (
-    <div className={s.modalOverlay} onClick={onClose}>
-      <div className={s.modalContent} onClick={(e) => e.stopPropagation()}>
+    <div
+      className={`${s.modalOverlay} ${show ? s.show : ""}`}
+      onClick={onClose}
+    >
+      <div
+        className={`${s.modalContent} ${show ? s.show : ""}`}
+        onClick={(e) => e.stopPropagation()}
+      >
         <h2 className={s.title}>Данные клиента</h2>
         <p><strong>Имя:</strong> {clientData.name}</p>
         <p><strong>Статус:</strong> {clientData.status}</p>
         <p><strong>Телефон:</strong> {clientData.phone}</p>
-               <button className={s.close_btn} onClick={onClose}>
+        <button className={s.close_btn} onClick={onClose}>
           <CloseIcon />
         </button>
       </div>

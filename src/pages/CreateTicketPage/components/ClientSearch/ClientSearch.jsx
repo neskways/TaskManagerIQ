@@ -1,50 +1,39 @@
 import s from "./ClientSearch.module.scss";
 import { useState, useRef, useEffect } from "react";
 
-export const ClientSearch = ({ clients, onSelect, text }) => {
+export const ClientSearch = ({ clients = [], onSelect, text }) => {
   const [query, setQuery] = useState("");
+  const [filtered, setFiltered] = useState([]);
   const [showList, setShowList] = useState(false);
-  const [selectedClient, setSelectedClient] = useState(null);
-  const [highlightIndex, setHighlightIndex] = useState(-1); // индекс подсветки
+  const [highlightIndex, setHighlightIndex] = useState(-1);
 
   const wrapperRef = useRef(null);
 
-  // Фильтруем только если 2+ символа и ограничиваем до 5
-  const filtered =
-    query.length >= 2
-      ? clients
-          .filter((c) => c.name.toLowerCase().includes(query.toLowerCase()))
-          .slice(0, 5)
-      : [];
+  // 🔸 Debounce-фильтрация
+  useEffect(() => {
+    if (query.length < 2) {
+      setFiltered([]);
+      setShowList(false);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      const res = clients
+        .filter((c) =>
+          c.name.toLowerCase().includes(query.trim().toLowerCase())
+        )
+        .slice(0, 10);
+      setFiltered(res);
+      setShowList(res.length > 0);
+    }, 150);
+
+    return () => clearTimeout(timer);
+  }, [query, clients]);
 
   const handleSelect = (client) => {
     setQuery(client.name);
-    setSelectedClient(client);
     setShowList(false);
-    setHighlightIndex(-1);
     onSelect && onSelect(client);
-  };
-
-  const handleFocus = () => {
-    if (!selectedClient && query.trim().length >= 2) {
-      setShowList(true);
-    }
-  };
-
-  const handleChange = (e) => {
-    const val = e.target.value;
-    setQuery(val);
-    setSelectedClient(null);
-    setShowList(val.trim().length >= 2);
-    setHighlightIndex(-1);
-  };
-
-  const handleBlur = (e) => {
-    if (wrapperRef.current && wrapperRef.current.contains(e.relatedTarget)) {
-      return;
-    }
-    setShowList(false);
-    setHighlightIndex(-1);
   };
 
   const handleKeyDown = (e) => {
@@ -66,37 +55,45 @@ export const ClientSearch = ({ clients, onSelect, text }) => {
     }
   };
 
+  // Закрытие при клике вне блока
   useEffect(() => {
-    // Если список изменился, сбрасываем подсветку
-    setHighlightIndex(-1);
-  }, [filtered]);
+    const handleClickOutside = (e) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
+        setShowList(false);
+      }
+    };
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, []);
 
   return (
     <div className={s.wrapper} ref={wrapperRef}>
-      <p className={`${s.text}`}> {text} </p>
+      <p className={s.text}>{text}</p>
       <input
         type="text"
         className={s.input}
         value={query}
         placeholder="Введите клиента"
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-        onChange={handleChange}
+        onChange={(e) => setQuery(e.target.value)}
         onKeyDown={handleKeyDown}
       />
 
-      {showList && filtered.length > 0 && (
-        <div className={s.dropdown} tabIndex="-1">
-          {filtered.map((client, index) => (
+      {showList && (
+        <div className={s.dropdown}>
+          {filtered.map((client, i) => (
             <div
               key={client.code}
-              className={`${s.item} ${index === highlightIndex ? s.highlight : ""}`}
-              tabIndex="0"
+              className={`${s.item} ${
+                i === highlightIndex ? s.highlight : ""
+              }`}
               onClick={() => handleSelect(client)}
             >
               {client.name}
             </div>
           ))}
+          {filtered.length === 0 && (
+            <div className={s.noResults}>Ничего не найдено</div>
+          )}
         </div>
       )}
     </div>

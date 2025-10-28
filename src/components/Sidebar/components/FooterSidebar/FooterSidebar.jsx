@@ -10,7 +10,7 @@ export const FooterSidebar = React.memo(({ isActiveBox, setIsActiveBox }) => {
     <footer className={s.footer}>
       <button className={`${s.footer_block} ${s.profile} ${isActiveBox === true && s.active}`}
         onClick={() => setIsActiveBox(!isActiveBox)}>
-        <img src="/images/default.png" alt="" />
+        <img className={s.img} src="/images/avatars/ava2.jpg" alt="" />
       </button>
       <NavLink className={`${s.footer_block} ${s.create}`} to="/create" title="Создать заявку" onClick={() => setIsActiveBox(false)}>
         <AddTicket />

@@ -16,12 +16,8 @@ export const LoginPage = () => {
     e.preventDefault();
 
     try {
-      const { token, userId } = await loginUser(login, password);
 
-      // сохраняем куки
-      Cookies.set("token", token, { expires: 7 });
-      Cookies.set("userId", userId, { expires: 7 });
-      
+      await loginUser(login, password);  
       window.location.href = "/";
 
     } catch (error) {
