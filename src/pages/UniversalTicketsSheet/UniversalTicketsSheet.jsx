@@ -1,7 +1,7 @@
 import s from "./UniversalTicketsSheet.module.scss";
 import { PageTitle } from "../../components/PageTitle/PageTitle";
-import { TasksTable } from "../../components/TasksTable/TasksTable";
-import { SidebarFilter } from "../../components/SidebarFilter/SidebarFilter";
+import { TasksTable } from "./components/TasksTable/TasksTable";
+import { SidebarFilter } from "./components/SidebarFilter/SidebarFilter";
 import { useState, useEffect } from "react";
 import {
   getFromLocalStorage,

@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import s from "./TasksTable.module.scss";
-import { headersTitleTickets } from "../../modules/Arrays";
+import { headersTitleTickets } from "../../../../modules/Arrays";
 import {
   getFromLocalStorage,
   saveToLocalStorage,
-} from "../../modules/localStorageUtils";
+} from "../../../../modules/localStorageUtils";
 import { TaskGridCell } from "../TaskGridCell/TaskGridCell";
 
 const LOCAL_STORAGE_KEY_TICKETS = "tickets_table_col_widths";

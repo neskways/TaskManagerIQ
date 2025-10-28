@@ -1,4 +1,4 @@
-import { CloseIcon } from "../../UI/CloseIcon/CloseIcon";
+import { CloseIcon } from "../../../../UI/CloseIcon/CloseIcon";
 import s from "./SidebarFilter.module.scss";
 
 export const SidebarFilter = ({ showFilter, setShowFilter }) => {

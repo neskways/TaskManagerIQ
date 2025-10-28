@@ -28,9 +28,7 @@ export const Sidebar = () => {
                   }`}
                   onClick={() => setIsActiveBox(false)}
                 >
-                  <Icon 
-                      isActive={isActive(currentPath)} 
-                      theme={theme} />
+                  <Icon isActive={isActive(currentPath)} theme={theme} />
                   {label}
                 </NavLink>
               </li>

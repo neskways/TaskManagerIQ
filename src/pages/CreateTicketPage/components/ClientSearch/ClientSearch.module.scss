@@ -33,7 +33,7 @@
   top: 103%;
   left: 0;
   right: 0;
-  background: var(--bg-color);
+  background: var(--bg-color-hover);
   border: 1px solid var(--border-color);
   max-height: 200px;
   overflow-y: auto;
@@ -42,11 +42,12 @@
 }
 
 .item {
+  transition: var(--transition);
   padding: 10px;
   cursor: pointer;
 }
 .item:hover {
-  background: var(--bg-color-hover);
+  background: var(--accent-color);
 }
 
 .text {
