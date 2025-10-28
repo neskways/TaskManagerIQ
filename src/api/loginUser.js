@@ -31,11 +31,11 @@ export const loginUser = async (login, password) => {
     }
 
     const { User, Token, Role, UserId } = data;
-
-    Cookies.set("token", Token, { expires: 7 });
-    Cookies.set("username", User ?? "Неизвестный пользователь", { expires: 7 });
-    Cookies.set("userId", UserId, { expires: 7 });
-    Cookies.set("role", Role ?? "Опущенный", { expires: 7 });
+    console.log(Role);
+    Cookies.set("token", Token, { expires: 1 });
+    Cookies.set("username", User ?? "Неизвестный пользователь", { expires: 1 });
+    Cookies.set("userId", UserId, { expires: 1 });
+    Cookies.set("role", Role ?? "Опущенный", { expires: 1 });
 
     return { token: Token, user: User ?? "", userId: UserId, role: Role ?? "" };
   } catch (error) {

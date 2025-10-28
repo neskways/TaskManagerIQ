@@ -5,12 +5,18 @@ import { Input } from "../../UI/Input/Input";
 import { Button } from "../../UI/Button/Button";
 import { Popup } from "../../UI/Popup/Popup";
 import { loginUser } from "../../api/loginUser";
+import { useTheme } from "../../context/ThemeContext";
+import { useNavigate } from "react-router-dom";
 
 export const LoginPage = () => {
+  const navigate = useNavigate();
   const [showPopup, setShowPopup] = useState(false);
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [isErrorIn, setIsErrorIn] = useState(false);
+  const { theme } = useTheme();
+  const darkLogo = "/images/logo/logo_dark.png";
+  const lightLogo = "/images/logo/logo.png";
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -18,7 +24,8 @@ export const LoginPage = () => {
     try {
 
       await loginUser(login, password);  
-      window.location.href = "/";
+       // делаем SPA-редирект
+      navigate("/tasks/my_assigned", { replace: true });
 
     } catch (error) {
       console.error(error.message);
@@ -43,7 +50,7 @@ export const LoginPage = () => {
             <div className={s.img_wrap}>
               <img
                 className={s.img}
-                src="./images/brain.png"
+                src={theme === "light" ? lightLogo : darkLogo}
                 alt="IQProg"
                 onDoubleClick={() => window.open("./images/mem.jpg", "_blank")}
               />

@@ -10,6 +10,7 @@ export const ProfilePage = () => {
   const darkLogo = "/images/logo/logo_dark.png";
   const lightLogo = "/images/logo/logo.png";
   const token = Cookies.get("token");
+  const role = Cookies.get("role");
 
   return (
     <>
@@ -22,6 +23,7 @@ export const ProfilePage = () => {
             </div>
             <div className={s.text_block}>
               <h3 className={s.username}> {username} </h3>
+              <p className={s.role}> {role} </p>
               <a
                 className={s.iqcompany}
                 href="https://iqprog.ru/"
@@ -30,9 +32,9 @@ export const ProfilePage = () => {
                 {" "}
                 АйКю Компани{" "}
               </a>
-              <p>{token}</p>
             </div>
           </div>
+           <p>{token}</p>
         </div>
         <img className={s.logo_opacity} src={theme === "light" ? lightLogo : darkLogo} alt="" />
       </div>   
