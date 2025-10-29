@@ -1,5 +1,10 @@
-import { useState, useEffect, useRef } from "react";
 import s from "./Calendar.module.scss";
+import Cookies from "js-cookie";
+import { ru } from "date-fns/locale";
+import { Popup } from "../../../../UI/Popup/Popup";
+import { useState, useEffect, useRef } from "react";
+import { getSchedule } from "../../../../api/getShedule";
+import { Loading } from "../../../../UI/Loading/Loading";
 import {
   format,
   startOfMonth,
@@ -9,10 +14,6 @@ import {
   addDays,
   isSameMonth,
 } from "date-fns";
-import { ru } from "date-fns/locale";
-import { getSchedule } from "../../../../api/getShedule";
-import { Popup } from "../../../../UI/Popup/Popup";
-import { Loading } from "../../../../UI/Loading/Loading";
 
 export const Calendar = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -33,7 +34,10 @@ export const Calendar = () => {
 
     try {
       const data = await getSchedule(month, year);
-      const normalized = data.map((item) => ({ ...item, date: new Date(item.date) }));
+      const normalized = data.map((item) => ({
+        ...item,
+        date: new Date(item.date),
+      }));
       cacheRef.current[key] = normalized;
       return normalized;
     } catch (err) {
@@ -96,7 +100,9 @@ export const Calendar = () => {
   const renderDays = () => {
     const days = [];
     const dateFormat = "EEEEEE";
-    const startDate = startOfWeek(startOfMonth(displayMonth), { weekStartsOn: 1 });
+    const startDate = startOfWeek(startOfMonth(displayMonth), {
+      weekStartsOn: 1,
+    });
 
     for (let i = 0; i < 7; i++) {
       days.push(
@@ -109,15 +115,21 @@ export const Calendar = () => {
     return <div className={s.daysRow}>{days}</div>;
   };
 
+  // внутри компонента Calendar
+  const username = Cookies.get("username");
+
   const renderCells = () => {
     const monthStart = startOfMonth(displayMonth);
     const monthEnd = endOfMonth(displayMonth);
     const startDate = startOfWeek(monthStart, { weekStartsOn: 1 });
     const endDate = endOfWeek(monthEnd, { weekStartsOn: 1 });
 
+    const username = Cookies.get("username");
     const rows = [];
     let days = [];
     let day = startDate;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // обнуляем время для точного сравнения
 
     while (day <= endDate) {
       for (let i = 0; i < 7; i++) {
@@ -128,15 +140,36 @@ export const Calendar = () => {
             item.date.getFullYear() === day.getFullYear()
         );
 
+        const isPastDay = day < today;
+        const isToday = day.getTime() === today.getTime();
+        const isActiveUser = duty && duty.user === username;
+
         days.push(
           <div
-            className={`${s.cell} ${!isSameMonth(day, monthStart) ? s.disabled : ""}`}
+            className={`${s.cell} ${
+              !isSameMonth(day, monthStart) ? s.disabled : ""
+            } ${isPastDay ? s.closen_day : ""}`}
             key={day.toISOString()}
           >
-            <span className={s.dateNum}>{format(day, "d", { locale: ru })}</span>
-            <div className={s.dataStub}>{duty ? duty.user : ""}</div>
+            <span className={s.dateNum}>
+              {format(day, "d", { locale: ru })}
+            </span>
+            <div className={s.dataStub}>
+              {duty ? (
+                <span
+                  className={`${isActiveUser ? s.active_duty : ""} ${
+                    isToday ? s.today : ""
+                  }`}
+                >
+                  {duty.user}
+                </span>
+              ) : (
+                ""
+              )}
+            </div>
           </div>
         );
+
         day = addDays(day, 1);
       }
 
@@ -156,7 +189,11 @@ export const Calendar = () => {
     <div className={s.calendar}>
       {/* селекторы */}
       <div className={s.controls}>
-        <select className={s.select} value={currentMonth.getMonth()} onChange={handleMonthChange}>
+        <select
+          className={s.select}
+          value={currentMonth.getMonth()}
+          onChange={handleMonthChange}
+        >
           {Array.from({ length: 12 }).map((_, i) => (
             <option key={i} value={i}>
               {format(new Date(2020, i), "LLLL", { locale: ru })}
@@ -164,7 +201,11 @@ export const Calendar = () => {
           ))}
         </select>
 
-        <select className={s.select} value={currentMonth.getFullYear()} onChange={handleYearChange}>
+        <select
+          className={s.select}
+          value={currentMonth.getFullYear()}
+          onChange={handleYearChange}
+        >
           {years.map((year) => (
             <option key={year} value={year}>
               {year}

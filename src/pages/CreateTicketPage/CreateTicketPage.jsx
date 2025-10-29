@@ -60,7 +60,9 @@ export const CreateTicketPage = () => {
       <form>
         <Input text="ЗАГОЛОВОК" />
 
-        <div className={`${s.filling_data_inner} ${showIspol ? "" : s.disable}`}>
+        <div
+          className={`${s.filling_data_inner} ${showIspol ? "" : s.disable}`}
+        >
           <ClientSearch
             clients={clients}
             onSelect={handleSelectClient}

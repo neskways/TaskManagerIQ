@@ -8,44 +8,38 @@ import {
 import { TaskGridCell } from "../TaskGridCell/TaskGridCell";
 
 const LOCAL_STORAGE_KEY_TICKETS = "tickets_table_col_widths";
-const DEFAULT_WIDTHS = [25, 15, 10, 10, 10, 10, 10, 10];
+const DEFAULT_WIDTHS = [5, 30, 20, 10, 13, 12, 10]; // 7 колонок, всего 100 надо набрать
+// const DEFAULT_WIDTHS = [25, 15, 10, 10, 10, 10, 10, 10];
 
 const mockTickets = [
   {
-    id: 31,
+    number: 31,
     title: "Ошибка входа в 1С",
     client: "ООО Ромашка",
-    department: "1С",
     status: "Открыт",
     priority: "Высокий",
     timeSpent: "01:20",
-    createdBy: "Иванов И.И.",
-    createdAt: "2025-06-10 14:32",
+    executor: "Сидорова А.А.",
   },
   {
-    id: 32,
+    number: 32,
     title: "Не печатается отчёт",
     client: "ЗАО Тест",
-    department: "СА",
     status: "В работе",
     priority: "Средний",
     timeSpent: "00:45",
-    createdBy: "Петров П.П.",
-    createdAt: "2025-06-12 09:10",
+    executor: "Сидорова А.А.",
   },
   {
-    id: 33,
+    number: 33,
     title: "Ошибка базы данных",
     client: "ИП Сидоров",
-    department: "1С",
     status: "Закрыт",
     priority: "Критичный",
     timeSpent: "02:10",
-    createdBy: "Сидорова А.А.",
-    createdAt: "2025-06-14 16:05",
+    executor: "Сидорова А.А.",
   },
 ];
-
 
 export const TasksTable = ({ showFilter }) => {
   const [colWidths, setColWidths] = useState(() =>
@@ -66,7 +60,6 @@ export const TasksTable = ({ showFilter }) => {
 
   const handleMouseDown = (e, index) => {
     e.preventDefault();
-
     isResizing.current = true;
     startX.current = e.clientX;
     resizingColIndex.current = index;
@@ -87,7 +80,6 @@ export const TasksTable = ({ showFilter }) => {
     let left = startWidths.current[0] + deltaPercent;
     let right = startWidths.current[1] - deltaPercent;
     const MIN_WIDTH = 5;
-
     if (left < MIN_WIDTH || right < MIN_WIDTH) return;
 
     const newWidths = [...colWidths];
@@ -105,28 +97,26 @@ export const TasksTable = ({ showFilter }) => {
   };
 
   return (
-    <div className={`${s.gridTableWrapper} ${showFilter ? s.active : ''}`}>
-      <div
-        ref={tableRef}
-        className={s.gridTable}
-        style={{ gridTemplateColumns }}
-      >
-        {headersTitleTickets.map((header, index) => (
-          <div key={index} className={s.gridHeader}>
-            <span className={s.header_span}>{header}</span>
-            {index < headersTitleTickets.length - 1 && (
+    <div className={s.gridTableWrapper} ref={tableRef}>
+      <div className={s.gridHeaderRow} style={{ gridTemplateColumns }}>
+        {headersTitleTickets.map((header, i) => (
+          <div key={i} className={s.gridHeader}>
+            <span>{header}</span>
+            {i < headersTitleTickets.length - 1 && (
               <div
                 className={s.resizer}
-                onMouseDown={(e) => handleMouseDown(e, index)}
+                onMouseDown={(e) => handleMouseDown(e, i)}
               />
             )}
           </div>
         ))}
-
-        {mockTickets.map((task, index) => (
-          <TaskGridCell key={index} taskData={task} />
-        ))}
       </div>
+
+      {mockTickets.map((task, index) => (
+        <div key={index} className={s.gridRow} style={{ gridTemplateColumns }}>
+          <TaskGridCell taskData={task} />
+        </div>
+      ))}
     </div>
   );
 };

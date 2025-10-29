@@ -152,7 +152,7 @@ export const AppRoutes = () => {
           />
         </Route>
         //Страница задачи
-        <Route path="/ticket_form/:id" element={<TicketFormPage />} />
+        <Route path="/ticket/:id" element={<TicketFormPage />} />
         //Страница статистики пользователя по выполненым задачам
         <Route path="/statistics" element={<StatisticsPage />}></Route>
         //Страница создания заявки

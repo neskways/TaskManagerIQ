@@ -16,7 +16,7 @@ export const ClientsPage = () => {
 
   return (
     <ContentWrapper>
-      <PageTitle titleText="Список клиентов" />
+      <PageTitle titleText="Список клиентов" center={true} />
 
       <ClientsTable
         clients={clients}

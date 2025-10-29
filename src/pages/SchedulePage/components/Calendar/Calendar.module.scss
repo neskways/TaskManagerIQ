@@ -39,13 +39,14 @@
 
 .cell {
   border: 1px solid var(--border-color);
-  padding: 8px;
+  padding: 16px 8px;
   min-height: 80px;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
   font-size: 14px;
   background-color: var(--bg-color-tertiary);
+  position: relative;
 }
 
 .disabled {
@@ -54,12 +55,22 @@
 }
 
 .dataStub {
-  font-size: 16px;
-  margin-top: 4px;
+  font-size: 18px;
+  text-align: center;
+}
+
+.active_duty {
+  border-bottom: 2px solid var(--accent-color);
+  padding: 0 7px 5px;
+  border-radius: 4px;
 }
 
 .dateNum {
-  font-size: 18px;
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  font-size: 14px;
+  text-align: right;
 }
 
 .controls {
@@ -102,4 +113,14 @@
 .errorText {
   font-size: 20px;
   font-weight: 500;
+}
+
+.closen_day::after {
+  content: '';
+}
+
+.today {
+    border-bottom: 2px solid var(--true);
+    padding: 0 7px 5px;
+    border-radius: 4px;
 }

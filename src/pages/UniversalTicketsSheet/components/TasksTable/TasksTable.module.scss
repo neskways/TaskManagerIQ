@@ -17,6 +17,18 @@
   min-width: 700px;
 }
 
+.gridHeaderRow {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-rows: 40px;
+}
+
+.gridRow {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-rows: 40px;
+}
+
 
 .gridHeader {
   font-size: 16px;
