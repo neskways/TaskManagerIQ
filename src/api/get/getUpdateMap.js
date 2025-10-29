@@ -1,37 +1,35 @@
-import { api } from "./axios";
+// api.js
+import { api } from "../axios";
 import Cookies from "js-cookie";
 
-export const getSchedule = async (month, year) => {
+export const getUpdateMap = async () => {
   try {
     const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-    
     const token = Cookies.get("token");
 
     const response = await api.post(
-      `${BASE_URL}/GetDutyCalendar`,
-      {
-        token: token, 
-        month: month,
-        year: year,
-      },
+      `${BASE_URL}/GetUpdateMap`,
+      { token },
       { responseType: "text" }
     );
 
     const fixed = (response.data || "").replace(/'/g, '"');
     const parsed = JSON.parse(fixed);
 
-    if (!Array.isArray(parsed)) {
-      throw new Error("Unexpected response format: not an array");
-    }
-
-    return parsed.map((item) => {
+    return parsed.map(item => {
       const [day, monthStr, yearStr] = (item.Date || "").split(".");
       const date = new Date(+yearStr, +monthStr - 1, +day);
-      return { date, user: item.User ?? "" };
+      return {
+        date,
+        client: item.Client,
+        config: item.Config,
+        employee: item.Employee,
+        done: item.Done === "Да",
+        dateOf: item.DateOf,
+      };
     });
-
   } catch (error) {
     console.error("Ошибка при загрузке расписания:", error);
-    throw error;
+    return [];
   }
 };

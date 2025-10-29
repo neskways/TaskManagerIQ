@@ -10,7 +10,7 @@ export const getClients = () => {
   useEffect(() => {
     
     const token = Cookies.get("token"); 
-    console.log(token);
+
     const loadClients = async () => {
       try {
         const BASE_URL = import.meta.env.VITE_API_BASE_URL;

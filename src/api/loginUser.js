@@ -30,14 +30,14 @@ export const loginUser = async (login, password) => {
       throw new Error("Некорректный формат ответа сервера");
     }
 
-    const { User, Token, Role, UserId } = data;
+    const { User, Token, Role, UserCode } = data;
     console.log(Role);
     Cookies.set("token", Token, { expires: 1 });
     Cookies.set("username", User ?? "Неизвестный пользователь", { expires: 1 });
-    Cookies.set("userId", UserId, { expires: 1 });
+    Cookies.set("userCode", UserCode, { expires: 1 });
     Cookies.set("role", Role ?? "Опущенный", { expires: 1 });
 
-    return { token: Token, user: User ?? "", userId: UserId, role: Role ?? "" };
+    return { token: Token, user: User ?? "", userCode: UserCode, role: Role ?? "" };
   } catch (error) {
     if (error.response?.status === 400) {
       throw new Error("Неверный логин или пароль");

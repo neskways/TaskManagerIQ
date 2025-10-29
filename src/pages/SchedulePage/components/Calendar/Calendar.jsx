@@ -118,72 +118,77 @@ export const Calendar = () => {
   // внутри компонента Calendar
   const username = Cookies.get("username");
 
-  const renderCells = () => {
-    const monthStart = startOfMonth(displayMonth);
-    const monthEnd = endOfMonth(displayMonth);
-    const startDate = startOfWeek(monthStart, { weekStartsOn: 1 });
-    const endDate = endOfWeek(monthEnd, { weekStartsOn: 1 });
+ const renderCells = () => {
+  const monthStart = startOfMonth(displayMonth);
+  const monthEnd = endOfMonth(displayMonth);
+  const startDate = startOfWeek(monthStart, { weekStartsOn: 1 });
+  const endDate = endOfWeek(monthEnd, { weekStartsOn: 1 });
 
-    const username = Cookies.get("username");
-    const rows = [];
-    let days = [];
-    let day = startDate;
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // обнуляем время для точного сравнения
+  const username = Cookies.get("username");
+  const rows = [];
+  let days = [];
+  let day = startDate;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // точное сравнение без времени
 
-    while (day <= endDate) {
-      for (let i = 0; i < 7; i++) {
-        const duty = schedule.find(
-          (item) =>
-            item.date.getDate() === day.getDate() &&
-            item.date.getMonth() === day.getMonth() &&
-            item.date.getFullYear() === day.getFullYear()
-        );
+  while (day <= endDate) {
+    for (let i = 0; i < 7; i++) {
+      // 🔹 Находим всех дежурных за конкретный день
+      const duties = schedule.filter(
+        (item) =>
+          item.date.getDate() === day.getDate() &&
+          item.date.getMonth() === day.getMonth() &&
+          item.date.getFullYear() === day.getFullYear()
+      );
 
-        const isPastDay = day < today;
-        const isToday = day.getTime() === today.getTime();
-        const isActiveUser = duty && duty.user === username;
+      // 🔹 Если есть дежурные — соединяем их имена через " и "
+      const dutyNames = duties.map((d) => d.user).join(" и ");
 
-        days.push(
-          <div
-            className={`${s.cell} ${
-              !isSameMonth(day, monthStart) ? s.disabled : ""
-            } ${isPastDay ? s.closen_day : ""}`}
-            key={day.toISOString()}
-          >
-            <span className={s.dateNum}>
-              {format(day, "d", { locale: ru })}
-            </span>
-            <div className={s.dataStub}>
-              {duty ? (
-                <span
-                  className={`${isActiveUser ? s.active_duty : ""} ${
-                    isToday ? s.today : ""
-                  }`}
-                >
-                  {duty.user}
-                </span>
-              ) : (
-                ""
-              )}
-            </div>
+      const isPastDay = day < today;
+      const isToday = day.getTime() === today.getTime();
+      const isActiveUser = duties.some((d) => d.user === username);
+
+      days.push(
+        <div
+          className={`${s.cell} ${
+            !isSameMonth(day, monthStart) ? s.disabled : ""
+          } ${isPastDay ? s.closen_day : ""}`}
+          key={day.toISOString()}
+        >
+          <span className={s.dateNum}>
+            {format(day, "d", { locale: ru })}
+          </span>
+          <div className={s.dataStub}>
+            {dutyNames ? (
+              <span
+                className={`${isActiveUser ? s.active_duty : ""} ${
+                  isToday ? s.today : ""
+                }`}
+              >
+                {dutyNames}
+              </span>
+            ) : (
+              ""
+            )}
           </div>
-        );
-
-        day = addDays(day, 1);
-      }
-
-      rows.push(
-        <div className={s.row} key={day.toISOString()}>
-          {days}
         </div>
       );
 
-      days = [];
+      day = addDays(day, 1);
     }
 
-    return <div className={s.body}>{rows}</div>;
-  };
+    rows.push(
+      <div className={s.row} key={day.toISOString()}>
+        {days}
+      </div>
+    );
+
+    days = [];
+  }
+
+  return <div className={s.body}>{rows}</div>;
+};
+
 
   return (
     <div className={s.calendar}>

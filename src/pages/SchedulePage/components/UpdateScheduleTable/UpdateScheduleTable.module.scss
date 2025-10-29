@@ -1,10 +1,11 @@
 .container {
+  text-align: left;
+  width: 100%;
   padding: 16px;
 }
 
 .monthTitle {
-  text-align: left;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
   font-size: 20px;
   margin-left: 6px;
 }
@@ -38,6 +39,13 @@
   }
 }
 
+.loadingWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 330px; // чтобы было по центру под заголовком
+  transform: scale(1.5);
+}
 
 .stickyColumn {
   position: sticky;
@@ -52,3 +60,36 @@
   padding: 6px 10px;
 }
 
+.centerWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px; // под размер календаря
+  text-align: center;
+}
+
+/* UpdateScheduleTable.module.scss */
+.cell {
+  text-align: center;
+  padding: 4px;
+  transition: var(--transition);
+  border: 1px solid #ccc;
+
+  /* Добавляем курсор для кликабельных ячеек */
+  cursor: pointer;
+
+  &:empty {
+    cursor: default; /* пустые ячейки не кликабельны */
+  }
+}
+
+.stickyColumn {
+  position: sticky;
+  left: 0;
+  background: #f8f8f8;
+  font-weight: bold;
+}
+
+.cell:hover {
+  background-color: var(--bg-color-tertiary);
+}

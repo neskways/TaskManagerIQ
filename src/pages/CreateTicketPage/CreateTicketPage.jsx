@@ -3,6 +3,7 @@ import Cookies from "js-cookie";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Input } from "../../UI/Input/Input";
+import { Popup } from "../../UI/Popup/Popup";
 import { Button } from "../../UI/Button/Button";
 import { Selector } from "../../UI/Selector/Selector";
 import { PageTitle } from "../../components/PageTitle/PageTitle";
@@ -11,58 +12,135 @@ import { getClientConfigurations } from "../../api/getClientConfigurations";
 import { MultipleInput } from "../../UI/MultipleInput/MultipleInput";
 import { ClientSearch } from "./components/ClientSearch/ClientSearch";
 import { getFromLocalStorage } from "../../modules/localStorageUtils";
-import { departmentsItems, executorsItems } from "../../modules/Arrays";
 import { ContentWrapper } from "../../UI/ContentWrapper/ContentWrapper";
+import { getEmployees } from "../../api/getEmployee";
+// import { createTask } from "../../api/create/createTask"; // пока закомментировано
 
 export const CreateTicketPage = () => {
   const lastSecondaryPath = getFromLocalStorage("last_secondary_sidebar_path");
 
+  // State
   const [clients, setClients] = useState([]);
+  const [employees, setEmployees] = useState([]);
+  const [configurations, setConfigurations] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
-  const [selectedDept, setSelectedDept] = useState("");
-  const [selectedExecutor, setSelectedExecutor] = useState("");
-  const [configurations, setConfigurations] = useState([]); // 🔹 Конфигурации клиента
-  const [selectedConfig, setSelectedConfig] = useState(""); // 🔹 выбранная конфигурация
+  const [selectedConfig, setSelectedConfig] = useState("");
+  const [selectedEmployee, setSelectedEmployee] = useState(Cookies.get("userCode"));
+  const [userCode] = useState(Cookies.get("userCode"));
   const [loading, setLoading] = useState(true);
+  const [configsLoading, setConfigsLoading] = useState(false);
 
-  const role = Cookies.get("role");
-  const showIspol = role === "Дежурный" || role === "Руководитель";
+  // Данные формы
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [contacts, setContacts] = useState("");
 
-  // Загружаем список клиентов
+  // Popup
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupText, setPopupText] = useState("");
+
+  // Загрузка клиентов и сотрудников
   useEffect(() => {
-    const loadClients = async () => {
-      const data = await getClientsForSearch();
-      setClients(data);
-      setLoading(false);
+    const loadData = async () => {
+      try {
+        const clientsData = await getClientsForSearch();
+        setClients(clientsData);
+        setLoading(false);
+
+        const employeesData = await getEmployees();
+        setEmployees(employeesData);
+      } catch (err) {
+        console.error("Ошибка при загрузке данных:", err);
+      }
     };
-    loadClients();
+
+    loadData();
   }, []);
 
-  // Когда выбираем клиента — запрашиваем конфигурации
+  // Выбор клиента и загрузка его конфигураций
   const handleSelectClient = async (client) => {
     setSelectedClient(client);
     setSelectedConfig("");
-    setConfigurations([]); // очищаем старые
+    setConfigurations([]);
+    setConfigsLoading(true);
 
-    console.log("Выбран клиент:", client);
-    const configs = await getClientConfigurations(client.code);
-    console.log("Конфигурации клиента:", configs);
-    setConfigurations(configs);
+    try {
+      const configs = await getClientConfigurations(client.code);
+      setConfigurations(Array.isArray(configs) ? configs : []);
+    } catch (error) {
+      console.error("Ошибка при загрузке конфигураций:", error);
+      setConfigurations([]);
+    } finally {
+      setConfigsLoading(false);
+    }
   };
 
-  const filteredExecutors = selectedDept
-    ? executorsItems.filter((ex) => ex.department === Number(selectedDept))
-    : [];
+  // Опции для селекторов
+  const configOptions = configurations.map((c, index) => ({
+    id: c.id || `conf-${index}`,
+    name: c.config || c.name || "Без имени",
+  }));
+
+  const employeeOptions = employees.map((e) => ({
+    id: e.Code,
+    name: e.Name,
+  }));
+
+  // Отправка данных с проверкой
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Проверка заполнения всех полей
+    if (!title.trim()) return showValidationPopup("Пожалуйста, заполните заголовок!");
+    if (!selectedClient) return showValidationPopup("Пожалуйста, выберите клиента!");
+    if (!selectedEmployee) return showValidationPopup("Пожалуйста, выберите исполнителя!");
+    if (!description.trim()) return showValidationPopup("Пожалуйста, заполните описание задачи!");
+    if (!selectedConfig) return showValidationPopup("Пожалуйста, выберите конфигурацию!");
+    if (!contacts.trim()) return showValidationPopup("Пожалуйста, заполните контакты!");
+
+    const token = Cookies.get("token");
+    const newTicket = {
+      token,
+      userCode,
+      task: {
+        clientId: selectedClient.code,
+        title: title.trim(),
+        description: description.trim(),
+        confId: selectedConfig,
+        contacts: contacts.trim(),
+        owner: selectedEmployee || userCode,
+      },
+    };
+
+    console.log("📝 Новая заявка:", newTicket);
+
+    // Если нужно отправить на сервер:
+    // try {
+    //   const response = await createTask(newTicket);
+    //   if (response.status === 200) {
+    //     console.log("Заявка успешно создана!");
+    //   }
+    // } catch (err) {
+    //   console.error("Ошибка при создании заявки:", err);
+    // }
+  };
+
+  // Функция для показа попапа с текстом
+  const showValidationPopup = (text) => {
+    setPopupText(text);
+    setShowPopup(true);
+    setTimeout(() => setShowPopup(false), 3000);
+  };
 
   return (
     <ContentWrapper>
       <PageTitle titleText="Новая заявка" center />
-      <form>
-        <Input text="ЗАГОЛОВОК" />
+      <Popup showPopup={showPopup} text={popupText} type={false} />
 
-        <div
-          className={`${s.filling_data_inner} ${showIspol ? "" : s.disable}`}
-        >
+      <form onSubmit={handleSubmit}>
+        <Input text="ЗАГОЛОВОК" value={title} setUserData={setTitle} />
+
+        <div className={s.filling_data_inner}>
           <ClientSearch
             clients={clients}
             onSelect={handleSelectClient}
@@ -70,33 +148,40 @@ export const CreateTicketPage = () => {
             disabled={loading}
           />
 
-          {showIspol && (
-            <Selector
-              items={departmentsItems}
-              value={selectedDept}
-              title="ИСПОЛНИТЕЛЬ"
-              onChange={(val) => {
-                setSelectedDept(val);
-                setSelectedExecutor("");
-              }}
-            />
-          )}
+          <Selector
+            items={employeeOptions}
+            value={selectedEmployee}
+            title="ИСПОЛНИТЕЛЬ"
+            onChange={setSelectedEmployee}
+            labelKey="name"
+            valueKey="id"
+          />
         </div>
 
-        <MultipleInput text="ТЕКСТ" rows={5} />
+        <MultipleInput
+          text="ТЕКСТ"
+          rows={5}
+          value={description}
+          setUserData={setDescription}
+        />
 
         <div className={s.filling_data_inner}>
           <Selector
-            items={configurations.map((c) => ({
-              id: c.id,
-              name: c.name,
-            }))}
+            items={configOptions}
             value={selectedConfig}
             title="КОНФИГУРАЦИЯ"
             onChange={setSelectedConfig}
+            disabled={!selectedClient || configsLoading || configurations.length === 0}
+            labelKey="name"
+            valueKey="id"
           />
 
-          <Input text="КОНТАКТЫ" placeholder="+7 999 666 99 99" />
+          <Input
+            text="КОНТАКТЫ"
+            placeholder="+7 999 666 99 99"
+            value={contacts}
+            setUserData={setContacts}
+          />
         </div>
 
         <div className={s.button_wrap}>

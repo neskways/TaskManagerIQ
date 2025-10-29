@@ -11,6 +11,7 @@ export const ProfilePage = () => {
   const lightLogo = "/images/logo/logo.png";
   const token = Cookies.get("token");
   const role = Cookies.get("role");
+  const userCode = Cookies.get("userCode");
 
   return (
     <>
@@ -35,6 +36,7 @@ export const ProfilePage = () => {
             </div>
           </div>
            <p>{token}</p>
+           <p>{userCode}</p>
         </div>
         <img className={s.logo_opacity} src={theme === "light" ? lightLogo : darkLogo} alt="" />
       </div>   
