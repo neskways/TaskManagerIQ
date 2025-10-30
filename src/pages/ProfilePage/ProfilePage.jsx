@@ -35,8 +35,8 @@ export const ProfilePage = () => {
               </a>
             </div>
           </div>
-           <p>{token}</p>
-           <p>{userCode}</p>
+           <p className={s.text_block}>{token}</p>
+           <p className={s.text_block}>{userCode}</p>
         </div>
         <img className={s.logo_opacity} src={theme === "light" ? lightLogo : darkLogo} alt="" />
       </div>   
