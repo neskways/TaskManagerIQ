@@ -61,6 +61,13 @@
   text-align: center;
 }
 
+.refreshBtn {
+  margin-left: auto;
+  position: relative;
+  top: 15px;
+  right: 5px;
+}
+
 .active_duty {
   border-bottom: 2px solid var(--accent-color);
   padding: 0 7px 5px;
@@ -119,6 +126,11 @@
 
 .closen_day::after {
   content: '';
+}
+
+.controls {
+  display: flex;
+  align-items: center;
 }
 
 .today {

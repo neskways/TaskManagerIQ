@@ -1,12 +1,11 @@
 import s from "./ClientsPage.module.scss";
 import { useState } from "react";
-import { useClients } from "./useClients";
 import { Popup } from "../../UI/Popup/Popup";
 import { useResizableTable } from "./useResizableTable";
 import { PageTitle } from "../../components/PageTitle/PageTitle";
 import { ClientModal } from "./components/ClientModal/ClientModal";
 import { ClientsTable } from "./components/ClientsTable/ClientsTable";
-import { getClients } from "../../api/getClients";
+import { getClients } from "../../api/get/getClients";
 import { ContentWrapper } from "../../UI/ContentWrapper/ContentWrapper";
 
 export const ClientsPage = () => {

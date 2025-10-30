@@ -1,13 +1,13 @@
 import s from "./UniversalTicketsSheet.module.scss";
-import { PageTitle } from "../../components/PageTitle/PageTitle";
+import { getTasksList } from "../../api/get/getTasksList";
 import { TasksTable } from "./components/TasksTable/TasksTable";
+import { PageTitle } from "../../components/PageTitle/PageTitle";
 import { SidebarFilter } from "./components/SidebarFilter/SidebarFilter";
 import { useState, useEffect } from "react";
 import {
   getFromLocalStorage,
   saveToLocalStorage,
 } from "../../modules/localStorageUtils";
-import { getTasksList } from "../../api/getTasksList";
 
 export const UniversalTicketsSheet = ({ url, titleText }) => {
   const [showFilter, setShowFilter] = useState(() =>

@@ -12,31 +12,6 @@
   padding: 30px 20px;
 }
 
-.toggleWrapper {
-  position: absolute;
-  top: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-}
-
-.toggleButton {
-  padding: 8px 16px;
-  min-width: 160px;
-  border-radius: 0 var(--border-radius) 0 4px;
-  border-bottom: 1px solid var(--border-color);
-  border-left: 1px solid var(--border-color);
-  background-color: var(--bg-color-secondary);
-  color: var(--text-color);
-  cursor: pointer;
-  transition: var(--transition);
-
-  &:hover {
-    background-color: var(--accent-color);
-    color: white;
-  }
-}
-
 .contentWrapper {
   display: flex;
   flex-direction: column;
@@ -48,4 +23,49 @@
   text-align: center;
   color: #666;
   font-size: 16px;
+}
+
+.tabs {
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 12px;
+  border-bottom: 1px solid var(--border-color);
+  border-left: 1px solid var(--border-color);
+  padding-bottom: 2px;
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: -1px;
+    height: 2px;
+    background-color: var(--accent-color, var(--accent-color));
+    border-radius: var(--border-radius);
+    width: var(--underline-width, 0px);
+    left: var(--underline-left, 0px);
+    transition: all 0.3s ease;
+  }
+}
+
+.tab {
+  background: none;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  color: var(--text-color-secondary);
+  position: relative;
+  transition: color 0.25s ease;
+
+  &:hover {
+  color: var(--text-color);
+  }
+
+  &.active {
+  color: var(--text-color);
+  }
 }

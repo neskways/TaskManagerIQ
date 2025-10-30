@@ -1,5 +1,5 @@
 // api/getEmployee.js
-import { api } from "./axios";
+import { api } from "../axios";
 import Cookies from "js-cookie";
 
 export const getEmployees = async () => {

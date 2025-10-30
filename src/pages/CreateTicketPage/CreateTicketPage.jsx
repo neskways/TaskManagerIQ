@@ -7,13 +7,14 @@ import { Popup } from "../../UI/Popup/Popup";
 import { Button } from "../../UI/Button/Button";
 import { Selector } from "../../UI/Selector/Selector";
 import { PageTitle } from "../../components/PageTitle/PageTitle";
-import { getClientsForSearch } from "../../api/getClientsForSearch";
-import { getClientConfigurations } from "../../api/getClientConfigurations";
+import { getClientsForSearch } from "../../api/get/getClientsForSearch";
+import { getClientConfigurations } from "../../api/get/getClientConfigurations";
 import { MultipleInput } from "../../UI/MultipleInput/MultipleInput";
 import { ClientSearch } from "./components/ClientSearch/ClientSearch";
 import { getFromLocalStorage } from "../../modules/localStorageUtils";
 import { ContentWrapper } from "../../UI/ContentWrapper/ContentWrapper";
-import { getEmployees } from "../../api/getEmployee";
+import { getEmployees } from "../../api/get/getEmployee";
+import { getContacts } from "../../api/get/getContacts";
 // import { createTask } from "../../api/create/createTask"; // пока закомментировано
 
 export const CreateTicketPage = () => {
@@ -25,7 +26,9 @@ export const CreateTicketPage = () => {
   const [configurations, setConfigurations] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
   const [selectedConfig, setSelectedConfig] = useState("");
-  const [selectedEmployee, setSelectedEmployee] = useState(Cookies.get("userCode"));
+  const [selectedEmployee, setSelectedEmployee] = useState(
+    Cookies.get("userCode")
+  );
   const [userCode] = useState(Cookies.get("userCode"));
   const [loading, setLoading] = useState(true);
   const [configsLoading, setConfigsLoading] = useState(false);
@@ -65,10 +68,18 @@ export const CreateTicketPage = () => {
     setConfigsLoading(true);
 
     try {
-      const configs = await getClientConfigurations(client.code);
+      // 👇 Параллельно грузим конфигурации и контакты
+      const [configs, contactsData] = await Promise.all([
+        getClientConfigurations(client.code),
+        getContacts(client.code),
+      ]);
+
       setConfigurations(Array.isArray(configs) ? configs : []);
+      console.log("📇 Контакты клиента:", contactsData);
+      // при желании можешь их сохранить в состояние, например:
+      // setContactsList(contactsData);
     } catch (error) {
-      console.error("Ошибка при загрузке конфигураций:", error);
+      console.error("Ошибка при загрузке данных клиента:", error);
       setConfigurations([]);
     } finally {
       setConfigsLoading(false);
@@ -91,12 +102,18 @@ export const CreateTicketPage = () => {
     e.preventDefault();
 
     // Проверка заполнения всех полей
-    if (!title.trim()) return showValidationPopup("Пожалуйста, заполните заголовок!");
-    if (!selectedClient) return showValidationPopup("Пожалуйста, выберите клиента!");
-    if (!selectedEmployee) return showValidationPopup("Пожалуйста, выберите исполнителя!");
-    if (!description.trim()) return showValidationPopup("Пожалуйста, заполните описание задачи!");
-    if (!selectedConfig) return showValidationPopup("Пожалуйста, выберите конфигурацию!");
-    if (!contacts.trim()) return showValidationPopup("Пожалуйста, заполните контакты!");
+    if (!title.trim())
+      return showValidationPopup("Пожалуйста, заполните заголовок!");
+    if (!selectedClient)
+      return showValidationPopup("Пожалуйста, выберите клиента!");
+    if (!selectedEmployee)
+      return showValidationPopup("Пожалуйста, выберите исполнителя!");
+    if (!description.trim())
+      return showValidationPopup("Пожалуйста, заполните описание задачи!");
+    if (!selectedConfig)
+      return showValidationPopup("Пожалуйста, выберите конфигурацию!");
+    if (!contacts.trim())
+      return showValidationPopup("Пожалуйста, заполните контакты!");
 
     const token = Cookies.get("token");
     const newTicket = {
@@ -171,14 +188,15 @@ export const CreateTicketPage = () => {
             value={selectedConfig}
             title="КОНФИГУРАЦИЯ"
             onChange={setSelectedConfig}
-            disabled={!selectedClient || configsLoading || configurations.length === 0}
+            disabled={
+              !selectedClient || configsLoading || configurations.length === 0
+            }
             labelKey="name"
             valueKey="id"
           />
 
           <Input
             text="КОНТАКТЫ"
-            placeholder="+7 999 666 99 99"
             value={contacts}
             setUserData={setContacts}
           />

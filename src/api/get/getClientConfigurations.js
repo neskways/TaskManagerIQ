@@ -1,4 +1,4 @@
-import { api } from "./axios";
+import { api } from "../axios";
 import Cookies from "js-cookie";
 
 export const getClientConfigurations = async (clientID) => {

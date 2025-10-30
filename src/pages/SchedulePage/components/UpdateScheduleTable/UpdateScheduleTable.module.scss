@@ -10,6 +10,13 @@
   margin-left: 6px;
 }
 
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
 .tableWrapper {
   overflow-x: auto;
 }

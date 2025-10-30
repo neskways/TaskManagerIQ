@@ -1,5 +1,4 @@
-// api/getClients.js
-import { api } from "./axios";
+import { api } from "../axios";
 import Cookies from "js-cookie";
 
 export const getClientsForSearch = async () => {
@@ -15,8 +14,7 @@ export const getClientsForSearch = async () => {
 
     const fixed = (response.data || "").replace(/'/g, '"');
     const parsed = JSON.parse(fixed);
-
-    // Нормализуем имена свойств, чтобы всегда были с маленькой буквы
+    
     const clients = Array.isArray(parsed)
       ? parsed.map((c) => ({
           name: c.Name,

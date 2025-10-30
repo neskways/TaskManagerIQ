@@ -1,17 +1,18 @@
-import { api } from "./axios";
+import { api } from "../axios";
 import Cookies from "js-cookie";
 
-export const getTaskInfo = async (taskID) => {
+export const getSchedule = async (month, year) => {
   try {
-    
     const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+    
     const token = Cookies.get("token");
 
     const response = await api.post(
-      `${BASE_URL}/GetTaskInfo`,
+      `${BASE_URL}/GetDutyCalendar`,
       {
-        Token: token,
-        TaskId: taskID
+        token: token, 
+        month: month,
+        year: year,
       },
       { responseType: "text" }
     );

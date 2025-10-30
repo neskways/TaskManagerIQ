@@ -1,0 +1,26 @@
+.svg * {
+    transition: var(--transition);
+}
+
+.svg:hover *{
+    stroke: var(--accent-color);
+}
+
+.svg {
+  display: inline-block;
+  transition: transform 0.5s ease;
+  transform-origin: center;
+}
+
+.spin {
+  animation: spinAnim 0.5s linear;
+}
+
+@keyframes spinAnim {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

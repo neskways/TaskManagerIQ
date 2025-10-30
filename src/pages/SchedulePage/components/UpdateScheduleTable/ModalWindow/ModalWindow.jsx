@@ -1,15 +1,16 @@
-// ModalWindow.jsx
 import s from "./ModalWindow.module.scss";
 import { useEffect, useState } from "react";
 import { CloseIcon } from "../../../../../UI/CloseIcon/CloseIcon";
 
 export const ModalWindow = ({ updatesArray, onClose }) => {
   const [show, setShow] = useState(false);
-
+   const username =  
   useEffect(() => {
     if (updatesArray) {
+        console.log(updatesArray);
       const timer = setTimeout(() => setShow(true), 10);
       return () => clearTimeout(timer);
+      
     } else {
       setShow(false);
     }
@@ -39,6 +40,7 @@ export const ModalWindow = ({ updatesArray, onClose }) => {
             <div className={s.text}><div className={s.text_item}>Сотрудник:</div> <div className={s.text_item2}>{u.employee}</div></div>
             <div className={s.text}><div className={s.text_item}>Дата:</div> <div className={s.text_item2}>{u.date.toLocaleDateString("ru-RU")}</div></div>
             <div className={s.text}><div className={s.text_item}>Выполнено:</div> <div className={s.text_item2}>{u.done ? "Да" : "Нет"}</div></div>
+            { u.done && <div className={s.text}><div className={s.text_item}> Дата выполнения:</div> <div className={s.text_item2}> { u.dateOf } </div></div> }
           </div>
         ))}
         <button className={s.close_btn} onClick={handleClose}>
