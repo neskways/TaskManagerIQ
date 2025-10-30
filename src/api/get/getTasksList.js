@@ -3,15 +3,12 @@ import Cookies from "js-cookie";
 
 export const getTasksList = async () => {
   try {
-    
     const BASE_URL = import.meta.env.VITE_API_BASE_URL;
     const token = Cookies.get("token");
 
     const response = await api.post(
       `${BASE_URL}/GetTasksList`,
-      {
-        token: token
-      },
+      { token },
       { responseType: "text" }
     );
 
@@ -22,12 +19,15 @@ export const getTasksList = async () => {
       throw new Error("Unexpected response format: not an array");
     }
 
-    return parsed.map((item) => {
-      const [day, monthStr, yearStr] = (item.Date || "").split(".");
-      const date = new Date(+yearStr, +monthStr - 1, +day);
-      return { date, user: item.User ?? "" };
-    });
-
+    return parsed.map((item) => ({
+      number: item.TaskID,
+      title: item.Name,
+      client: item.Client,
+      status: item.status,
+      executor: item.user,
+      priority: "", // пока нет данных
+      timeSpent: item.time,
+    }));
   } catch (error) {
     console.error("Ошибка при загрузке расписания:", error);
     throw error;

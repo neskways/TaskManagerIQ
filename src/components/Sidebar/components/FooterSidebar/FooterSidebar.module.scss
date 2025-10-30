@@ -7,6 +7,11 @@
     width: 100%;
 }
 
+.not_duty {
+    grid-template-columns: 1fr;
+}
+
+
 .footer_block {
     flex: 1; 
     padding: 15px 25px;
@@ -15,6 +20,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    height: 100%;
 }
 
 .footer_block:first-of-type {

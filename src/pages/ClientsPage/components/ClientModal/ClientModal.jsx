@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
 import s from "./ClientModal.module.scss";
+import { useEffect, useState } from "react";
 import { CloseIcon } from "../../../../UI/CloseIcon/CloseIcon";
 
 export const ClientModal = ({ clientData, onClose }) => {

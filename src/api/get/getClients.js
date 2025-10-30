@@ -1,42 +1,23 @@
-import { useState, useEffect } from "react";
 import { api } from "../axios";
 import Cookies from "js-cookie";
 
-export const getClients = () => {
-  
-  const [clients, setClients] = useState([]);
-  const [showPopup, setShowPopup] = useState(false);
+export const getClients = async () => {
+  try {
+    const token = Cookies.get("token");
+    const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-  useEffect(() => {
-    
-    const token = Cookies.get("token"); 
+    const response = await api.post(
+      `${BASE_URL}/ClientGetList`,
+      { Token: token },
+      { responseType: "text" }
+    );
 
-    const loadClients = async () => {
-      try {
-        const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-        // передаём токен в теле запроса
-        const response = await api.post(
-          `${BASE_URL}/ClientGetList`,
-          { Token: token },
-          { responseType: "text" }
-        );
+    const fixed = (response.data || "").replace(/'/g, '"');
+    const parsed = JSON.parse(fixed);
 
-        const fixed = (response.data || "").replace(/'/g, '"');
-        const parsed = JSON.parse(fixed);
-
-        setClients(parsed || []);
-
-      } catch (error) {
-        console.error("Ошибка при загрузке клиентов:", error);
-
-        setShowPopup(true);
-        const timer = setTimeout(() => setShowPopup(false), 3000);
-        return () => clearTimeout(timer);
-      }
-    };
-
-    loadClients();
-  }, []);
-
-  return { clients, showPopup };
+    return parsed || [];
+  } catch (error) {
+    console.error("Ошибка при загрузке клиентов:", error);
+    throw error;
+  }
 };

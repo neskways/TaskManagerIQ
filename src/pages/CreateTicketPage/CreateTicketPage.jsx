@@ -1,158 +1,112 @@
 import s from "./CreateTicketPage.module.scss";
 import Cookies from "js-cookie";
-import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Input } from "../../UI/Input/Input";
-import { Popup } from "../../UI/Popup/Popup";
 import { Button } from "../../UI/Button/Button";
+import { useContacts } from "./hooks/useContacts";
+import { Link, useNavigate } from "react-router-dom";
+import { usePopup } from "../../context/PopupContext";
 import { Selector } from "../../UI/Selector/Selector";
+import { createTask } from "../../api/create/createTask";
+import { useConfigurations } from "./hooks/useConfigurations";
 import { PageTitle } from "../../components/PageTitle/PageTitle";
-import { getClientsForSearch } from "../../api/get/getClientsForSearch";
-import { getClientConfigurations } from "../../api/get/getClientConfigurations";
 import { MultipleInput } from "../../UI/MultipleInput/MultipleInput";
-import { ClientSearch } from "./components/ClientSearch/ClientSearch";
 import { getFromLocalStorage } from "../../modules/localStorageUtils";
+import { useClientsAndEmployees } from "./hooks/useClientsAndEmployees";
+import { ClientSearch } from "./components/ClientSearch/ClientSearch";
+import { NewContactForm } from "./components/NewContactForm/NewContactForm";
 import { ContentWrapper } from "../../UI/ContentWrapper/ContentWrapper";
-import { getEmployees } from "../../api/get/getEmployee";
-import { getContacts } from "../../api/get/getContacts";
-// import { createTask } from "../../api/create/createTask"; // пока закомментировано
 
 export const CreateTicketPage = () => {
   const lastSecondaryPath = getFromLocalStorage("last_secondary_sidebar_path");
+  const navigate = useNavigate();
 
-  // State
-  const [clients, setClients] = useState([]);
-  const [employees, setEmployees] = useState([]);
-  const [configurations, setConfigurations] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
-  const [selectedConfig, setSelectedConfig] = useState("");
   const [selectedEmployee, setSelectedEmployee] = useState(
     Cookies.get("userCode")
   );
-  const [userCode] = useState(Cookies.get("userCode"));
-  const [loading, setLoading] = useState(true);
-  const [configsLoading, setConfigsLoading] = useState(false);
-
-  // Данные формы
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [contacts, setContacts] = useState("");
 
-  // Popup
-  const [showPopup, setShowPopup] = useState(false);
-  const [popupText, setPopupText] = useState("");
+  const { showPopup } = usePopup();
 
-  // Загрузка клиентов и сотрудников
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const clientsData = await getClientsForSearch();
-        setClients(clientsData);
-        setLoading(false);
+  // Хуки
+  const { clients, employeeOptions, loading: clientsLoading } = useClientsAndEmployees();
+  const {
+    contactOptions,
+    selectedContactId,
+    creatingNewContact,
+    contactDetails,
+    setContactDetails,
+    handleSelectContact,
+  } = useContacts(selectedClient);
+  const { configOptions, selectedConfig, setSelectedConfig, loading: configsLoading } =
+    useConfigurations(selectedClient);
 
-        const employeesData = await getEmployees();
-        setEmployees(employeesData);
-      } catch (err) {
-        console.error("Ошибка при загрузке данных:", err);
-      }
-    };
+  // ✅ общий флаг готовности данных
+  const dataReady = !configsLoading && configOptions.length > 0 && contactOptions.length > 0;
 
-    loadData();
-  }, []);
-
-  // Выбор клиента и загрузка его конфигураций
-  const handleSelectClient = async (client) => {
-    setSelectedClient(client);
-    setSelectedConfig("");
-    setConfigurations([]);
-    setConfigsLoading(true);
-
-    try {
-      // 👇 Параллельно грузим конфигурации и контакты
-      const [configs, contactsData] = await Promise.all([
-        getClientConfigurations(client.code),
-        getContacts(client.code),
-      ]);
-
-      setConfigurations(Array.isArray(configs) ? configs : []);
-      console.log("📇 Контакты клиента:", contactsData);
-      // при желании можешь их сохранить в состояние, например:
-      // setContactsList(contactsData);
-    } catch (error) {
-      console.error("Ошибка при загрузке данных клиента:", error);
-      setConfigurations([]);
-    } finally {
-      setConfigsLoading(false);
-    }
+  const showValidationPopup = (text) => {
+    showPopup(text, { type: false });
   };
 
-  // Опции для селекторов
-  const configOptions = configurations.map((c, index) => ({
-    id: c.id || `conf-${index}`,
-    name: c.config || c.name || "Без имени",
-  }));
-
-  const employeeOptions = employees.map((e) => ({
-    id: e.Code,
-    name: e.Name,
-  }));
-
-  // Отправка данных с проверкой
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Проверка заполнения всех полей
-    if (!title.trim())
-      return showValidationPopup("Пожалуйста, заполните заголовок!");
-    if (!selectedClient)
-      return showValidationPopup("Пожалуйста, выберите клиента!");
-    if (!selectedEmployee)
-      return showValidationPopup("Пожалуйста, выберите исполнителя!");
-    if (!description.trim())
-      return showValidationPopup("Пожалуйста, заполните описание задачи!");
-    if (!selectedConfig)
-      return showValidationPopup("Пожалуйста, выберите конфигурацию!");
-    if (!contacts.trim())
-      return showValidationPopup("Пожалуйста, заполните контакты!");
+    // Валидация
+    if (!title.trim()) return showValidationPopup("Пожалуйста, заполните заголовок!");
+    if (!selectedClient) return showValidationPopup("Пожалуйста, выберите клиента!");
+    if (!selectedEmployee) return showValidationPopup("Пожалуйста, выберите исполнителя!");
+    if (!description.trim()) return showValidationPopup("Пожалуйста, заполните описание задачи!");
+    if (!selectedConfig) return showValidationPopup("Пожалуйста, выберите конфигурацию!");
+    if (!contactDetails.name.trim()) return showValidationPopup("Пожалуйста, заполните контакт!");
 
     const token = Cookies.get("token");
-    const newTicket = {
+    const userCode = Cookies.get("userCode");
+
+    const payload = {
       token,
-      userCode,
+      userId: userCode,
       task: {
         clientId: selectedClient.code,
         title: title.trim(),
         description: description.trim(),
         confId: selectedConfig,
-        contacts: contacts.trim(),
+        contacts: { ...contactDetails },
         owner: selectedEmployee || userCode,
       },
     };
 
-    console.log("📝 Новая заявка:", newTicket);
+    try {
+      let result = await createTask(payload);
 
-    // Если нужно отправить на сервер:
-    // try {
-    //   const response = await createTask(newTicket);
-    //   if (response.status === 200) {
-    //     console.log("Заявка успешно создана!");
-    //   }
-    // } catch (err) {
-    //   console.error("Ошибка при создании заявки:", err);
-    // }
-  };
+      // Если приходит строка — парсим её
+      if (typeof result === "string") {
+        const fixed = result.replace(/'/g, '"');
+        result = JSON.parse(fixed);
+      }
 
-  // Функция для показа попапа с текстом
-  const showValidationPopup = (text) => {
-    setPopupText(text);
-    setShowPopup(true);
-    setTimeout(() => setShowPopup(false), 3000);
+      if (result?.Error) {
+        showPopup(`Ошибка: ${result.Error}`, { type: false });
+        return;
+      }
+
+      const cleanId = parseInt(result.taskid, 10);
+
+      showPopup("Заявка успешно создана!", { type: true });
+
+      setTimeout(() => {
+        navigate(`/ticket/${cleanId}`);
+      }, 100);
+    } catch (error) {
+      console.error(error);
+      showPopup("Не удалось создать заявку, попробуйте позже.", { type: false });
+    }
   };
 
   return (
     <ContentWrapper>
       <PageTitle titleText="Новая заявка" center />
-      <Popup showPopup={showPopup} text={popupText} type={false} />
 
       <form onSubmit={handleSubmit}>
         <Input text="ЗАГОЛОВОК" value={title} setUserData={setTitle} />
@@ -160,9 +114,9 @@ export const CreateTicketPage = () => {
         <div className={s.filling_data_inner}>
           <ClientSearch
             clients={clients}
-            onSelect={handleSelectClient}
+            onSelect={setSelectedClient}
             text="КЛИЕНТ"
-            disabled={loading}
+            disabled={clientsLoading}
           />
 
           <Selector
@@ -177,7 +131,7 @@ export const CreateTicketPage = () => {
 
         <MultipleInput
           text="ТЕКСТ"
-          rows={5}
+          rows={6}
           value={description}
           setUserData={setDescription}
         />
@@ -188,19 +142,28 @@ export const CreateTicketPage = () => {
             value={selectedConfig}
             title="КОНФИГУРАЦИЯ"
             onChange={setSelectedConfig}
-            disabled={
-              !selectedClient || configsLoading || configurations.length === 0
-            }
+            disabled={!selectedClient || !dataReady}
             labelKey="name"
             valueKey="id"
           />
 
-          <Input
-            text="КОНТАКТЫ"
-            value={contacts}
-            setUserData={setContacts}
+          <Selector
+            items={contactOptions}
+            value={selectedContactId}
+            title="КОНТАКТЫ"
+            onChange={handleSelectContact}
+            disabled={!selectedClient || !dataReady}
+            labelKey="name"
+            valueKey="id"
           />
         </div>
+
+        {creatingNewContact && (
+          <NewContactForm
+            contactDetails={contactDetails}
+            setContactDetails={setContactDetails}
+          />
+        )}
 
         <div className={s.button_wrap}>
           <Button name="Создать" type="submit" />

@@ -1,5 +1,17 @@
-.gridTableWrapper {
-  width: 100%;
-  padding: 35px 40px;
-  overflow-x: auto;
+.centerWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px; // под размер календаря
+  text-align: center;
+}
+
+.header {
+  position: relative;
+}
+
+.refreshBtn {
+  position: absolute;
+  right: 10px;
+  top: 0;
 }

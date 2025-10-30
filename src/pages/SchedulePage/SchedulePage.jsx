@@ -1,24 +1,26 @@
-import { useState, useRef, useEffect } from "react";
 import s from "./SchedulePage.module.scss";
+import { useState, useRef, useEffect } from "react";
+import { useTheme } from "../../context/ThemeContext";
+import { motion, AnimatePresence } from "framer-motion";
 import { Calendar } from "./components/Calendar/Calendar";
 import { PageTitle } from "../../components/PageTitle/PageTitle";
 import { ContentWrapper } from "../../UI/ContentWrapper/ContentWrapper";
 import { UpdateScheduleTable } from "./components/UpdateScheduleTable/UpdateScheduleTable";
 import { getFromLocalStorage, saveToLocalStorage } from "../../modules/localStorageUtils";
-import { useTheme } from "../../context/ThemeContext";
 
 export const SchedulePage = () => {
-  const [view, setView] = useState(() => getFromLocalStorage("scheduleView", "duty"));
+  
+  const [view, setView] = useState(() =>
+    getFromLocalStorage("scheduleView", "duty")
+  );
   const { theme } = useTheme();
   const tabsRef = useRef(null);
 
-  // 🔹 Функция переключения вкладок
   const handleTabChange = (tab) => {
     setView(tab);
     saveToLocalStorage("scheduleView", tab);
   };
 
-  // 🔹 Вычисляем позицию активной вкладки
   useEffect(() => {
     const tabs = tabsRef.current;
     if (!tabs) return;
@@ -54,11 +56,31 @@ export const SchedulePage = () => {
       </div>
 
       <div className={s.contentWrapper}>
-        {view === "duty" ? (
-          <Calendar theme={theme} />
-        ) : (
-          <UpdateScheduleTable theme={theme} />
-        )}
+        <AnimatePresence exitBeforeEnter>
+          {view === "duty" ? (
+            <motion.div
+              key="duty"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.1 }}
+              className={s.absoluteContent}
+            >
+              <Calendar theme={theme} />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="updates"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.1 }}
+              className={s.absoluteContent}
+            >
+              <UpdateScheduleTable theme={theme} />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </ContentWrapper>
   );

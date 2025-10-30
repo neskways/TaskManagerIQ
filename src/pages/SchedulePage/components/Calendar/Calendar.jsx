@@ -1,12 +1,12 @@
 import s from "./Calendar.module.scss";
 import Cookies from "js-cookie";
 import { ru } from "date-fns/locale";
-import { Popup } from "../../../../UI/Popup/Popup";
 import { useState, useEffect, useRef } from "react";
-import { getSchedule } from "../../../../api/get/getShedule";
 import { Loading } from "../../../../UI/Loading/Loading";
-import { loadCache, saveCache } from "../../../../modules/cache";
+import { usePopup } from "../../../../context/PopupContext";
+import { getSchedule } from "../../../../api/get/getShedule";
 import { ReloadIcon } from "../../../../UI/ReloadIcon/ReloadIcon";
+import { loadCache, saveCache } from "../../../../modules/cookieCache";
 import {
   format,
   startOfMonth,
@@ -18,13 +18,14 @@ import {
 } from "date-fns";
 
 export const Calendar = ({ theme }) => {
+
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [displayMonth, setDisplayMonth] = useState(new Date());
   const [schedule, setSchedule] = useState([]);
-  const [showPopup, setShowPopup] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
   const [initialLoading, setInitialLoading] = useState(true);
   const [spinning, setSpinning] = useState(false);
+
+  const { showPopup } = usePopup();
 
   const cacheRef = useRef({});
 
@@ -44,15 +45,13 @@ export const Calendar = ({ theme }) => {
       return normalized;
     } catch (err) {
       console.error("Ошибка при загрузке расписания:", err);
-      setErrorMessage("Ошибка загрузки данных");
-      setShowPopup(true);
-      setTimeout(() => setShowPopup(false), 3000);
+      showPopup("Ошибка загрузки данных", false); 
       return null;
     }
   };
 
   const handleRefresh = async () => {
-    if (spinning) return; // защита от спама кликов
+    if (spinning) return;
     setSpinning(true);
     setInitialLoading(true);
     const month = currentMonth.getMonth() + 1;
@@ -214,9 +213,9 @@ export const Calendar = ({ theme }) => {
         <div className={s.centerWrapper}>
           <Loading className={s.loading} />
         </div>
-      ) : errorMessage && schedule.length === 0 ? (
+      ) : schedule.length === 0 ? (
         <div className={s.centerWrapper}>
-          <p className={s.errorText}>{errorMessage}</p>
+          <p className={s.errorText}>Нет данных для отображения</p>
         </div>
       ) : (
         <>
@@ -224,8 +223,6 @@ export const Calendar = ({ theme }) => {
           {renderCells()}
         </>
       )}
-
-      <Popup showPopup={showPopup} text={errorMessage} />
     </div>
   );
 };

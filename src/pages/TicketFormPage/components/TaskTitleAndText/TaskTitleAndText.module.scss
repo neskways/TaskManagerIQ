@@ -2,7 +2,8 @@
   max-width: 950px;
   text-align: center;
   margin: 0 auto;
-  margin-bottom: 30px;
+  margin-top: -10px;
+  margin-bottom: 25px;
 }
 
 .task_title {
@@ -10,29 +11,21 @@
   max-width: 950px;
   color: var(--text-color);
   font-size: 22px;
-  background-color: transparent;
   border: none;
   resize: none;
   overflow: hidden;
-  line-height: 1.4;
   text-align: center;
-  border: 1px solid transparent;
-}
-
-.task_title:focus, .task_title:hover {
-  background: var(--bg-color-secondary);
-  border-radius: var(--border-radius);
-  outline: none;
+  margin-bottom: 5px;
 }
 
 .date_text {
-    margin-top: -5px;
     text-align: center;
     font-size: 14px;
     color: var(--text-color-secondary);
 }
 
 .task_text {
+  margin-top: 25px;
   width: 90%;
   margin: 5px auto 30px;
   background: var(--bg-color-tertiary);

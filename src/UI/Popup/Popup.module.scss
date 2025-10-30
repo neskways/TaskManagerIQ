@@ -1,9 +1,10 @@
 @import url('../../styles/variabales.scss');
 
 .popup {
+  text-align: center;
   position: fixed;
   top: 20px;
-  left: calc(50%);
+  left: calc(50% - 135px);
   transform: translateX(-50%);
   background-color: var(--false);
   color: white;
@@ -11,32 +12,14 @@
   border-radius: 6px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
   z-index: 1000;
-  animation: fadeInOut 3s ease forwards;
+  width: 270px;
 }
 
 .popupMargin {
-   left: calc(50% + 115px) !important;
+   left: calc(50% - 20px) !important;
 }
 
 .true {
   background-color: var(--true);
 }
 
-@keyframes fadeInOut {
-  0% {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-10px);
-  }
-  10% {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-  90% {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-10px);
-  }
-}

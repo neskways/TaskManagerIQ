@@ -1,62 +1,61 @@
-import { useEffect, useRef, useState } from "react";
 import s from "./TasksTable.module.scss";
-import { headersTitleTickets } from "../../../../modules/Arrays";
-import {
-  getFromLocalStorage,
-  saveToLocalStorage,
-} from "../../../../modules/localStorageUtils";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Loading } from "../../../../UI/Loading/Loading";
 import { TaskGridCell } from "../TaskGridCell/TaskGridCell";
+import { getTasksList } from "../../../../api/get/getTasksList";
+import { headersTitleTickets } from "../../../../modules/TitlesForTables";
 
 const LOCAL_STORAGE_KEY_TICKETS = "tickets_table_col_widths";
-const DEFAULT_WIDTHS = [5, 30, 20, 10, 13, 12, 10]; // 7 колонок, всего 100 надо набрать
-// const DEFAULT_WIDTHS = [25, 15, 10, 10, 10, 10, 10, 10];
+const DEFAULT_WIDTHS = [5, 30, 20, 10, 13, 12, 10]; // 7 колонок
 
-const mockTickets = [
-  {
-    number: 31,
-    title: "Ошибка входа в 1С",
-    client: "ООО Ромашка",
-    status: "Открыт",
-    priority: "Высокий",
-    timeSpent: "01:20",
-    executor: "Сидорова А.А.",
-  },
-  {
-    number: 32,
-    title: "Не печатается отчёт",
-    client: "ЗАО Тест",
-    status: "В работе",
-    priority: "Средний",
-    timeSpent: "00:45",
-    executor: "Сидорова А.А.",
-  },
-  {
-    number: 33,
-    title: "Ошибка базы данных",
-    client: "ИП Сидоров",
-    status: "Закрыт",
-    priority: "Критичный",
-    timeSpent: "02:10",
-    executor: "Сидорова А.А.",
-  },
-];
+export const TasksTable = ({ setShowFilter }) => {
+  
+  const navigate = useNavigate();
 
-export const TasksTable = ({ showFilter }) => {
-  const [colWidths, setColWidths] = useState(() =>
-    getFromLocalStorage(LOCAL_STORAGE_KEY_TICKETS, DEFAULT_WIDTHS)
+  const [colWidths, setColWidths] = useState(
+    () =>
+      JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_TICKETS)) ||
+      DEFAULT_WIDTHS
   );
-
   const tableRef = useRef(null);
   const startX = useRef(0);
   const isResizing = useRef(false);
   const startWidths = useRef([0, 0]);
   const resizingColIndex = useRef(null);
 
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   const gridTemplateColumns = colWidths.map((w) => `${w}%`).join(" ");
 
   useEffect(() => {
-    saveToLocalStorage(LOCAL_STORAGE_KEY_TICKETS, colWidths);
+    localStorage.setItem(LOCAL_STORAGE_KEY_TICKETS, JSON.stringify(colWidths));
   }, [colWidths]);
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      setLoading(true);
+      try {
+        const data = await getTasksList();
+        const mapped = data.map((item) => ({
+          number: parseInt(item.number, 10),
+          title: item.title,
+          client: item.client,
+          status: item.status,
+          executor: item.executor,
+          priority: item.priority,
+          timeSpent: item.timeSpent,
+        }));
+        setTasks(mapped);
+      } catch (err) {
+        console.error("Ошибка при загрузке задач:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTasks();
+  }, []);
 
   const handleMouseDown = (e, index) => {
     e.preventDefault();
@@ -72,7 +71,6 @@ export const TasksTable = ({ showFilter }) => {
 
   const handleMouseMove = (e) => {
     if (!isResizing.current || !tableRef.current) return;
-
     const dx = e.clientX - startX.current;
     const tableWidth = tableRef.current.offsetWidth;
     const deltaPercent = (dx / tableWidth) * 100;
@@ -85,7 +83,6 @@ export const TasksTable = ({ showFilter }) => {
     const newWidths = [...colWidths];
     newWidths[resizingColIndex.current] = left;
     newWidths[resizingColIndex.current + 1] = right;
-
     setColWidths(newWidths);
   };
 
@@ -96,27 +93,51 @@ export const TasksTable = ({ showFilter }) => {
     document.removeEventListener("mouseup", handleMouseUp);
   };
 
+  if (loading) {
+    return (
+      <div className={s.centerWrapper}>
+        <Loading />
+      </div>
+    );
+  }
+
   return (
-    <div className={s.gridTableWrapper} ref={tableRef}>
-      <div className={s.gridHeaderRow} style={{ gridTemplateColumns }}>
-        {headersTitleTickets.map((header, i) => (
-          <div key={i} className={s.gridHeader}>
-            <span>{header}</span>
-            {i < headersTitleTickets.length - 1 && (
-              <div
-                className={s.resizer}
-                onMouseDown={(e) => handleMouseDown(e, i)}
-              />
-            )}
+    <div>
+      <div className={s.btn_wrapper}>
+        <button
+          className={s.filter_btn}
+          onClick={() => setShowFilter((prev) => !prev)}
+        >
+          Фильтр
+        </button>
+      </div>
+
+      <div className={s.gridTableWrapper} ref={tableRef}>
+        <div className={s.gridHeaderRow} style={{ gridTemplateColumns }}>
+          {headersTitleTickets.map((header, i) => (
+            <div key={i} className={s.gridHeader}>
+              <span>{header}</span>
+              {i < headersTitleTickets.length - 1 && (
+                <div
+                  className={s.resizer}
+                  onMouseDown={(e) => handleMouseDown(e, i)}
+                />
+              )}
+            </div>
+          ))}
+        </div>
+
+        {tasks.map((task, index) => (
+          <div
+            key={index}
+            className={s.gridRow}
+            style={{ gridTemplateColumns }}
+            onClick={() => navigate(`/ticket/${task.number}`)} // переход по клику
+          >
+            <TaskGridCell taskData={task} />
           </div>
         ))}
       </div>
-
-      {mockTickets.map((task, index) => (
-        <div key={index} className={s.gridRow} style={{ gridTemplateColumns }}>
-          <TaskGridCell taskData={task} />
-        </div>
-      ))}
     </div>
   );
 };

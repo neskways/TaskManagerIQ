@@ -1,6 +1,6 @@
 import s from "./ClientsTable.module.scss";
-import { headersTitle } from "../../../../modules/Arrays";
 import { ClientGridCell } from "../ClientGridCell/ClientGridCell";
+import { headersTitle } from "../../../../modules/TitlesForTables";
 
 export const ClientsTable = ({
   clients,

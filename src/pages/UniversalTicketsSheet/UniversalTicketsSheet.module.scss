@@ -1,14 +1,7 @@
 .wrapper {
     margin: 35px 40px;
     width: 100%;
-    overflow: hidden;
-}
-
-.filter_btn {
-    color: var(--text-color);
-    background-color: var(--bg-color-tertiary);
-    border-bottom: 1px solid var(--border-color);
-    padding: 6px 11px;
-    border-radius: var(--border-radius) var(--border-radius) 0 0;
-    font-size: 16px;
+    height: calc(90vh - 70px);
+    overflow-y: auto;
+    padding-right: 15px;
 }

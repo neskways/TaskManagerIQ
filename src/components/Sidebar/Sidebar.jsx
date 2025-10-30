@@ -1,12 +1,13 @@
 import s from "./Sidebar.module.scss";
 import { useState } from "react";
+import { sidebarItems } from "./sidebarLinks"; 
+import { useTheme } from "../../context/ThemeContext";
 import { NavLink, useLocation } from "react-router-dom";
 import { HeaderSidebar } from "./components/HeaderSidebar/HeaderSidebar";
 import { FooterSidebar } from "./components/FooterSidebar/FooterSidebar";
-import { sidebarItems } from "../../modules/sidebarLinks"; // импортируем конфиг
-import { useTheme } from "../../context/ThemeContext";
 
 export const Sidebar = () => {
+  
   const location = useLocation();
   const currentPath = location.pathname;
   const [isActiveBox, setIsActiveBox] = useState(false);

@@ -1,6 +1,6 @@
+import s from "./ClientGridCell.module.scss";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";  // Импортируем useNavigate для перенаправления
-import s from "./ClientGridCell.module.scss";
 
 export const ClientGridCell = ({ clientData, setSelectedClient }) => {
   const [hovered, setHovered] = useState(false);

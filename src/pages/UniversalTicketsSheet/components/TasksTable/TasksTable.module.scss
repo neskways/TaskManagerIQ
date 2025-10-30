@@ -84,3 +84,17 @@
   border-radius: 1px;
 }
 
+.filter_btn {
+    color: var(--text-color);
+    background-color: var(--bg-color-tertiary);
+    border-bottom: 1px solid var(--border-color);
+    padding: 6px 9px;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    font-size: 16px;
+}
+
+.centerWrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 250px;
+}

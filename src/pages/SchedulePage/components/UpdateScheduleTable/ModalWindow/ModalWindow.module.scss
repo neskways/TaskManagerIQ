@@ -23,7 +23,7 @@
 
 .modalContent {
   background: var(--bg-color);
-  padding: 20px;
+  padding: 10px;
   border-radius: 8px;
   min-width: 500px;
   height: 400px;
@@ -37,6 +37,12 @@
     transform: translateY(0);
     opacity: 1;
   }
+}
+
+.inner {
+  height: 85%;
+  padding: 10px 10px 0;
+  overflow-y: auto;
 }
 
 .title {
@@ -57,6 +63,11 @@
     border-bottom: 2px solid var(--border-color);
     margin-bottom: 10px;
 }
+
+.updateItem:last-child {
+  margin-bottom: 0;    /* если нужно убрать отступ */
+}
+
 
 .text {
     line-height: 1.3;

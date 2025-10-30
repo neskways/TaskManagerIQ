@@ -1,36 +1,92 @@
 import s from "./ClientsPage.module.scss";
-import { useState } from "react";
-import { Popup } from "../../UI/Popup/Popup";
-import { useResizableTable } from "./useResizableTable";
+import { useState, useEffect, useRef } from "react";
 import { PageTitle } from "../../components/PageTitle/PageTitle";
-import { ClientModal } from "./components/ClientModal/ClientModal";
 import { ClientsTable } from "./components/ClientsTable/ClientsTable";
-import { getClients } from "../../api/get/getClients";
+import { ClientModal } from "./components/ClientModal/ClientModal";
 import { ContentWrapper } from "../../UI/ContentWrapper/ContentWrapper";
+import {
+  getFromLocalStorage,
+  saveToLocalStorage,
+} from "../../modules/localStorageUtils";
+import { useResizableTable } from "./useResizableTable";
+import { usePopup } from "../../context/PopupContext";
+import { getClients } from "../../api/get/getClients";
+import { ReloadIcon } from "../../UI/ReloadIcon/ReloadIcon";
+import { Loading } from "../../UI/Loading/Loading";
+import { useTheme } from "../../context/ThemeContext";
+
+const CACHE_KEY = "clientsCache";
 
 export const ClientsPage = () => {
+  const { theme } = useTheme();
+
+  // ✅ Сразу читаем кэш
+  const cachedClients = getFromLocalStorage(CACHE_KEY, null);
+
+  const [clients, setClients] = useState(cachedClients || []);
   const [selectedClient, setSelectedClient] = useState(null);
-  const { clients, showPopup } = getClients();
+  const [initialLoading, setInitialLoading] = useState(!cachedClients);
+  const [spinning, setSpinning] = useState(false);
+
+  const { showPopup } = usePopup();
   const { colWidths, tableRef, handleMouseDown } = useResizableTable();
+
+  const loadClients = async (force = false) => {
+    if (!force && cachedClients) return;
+
+    setInitialLoading(true);
+    try {
+      const data = await getClients();
+      setClients(data);
+      saveToLocalStorage(CACHE_KEY, data);
+    } catch (err) {
+      console.error("Ошибка при загрузке клиентов:", err);
+      showPopup("Ошибка при загрузке клиентов!", { type: false });
+    } finally {
+      setInitialLoading(false);
+      setSpinning(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!cachedClients) {
+      loadClients();
+    }
+  }, []);
+
+  const handleRefresh = async () => {
+    if (spinning) return;
+    setSpinning(true);
+    await loadClients(true);
+  };
 
   return (
     <ContentWrapper>
-      <PageTitle titleText="Список клиентов" center={true} />
+      <div className={s.header}>
+        <PageTitle titleText="Список клиентов" center />
+        <button className={s.refreshBtn} onClick={handleRefresh}>
+          <ReloadIcon theme={theme} spinning={spinning} />
+        </button>
+      </div>
 
-      <ClientsTable
-        clients={clients}
-        colWidths={colWidths}
-        tableRef={tableRef}
-        handleMouseDown={handleMouseDown}
-        setSelectedClient={setSelectedClient}
-      />
+      {initialLoading ? (
+        <div className={s.centerWrapper}>
+          <Loading className={s.loading} />
+        </div>
+      ) : (
+        <ClientsTable
+          clients={clients}
+          colWidths={colWidths}
+          tableRef={tableRef}
+          handleMouseDown={handleMouseDown}
+          setSelectedClient={setSelectedClient}
+        />
+      )}
 
       <ClientModal
         clientData={selectedClient}
         onClose={() => setSelectedClient(null)}
       />
-
-      <Popup showPopup={showPopup} text="Ошибка при загрузке клиентов!" />
     </ContentWrapper>
   );
 };

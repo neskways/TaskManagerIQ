@@ -1,7 +1,7 @@
-import { NavLink } from "react-router-dom";
-import { sidebarSecondaryItems } from "../../modules/sidebarLinks";
-import { saveToLocalStorage } from "../../modules/localStorageUtils";
 import s from "./SidebarSecondary.module.scss";
+import { NavLink } from "react-router-dom";
+import { sidebarSecondaryItems } from "./sidebarLinks";
+import { saveToLocalStorage } from "../../modules/localStorageUtils";
 
 export const SidebarSecondary = () => {
   const count = 0;

@@ -8,8 +8,6 @@ export const DeleteButton = () => {
 
   const clearLocalStorage = () => {
     localStorage.clear();
-    console.log("LocalStorage очищен.");
-
     setShowPopup(true);
 
     const timer = setTimeout(() => {

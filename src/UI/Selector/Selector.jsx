@@ -7,9 +7,10 @@ export const Selector = ({
   title,
   onChange,
   disabled,
-  labelKey = "name",   // 🟢 теперь по умолчанию "name"
-  valueKey = "id",     // 🟢 добавили valueKey
+  labelKey = "name",   
+  valueKey = "id",     
 }) => {
+  
   const isControlled = value !== undefined && onChange;
 
   return (
@@ -25,7 +26,7 @@ export const Selector = ({
         <option value="">-</option>
         {items.map((item, index) => (
           <option
-            key={item[valueKey] || `opt-${index}`} // ✅ гарантируем уникальный ключ
+            key={item[valueKey] || `opt-${index}`} 
             value={item[valueKey] ?? ""}
           >
             {item[labelKey] ?? ""}

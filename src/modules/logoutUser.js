@@ -6,5 +6,6 @@ export const logoutUserWithoutToken = () => {
     Cookies.remove("user");
     Cookies.remove("role");
     Cookies.remove("UserCode");
+    localStorage.clear();
 
 };

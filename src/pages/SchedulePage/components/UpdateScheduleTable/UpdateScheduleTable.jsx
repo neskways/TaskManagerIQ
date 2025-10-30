@@ -1,96 +1,41 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import s from "./UpdateScheduleTable.module.scss";
 import { ModalWindow } from "./ModalWindow/ModalWindow";
 import { Loading } from "../../../../UI/Loading/Loading";
-import { getUpdateMap } from "../../../../api/get/getUpdateMap";
-import { loadCache, saveCache } from "../../../../modules/cache";
+import { usePopup } from "../../../../context/PopupContext"; 
+import { useUpdateSchedule } from "./hooks/useUpdateSchedule";
 import { ReloadIcon } from "../../../../UI/ReloadIcon/ReloadIcon";
 
 export const UpdateScheduleTable = ({ theme }) => {
+
   const today = new Date();
   const monthStr = today.toLocaleString("ru-RU", { month: "long", year: "numeric" });
-  const defaultMonthTitle = monthStr.charAt(0).toUpperCase() + monthStr.slice(1);
+  const monthTitle = monthStr.charAt(0).toUpperCase() + monthStr.slice(1);
 
-  const [schedule, setSchedule] = useState([]);
-  const [daysInMonth, setDaysInMonth] = useState(
-    new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate()
-  );
-  const [monthTitle] = useState(defaultMonthTitle);
-  const [loading, setLoading] = useState(false); // 🔹 по умолчанию false
+  const { schedule, daysInMonth, loading, loadSchedule, error } = useUpdateSchedule();
   const [selectedClientUpdates, setSelectedClientUpdates] = useState(null);
   const [spinning, setSpinning] = useState(false);
 
-  const cacheKey = "update-schedule";
+  const { showPopup } = usePopup(); 
 
-  const loadSchedule = async (force = false) => {
-    if (!force) {
-      const cached = loadCache(cacheKey);
-      if (cached) {
-        const restored = cached.map((client) => ({
-          ...client,
-          updates: client.updates.map((arr) =>
-            arr.map((u) => ({
-              ...u,
-              date: new Date(u.date),
-            }))
-          ),
-        }));
-        setSchedule(restored);
-        return;
-      }
+  useEffect(() => {
+    if (!loading && error) {
+      showPopup("Ошибка загрузки расписания", false);
     }
-
-    setLoading(true);
-    try {
-      const data = await getUpdateMap();
-      if (!data || data.length === 0) {
-        setSchedule([]);
-        return;
-      }
-
-      const sampleDate = data[0].date;
-      const days = new Date(sampleDate.getFullYear(), sampleDate.getMonth() + 1, 0).getDate();
-      setDaysInMonth(days);
-
-      const clientsMap = {};
-      data.forEach((item) => {
-        if (!item.date || !item.client) return;
-        const dayIndex = item.date.getDate() - 1;
-
-        if (!clientsMap[item.client]) {
-          clientsMap[item.client] = Array(days)
-            .fill(null)
-            .map(() => []);
-        }
-
-        clientsMap[item.client][dayIndex].push(item);
-      });
-
-      const clientsArray = Object.entries(clientsMap).map(([name, updates]) => ({
-        name,
-        updates,
-      }));
-
-      saveCache(cacheKey, clientsArray);
-      setSchedule(clientsArray);
-    } catch (err) {
-      console.error("Ошибка загрузки:", err);
-      setSchedule([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [loading, error, showPopup]);
 
   const handleRefresh = async () => {
     if (spinning) return;
     setSpinning(true);
-    await loadSchedule(true);
-    setTimeout(() => setSpinning(false), 1000);
+    try {
+      await loadSchedule(true);
+    } catch (err) {
+      console.error("Ошибка при обновлении расписания:", err);
+      showPopup("Ошибка при обновлении расписания", false);
+    } finally {
+      setTimeout(() => setSpinning(false), 1000);
+    }
   };
-
-  useEffect(() => {
-    loadSchedule();
-  }, []);
 
   const renderHeader = () => (
     <tr>
@@ -131,6 +76,10 @@ export const UpdateScheduleTable = ({ theme }) => {
       {loading ? (
         <div className={s.centerWrapper}>
           <Loading className={s.loading} />
+        </div>
+      ) : error ? (
+        <div className={s.centerWrapper}>
+          <p className={s.errorText}>Не удалось загрузить расписание</p>
         </div>
       ) : (
         <div className={s.tableWrapper}>
