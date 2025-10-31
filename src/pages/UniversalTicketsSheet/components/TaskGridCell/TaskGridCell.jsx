@@ -3,9 +3,11 @@ import { useState } from "react";
 
 export const TaskGridCell = ({ taskData }) => {
   const [hovered, setHovered] = useState(false);
+
   const onEnter = () => setHovered(true);
   const onLeave = () => setHovered(false);
-  const cellClass = hovered ? `${s.gridCell} ${s.hovered}` : s.gridCell;
+
+  const baseClass = hovered ? `${s.gridCell} ${s.hovered}` : s.gridCell;
 
   const cells = [
     taskData.number,
@@ -19,16 +21,22 @@ export const TaskGridCell = ({ taskData }) => {
 
   return (
     <>
-      {cells.map((text, i) => (
-        <div
-          key={i}
-          className={cellClass}
-          onMouseEnter={onEnter}
-          onMouseLeave={onLeave}
-        >
-          <span>{text}</span>
-        </div>
-      ))}
+      {cells.map((text, i) => {
+        let extraClass = "";
+        if (i === 0) extraClass = s.first_column;
+        else if (i === 1) extraClass = s.second_column;
+
+        return (
+          <div
+            key={i}
+            className={`${baseClass} ${extraClass}`}
+            onMouseEnter={onEnter}
+            onMouseLeave={onLeave}
+          >
+            <span>{text}</span>
+          </div>
+        );
+      })}
     </>
   );
 };

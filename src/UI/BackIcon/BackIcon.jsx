@@ -3,7 +3,7 @@ import s from "./BackIcon.module.scss";
 export const BackIcon = ({ theme }) => {
 
   const color = theme === "dark" ? "#fff" : "#000";
-  console.log(color)
+
   return (
     <svg
       className={s.svg}

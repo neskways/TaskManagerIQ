@@ -8,7 +8,7 @@ export const getTaskInfo = async (taskID) => {
 
     // Приводим к формату 9 цифр с ведущими нулями
     const formattedTaskID = taskID.toString().padStart(9, "0");
-    console.log(formattedTaskID);
+
     const response = await api.post(
       `${BASE_URL}/GetTaskInfo`,
       {

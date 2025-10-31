@@ -10,7 +10,6 @@ const LOCAL_STORAGE_KEY_TICKETS = "tickets_table_col_widths";
 const DEFAULT_WIDTHS = [5, 30, 20, 10, 13, 12, 10]; // 7 колонок
 
 export const TasksTable = ({ setShowFilter }) => {
-  
   const navigate = useNavigate();
 
   const [colWidths, setColWidths] = useState(
@@ -112,7 +111,8 @@ export const TasksTable = ({ setShowFilter }) => {
         </button>
       </div>
 
-      <div className={s.gridTableWrapper} ref={tableRef}>
+      <div className={s.gridTableWrapper}>
+        {/* 🔹 Фиксированная шапка */}
         <div className={s.gridHeaderRow} style={{ gridTemplateColumns }}>
           {headersTitleTickets.map((header, i) => (
             <div key={i} className={s.gridHeader}>
@@ -127,16 +127,19 @@ export const TasksTable = ({ setShowFilter }) => {
           ))}
         </div>
 
-        {tasks.map((task, index) => (
-          <div
-            key={index}
-            className={s.gridRow}
-            style={{ gridTemplateColumns }}
-            onClick={() => navigate(`/ticket/${task.number}`)} // переход по клику
-          >
-            <TaskGridCell taskData={task} />
-          </div>
-        ))}
+        {/* 🔹 Скроллируемое тело */}
+        <div className={s.gridBody} ref={tableRef}>
+          {tasks.map((task, index) => (
+            <div
+              key={index}
+              className={s.gridRow}
+              style={{ gridTemplateColumns }}
+              onClick={() => navigate(`/ticket/${task.number}`)}
+            >
+              <TaskGridCell taskData={task} />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

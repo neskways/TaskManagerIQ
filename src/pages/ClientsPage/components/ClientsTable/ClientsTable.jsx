@@ -7,37 +7,41 @@ export const ClientsTable = ({
   colWidths,
   handleMouseDown,
   tableRef,
-  setSelectedClient
+  setSelectedClient,
 }) => {
   const gridTemplateColumns = colWidths.map((w) => `${w}%`).join(" ");
 
   return (
-    <div
-      ref={tableRef}
-      className={s.gridTable}
-      style={{ gridTemplateColumns }}
-    >
-      {headersTitle.map((header, i) => (
-        <div key={i} className={s.gridHeader}>
-          <div className={s.headerCell}>
-            <span className={s.header_span}>{header}</span>
-            {i < headersTitle.length - 1 && (
-              <div
-                className={s.resizer}
-                onMouseDown={(e) => handleMouseDown(e, i)}
-              />
-            )}
+    <div className={s.gridTableWrapper}>
+      <div className={s.gridHeaderRow} style={{ gridTemplateColumns }}>
+        {headersTitle.map((header, i) => (
+          <div key={i} className={s.gridHeader}>
+            <div className={s.headerCell}>
+              <span className={s.header_span}>{header}</span>
+              {i < headersTitle.length - 1 && (
+                <div
+                  className={s.resizer}
+                  onMouseDown={(e) => handleMouseDown(e, i)}
+                />
+              )}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
 
-      {clients.map((client, index) => (
-        <ClientGridCell
-          key={index}
-          clientData={client}
-          setSelectedClient={setSelectedClient}
-        />
-      ))}
+      <div
+        ref={tableRef}
+        className={s.gridBody}
+        style={{ gridTemplateColumns }}
+      >
+        {clients.map((client, index) => (
+          <ClientGridCell
+            key={index}
+            clientData={client}
+            setSelectedClient={setSelectedClient}
+          />
+        ))}
+      </div>
     </div>
   );
 };

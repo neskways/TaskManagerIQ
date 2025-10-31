@@ -1,15 +1,9 @@
 import { api } from "./axios";
 import Cookies from "js-cookie";
 
-/**
- * Авторизация пользователя
- * @param {string} login - Логин
- * @param {string} password - Пароль
- * @returns {Promise<{ token: string, userId: string, user: string, role: string }>}
- */
 export const loginUser = async (login, password) => {
-  
   const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  const TOKEN_LIFETIME = Number(import.meta.env.VITE_TOKEN_LIFETIME) || 0.6;
 
   try {
     const response = await api.post(
@@ -23,7 +17,6 @@ export const loginUser = async (login, password) => {
 
     const fixed = (response.data || "").replace(/'/g, '"');
     const parsed = JSON.parse(fixed);
-
     const data = Array.isArray(parsed) ? parsed[0] : parsed;
 
     if (!data || typeof data !== "object") {
@@ -31,11 +24,12 @@ export const loginUser = async (login, password) => {
     }
 
     const { User, Token, Role, UserCode } = data;
-    console.log(Role);
-    Cookies.set("token", Token, { expires: 1 });
-    Cookies.set("username", User ?? "Неизвестный пользователь", { expires: 1 });
-    Cookies.set("userCode", UserCode, { expires: 1 });
-    Cookies.set("role", Role ?? "Опущенный", { expires: 1 });
+
+    Cookies.set("token", Token, { expires: TOKEN_LIFETIME });
+    Cookies.set("username", User ?? "Неизвестный пользователь", { expires: TOKEN_LIFETIME });
+    Cookies.set("userCode", UserCode, { expires: TOKEN_LIFETIME });
+    //Cookies.set("role", Role ?? "Сотрудник", { expires: TOKEN_LIFETIME });
+    Cookies.set("role", "Руководитель", { expires: TOKEN_LIFETIME });
 
     return { token: Token, user: User ?? "", userCode: UserCode, role: Role ?? "" };
   } catch (error) {

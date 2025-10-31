@@ -1,0 +1,108 @@
+.checkbox_container {
+  display: flex;
+  gap: 20px;
+  padding: 10px;
+  background: var(--bg-color);
+  border-radius: 12px;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -2px rgba(0, 0, 0, 0.05);
+}
+
+.ios_checkbox {
+  --checkbox-size: 16px;
+
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ios_checkbox input {
+  display: none;
+}
+
+.checkbox_wrapper {
+  position: relative;
+  width: var(--checkbox-size);
+  height: var(--checkbox-size);
+  border-radius: 8px;
+  transition: transform 0.2s ease;
+}
+
+.checkbox_bg {
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  border: 2px solid var(--checkbox-border);
+  background: var(--bg-color);
+  transition: all 0.2s ease;
+}
+
+.checkbox_icon {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 80%;
+  height: 80%;
+  color: white;
+  transform: scale(0);
+  transition: all 0.2s ease;
+}
+
+.check_path {
+  stroke-dasharray: 40;
+  stroke-dashoffset: 40;
+  transition: stroke-dashoffset 0.3s ease 0.1s;
+}
+
+/* Checked State */
+.ios_checkbox input:checked + .checkbox_wrapper .checkbox_bg {
+  background: var(--checkbox-color);
+  border-color: var(--checkbox-color);
+}
+
+.ios_checkbox input:checked + .checkbox_wrapper .checkbox_icon {
+  transform: scale(1);
+}
+
+.ios_checkbox input:checked + .checkbox_wrapper .check_path {
+  stroke-dashoffset: 0;
+}
+
+/* Hover Effects */
+.ios_checkbox:hover .checkbox_wrapper {
+  transform: scale(1.05);
+}
+
+/* Active Animation */
+.ios_checkbox:active .checkbox_wrapper {
+  transform: scale(0.95);
+}
+
+/* Focus Styles */
+.ios_checkbox input:focus + .checkbox_wrapper .checkbox_bg {
+  box-shadow: 0 0 0 4px var(--checkbox-bg);
+}
+
+.ios_checkbox.red {
+  --checkbox-color: var(--accent-color);
+  --checkbox-bg: #fee2e2;
+  --checkbox-border: var(--accent-color-secondary);
+}
+
+/* Animation */
+@keyframes bounce {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.ios_checkbox input:checked + .checkbox_wrapper {
+  animation: bounce 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}

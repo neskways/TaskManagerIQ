@@ -10,6 +10,7 @@
   cursor: pointer;
   border-bottom: 1px solid var(--border-color);
   transition: var(--transition);
+  background-color: var(--bg-color);
 }
 .hovered {
   background-color: var(--bg-color-hover-second);
@@ -21,4 +22,13 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   flex: 1;
+}
+
+.first_column {
+  color: var(text-color-secondary);
+}
+
+.second_column {
+  color: var(--accent-color-secondary);
+
 }

@@ -18,7 +18,7 @@ import { NewContactForm } from "./components/NewContactForm/NewContactForm";
 import { ContentWrapper } from "../../UI/ContentWrapper/ContentWrapper";
 
 export const CreateTicketPage = () => {
-  const lastSecondaryPath = getFromLocalStorage("last_secondary_sidebar_path");
+  const lastSecondaryPath = getFromLocalStorage("last_link_path");
   const navigate = useNavigate();
 
   const [selectedClient, setSelectedClient] = useState(null);
@@ -43,7 +43,6 @@ export const CreateTicketPage = () => {
   const { configOptions, selectedConfig, setSelectedConfig, loading: configsLoading } =
     useConfigurations(selectedClient);
 
-  // ✅ общий флаг готовности данных
   const dataReady = !configsLoading && configOptions.length > 0 && contactOptions.length > 0;
 
   const showValidationPopup = (text) => {

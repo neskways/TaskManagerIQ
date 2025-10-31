@@ -1,24 +1,35 @@
 .gridTableWrapper {
   width: 100%;
-  padding: 30px 40px;
   height: 100%;
 }
 
-.gridTable {
+
+/* 🔹 Шапка — фиксируется при скролле */
+.gridHeaderRow {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-rows: 50px;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--bg-color-tertiary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* 🔹 Тело таблицы со скроллом */
+.gridBody {
   display: grid;
   grid-auto-rows: 50px;
   width: 100%;
   min-width: 600px;
-  height: 93%;
+  height: 87%;
   overflow-y: auto;
-  padding-right: 10px;
+  overflow-x: hidden;
+  background: var(--bg-color);
 }
 
+/* 🔹 Отдельная ячейка заголовка */
 .gridHeader {
-  font-size: 16px;
-}
-
-.gridHeader{
   font-size: 16px;
   padding: 0 8px;
   overflow: hidden;
@@ -27,7 +38,7 @@
   display: flex;
   align-items: center;
   min-height: 40px;
-  background: var(--bg-color-tertiary);
+  position: relative;
 }
 
 .headerCell {
@@ -42,7 +53,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  flex: 1 1 auto; 
+  flex: 1 1 auto;
   min-width: 0;
 }
 
@@ -52,11 +63,10 @@
   bottom: 0;
   right: -5px;
   width: 10px;
-  height: 30px; 
+  height: 30px;
   cursor: col-resize;
   z-index: 10;
   background-color: transparent;
-  // Для удобства
   display: flex;
   align-items: center;
   justify-content: center;
@@ -65,9 +75,8 @@
 .resizer::after {
   content: '';
   display: block;
-  width: 2px;
+  width: 1px;
   height: 60%;
-  background-color: var(--bg-color);
-  border-radius: var(--border-radius);
+  background-color: var(--border-color);
   border-radius: 1px;
 }

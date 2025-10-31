@@ -1,5 +1,4 @@
 import s from "./UniversalTicketsSheet.module.scss";
-import { getTasksList } from "../../api/get/getTasksList";
 import { TasksTable } from "./components/TasksTable/TasksTable";
 import { PageTitle } from "../../components/PageTitle/PageTitle";
 import { SidebarFilter } from "./components/SidebarFilter/SidebarFilter";

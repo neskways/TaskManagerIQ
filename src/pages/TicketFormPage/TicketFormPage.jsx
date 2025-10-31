@@ -14,7 +14,7 @@ import { Loading } from "../../UI/Loading/Loading";
 
 export const TicketFormPage = () => {
   const { id } = useParams();
-  const lastSecondaryPath = getFromLocalStorage("last_secondary_sidebar_path");
+  const lastSecondaryPath = getFromLocalStorage("last_link_path");
   const { theme } = useTheme();
 
   const [task, setTask] = useState(null);

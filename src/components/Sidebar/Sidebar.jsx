@@ -1,17 +1,23 @@
 import s from "./Sidebar.module.scss";
 import { useState } from "react";
-import { sidebarItems } from "./sidebarLinks"; 
+import { sidebarItems } from "./sidebarLinks";
 import { useTheme } from "../../context/ThemeContext";
 import { NavLink, useLocation } from "react-router-dom";
+import { saveToLocalStorage } from "../../modules/localStorageUtils";
 import { HeaderSidebar } from "./components/HeaderSidebar/HeaderSidebar";
 import { FooterSidebar } from "./components/FooterSidebar/FooterSidebar";
 
 export const Sidebar = () => {
-  
   const location = useLocation();
   const currentPath = location.pathname;
+  
   const [isActiveBox, setIsActiveBox] = useState(false);
   const { theme } = useTheme();
+
+  const handleLinkClick = (path) => {
+    saveToLocalStorage("last_link_path", path);
+    setIsActiveBox(false);
+  };
 
   return (
     <>
@@ -24,10 +30,10 @@ export const Sidebar = () => {
               <li className={s.menu_item} key={label}>
                 <NavLink
                   to={path}
+                  onClick={() => handleLinkClick(path)}
                   className={`${s.menu_link} ${
                     isActive(currentPath) ? s.active : ""
                   }`}
-                  onClick={() => setIsActiveBox(false)}
                 >
                   <Icon isActive={isActive(currentPath)} theme={theme} />
                   {label}

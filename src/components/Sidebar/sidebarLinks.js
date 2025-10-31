@@ -6,7 +6,7 @@ import { StatiscticsIcon } from "./UI/StatiscticsIcon/StatiscticsIcon";
 
 export const sidebarItems = [
   {
-    label: "Списки",
+    label: "Задачи",
     path: "/tasks",
     isActive: (currentPath) => currentPath.startsWith("/tasks"),
     Icon: ListIcon,
