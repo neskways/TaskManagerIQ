@@ -15,7 +15,7 @@ export const Sidebar = () => {
   const { theme } = useTheme();
 
   const handleLinkClick = (path) => {
-    saveToLocalStorage("last_link_path", path);
+    saveToLocalStorage("last_link_path", path);    
     setIsActiveBox(false);
   };
 
