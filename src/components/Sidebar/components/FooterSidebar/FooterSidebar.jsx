@@ -7,11 +7,10 @@ import { ProfileBox } from "../ProfileBox/Profilebox";
 
 export const FooterSidebar = React.memo(({ isActiveBox, setIsActiveBox }) => {
 
-  const role = "Дежурный";
-  //const role = Cookies.get("role");
+  const role = Cookies.get("role");
 
   return (
-    <footer className={`${s.footer} ${role === "Сотрудник" ? s.not_duty : ""}`}>
+    <footer className={`${s.footer} ${role === import.meta.env.VITE_TOKEN_EMPLOYEE ? s.not_duty : ""}`}>
       <button
         className={`${s.footer_block} ${s.profile} ${
           isActiveBox === true && s.active
@@ -20,7 +19,7 @@ export const FooterSidebar = React.memo(({ isActiveBox, setIsActiveBox }) => {
       >
         <img className={s.img} src="/images/avatars/ava2.jpg" alt="" />
       </button>
-      {role !== "Сотрудник" && 
+      {role !== import.meta.env.VITE_TOKEN_EMPLOYEE && 
       <div className={s.link_wrap}>
         <NavLink
           className={`${s.footer_block} ${s.create}`}

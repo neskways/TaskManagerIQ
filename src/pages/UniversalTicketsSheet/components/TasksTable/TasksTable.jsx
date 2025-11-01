@@ -36,7 +36,8 @@ export const TasksTable = ({ setShowFilter }) => {
     const fetchTasks = async () => {
       setLoading(true);
       try {
-        const data = await getTasksList();
+        const states = ["000000003", "000000004"]
+        const data = await getTasksList(states);
         const mapped = data.map((item) => ({
           number: parseInt(item.number, 10),
           title: item.title,

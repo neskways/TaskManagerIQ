@@ -51,6 +51,7 @@ export const ProfilePage = () => {
         <img
           className={s.logo_opacity}
           src={theme === "light" ? lightLogo : darkLogo}
+          onDoubleClick={() => window.open("https://vk.com/furryevent", "_blank")}
           alt=""
         />
       </div>

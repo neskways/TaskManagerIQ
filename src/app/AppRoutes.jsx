@@ -36,7 +36,6 @@ const NavigateFromLogin = ({ children }) => {
   return <Navigate to={saved} replace />;
 };
 
-
 export const AppRoutes = () => {
   return (
     <Routes>
@@ -154,12 +153,19 @@ export const AppRoutes = () => {
             }
           />
         </Route>
+        //Страница создания заявки // Страница создания заявки
+        <Route
+          path="/create"
+          element={
+            <RoleProtectedRoute allowDuty allowManagement>
+              <CreateTicketPage />
+            </RoleProtectedRoute>
+          }
+        />
         //Страница задачи
         <Route path="/ticket/:id" element={<TicketFormPage />} />
         //Страница статистики пользователя по выполненым задачам
         <Route path="/statistics" element={<StatisticsPage />}></Route>
-        //Страница создания заявки
-        <Route path="/create" element={<CreateTicketPage />}></Route>
         //Страница со списком всех клиентов
         <Route path="/clients" element={<ClientsPage />}></Route>
         //Страница профиля

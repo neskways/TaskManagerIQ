@@ -6,13 +6,14 @@ import { TimerTasks } from "./components/TimerTasks/TimerTasks";
 import { Screamer } from "../Screamer/Screamer";
 
 export const MainLayout = () => {
-  const [showScreamer, setShowScreamer] = useState(false);
+
+  // const [showScreamer, setShowScreamer] = useState(false);
 
   // useEffect(() => {
   //   const interval = setInterval(() => {
   //     setShowScreamer(true);
   //     setTimeout(() => setShowScreamer(false), 100);
-  //   }, 100); 
+  //   }, 60000); 
 
   //   return () => clearInterval(interval);
   // }, []);
@@ -25,7 +26,7 @@ export const MainLayout = () => {
         <Outlet />
       </main>
 
-      {showScreamer && <Screamer />}
+      {/* {showScreamer && <Screamer />} */}
     </div>
   );
 };

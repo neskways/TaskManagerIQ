@@ -1,14 +1,16 @@
 import { api } from "../axios";
 import Cookies from "js-cookie";
 
-export const getTasksList = async () => {
+export const getTasksList = async (states) => {
   try {
     const BASE_URL = import.meta.env.VITE_API_BASE_URL;
     const token = Cookies.get("token");
 
     const response = await api.post(
       `${BASE_URL}/GetTasksList`,
-      { token },
+      { Token: token,
+        State: states
+       },
       { responseType: "text" }
     );
 
