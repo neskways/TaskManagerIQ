@@ -28,8 +28,7 @@ export const loginUser = async (login, password) => {
     Cookies.set("token", Token, { expires: TOKEN_LIFETIME });
     Cookies.set("username", User ?? "Неизвестный пользователь", { expires: TOKEN_LIFETIME });
     Cookies.set("userCode", UserCode, { expires: TOKEN_LIFETIME });
-    //Cookies.set("role", Role ?? "Сотрудник", { expires: TOKEN_LIFETIME });
-    Cookies.set("role", "Руководитель", { expires: TOKEN_LIFETIME });
+    Cookies.set("role", Role ?? import.meta.env.VITE_TOKEN_EMPLOYEE, { expires: TOKEN_LIFETIME });
 
     return { token: Token, user: User ?? "", userCode: UserCode, role: Role ?? "" };
   } catch (error) {

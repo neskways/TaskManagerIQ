@@ -1,5 +1,3 @@
-@import url("../../styles/variabales.scss");
-
 .wrapper {
   width: 100%;
   padding: 35px 40px;
@@ -14,4 +12,24 @@
   padding: 30px 20px;
   margin-bottom: 20px;
   position: relative;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  0% {
+    transform: translateY(5px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.inner {
+  opacity: 0.9;
+  transition: all 0.3s ease-out;
+}
+
+.inner.show {
+  opacity: 1;
+  transform: translateY(0);
 }

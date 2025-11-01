@@ -2,16 +2,14 @@ import { Navigate } from "react-router-dom";
 import { getFromLocalStorage } from "../../modules/localStorageUtils";
 
 export const TaskRedirect = () => {
-  const defaultPath = "my_assigned";
-  const fullSavedPath = getFromLocalStorage(
-    "last_link_path",
-    `/ticket/${defaultPath}`
-  );
+  const defaultPath = "/tasks/my_assigned";
+  const saved = getFromLocalStorage("last_tasks_path", defaultPath);
 
-  const match = fullSavedPath.match(/^\/ticket\/(.+)$/);
-  const nestedPath = match ? match[1] : defaultPath;
+  if (!saved.startsWith("/tasks/")) {
+    return <Navigate to="my_assigned" replace />;
+  }
 
-  return <Navigate to={nestedPath} replace />;
+  const subPath = saved.replace("/tasks/", "");
 
-  return <Navigate to={nestedPath} replace />;
+  return <Navigate to={subPath} replace />;
 };

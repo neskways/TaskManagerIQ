@@ -12,7 +12,7 @@ export const MainLayout = () => {
   //   const interval = setInterval(() => {
   //     setShowScreamer(true);
   //     setTimeout(() => setShowScreamer(false), 100);
-  //   }, 600000); 
+  //   }, 100); 
 
   //   return () => clearInterval(interval);
   // }, []);

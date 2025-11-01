@@ -8,10 +8,13 @@ export const SidebarSecondary = () => {
  
   const role = Cookies.get("role");
   const count = 0;
+  
+const handleLinkClick = (path) => {
+  if (path.startsWith("/tasks/")) {
+    saveToLocalStorage("last_tasks_path", path);
+  }
+};
 
-  const handleLinkClick = (path) => {
-    saveToLocalStorage("last_link_path", path);
-  };
 
   // Фильтруем меню по роли
   const filteredItems = sidebarSecondaryItems.filter((item) => {

@@ -31,10 +31,11 @@ const NavigateFromLogin = ({ children }) => {
   if (!isAuthenticated) return children;
 
   const defaultPath = "/tasks/my_assigned";
-  const saved = getFromLocalStorage("last_link_path", defaultPath);
+  const saved = getFromLocalStorage("last_tasks_path", defaultPath);
 
   return <Navigate to={saved} replace />;
 };
+
 
 export const AppRoutes = () => {
   return (
@@ -64,10 +65,11 @@ export const AppRoutes = () => {
             </PrivateRoute>
           }
         />
-        {/* Перенаправляет на странице /ticket по умолчанию */}
-        <Route index element={<Navigate to="/tasks" replace />} />
-        {/* Страница с задачами, по умолчанию показывает список задач пользователя */}
+        {/* Главный редирект со слеша */}
+        <Route index element={<Navigate to="/tasks" />} />
+        {/* Блок задач */}
         <Route path="/tasks" element={<TicketPage />}>
+          {/* если просто /tasks → перенаправляем на последнее место */}
           <Route index element={<TaskRedirect />} />
 
           <Route
