@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import s from "./ProfilePage.module.scss";
 import Cookies from "js-cookie";
 import { useTheme } from "../../context/ThemeContext";
@@ -5,6 +6,13 @@ import { PageTitle } from "../../components/PageTitle/PageTitle";
 import { ProfileBlock } from "./Components/ProfileBlock/ProfileBlock";
 
 export const ProfilePage = () => {
+
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => setVisible(true), 10);
+    return () => clearTimeout(timeout);
+  }, []);
 
   const username = Cookies.get("username");
   const { theme } = useTheme();
@@ -17,7 +25,7 @@ export const ProfilePage = () => {
   return (
     <>
       <div className={s.wrapper}>
-        <div className={s.inner}>
+        <div className={`${s.inner} ${visible ? s.show : ""}`}>
           <PageTitle titleText={"Профиль"} center={true} />
           <div className={s.profile_wrapper}>
             <div className={s.img_block}>
@@ -29,20 +37,23 @@ export const ProfilePage = () => {
               <a
                 className={s.iqcompany}
                 href="https://iqprog.ru/"
-                target="_black"
+                target="_blank"
+                rel="noreferrer"
               >
-                {" "}
-                АйКю Компани{" "}
+                АйКю Компани
               </a>
             </div>
           </div>
           <h4 className={s.second_title}>Текущие задачи</h4>
-              {/* <p className={s.role}> {token} </p> */}
-          { UserCode === "000000002" && <ProfileBlock/> }
-        
+          {/* <p className={s.role}> {token} </p> */}
+          {UserCode === "000000002" && <ProfileBlock />}
         </div>
-        <img className={s.logo_opacity} src={theme === "light" ? lightLogo : darkLogo} alt="" />
-      </div>   
+        <img
+          className={s.logo_opacity}
+          src={theme === "light" ? lightLogo : darkLogo}
+          alt=""
+        />
+      </div>
     </>
   );
 };
