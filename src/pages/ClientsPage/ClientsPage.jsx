@@ -1,5 +1,5 @@
 import s from "./ClientsPage.module.scss";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { PageTitle } from "../../components/PageTitle/PageTitle";
 import { ClientsTable } from "./components/ClientsTable/ClientsTable";
 import { ClientModal } from "./components/ClientModal/ClientModal";
@@ -19,17 +19,14 @@ const CACHE_KEY = "clientsCache";
 
 export const ClientsPage = () => {
   const { theme } = useTheme();
+  const { showPopup } = usePopup();
+  const { colWidths, tableRef, handleMouseDown } = useResizableTable();
 
-  // ✅ Сразу читаем кэш
   const cachedClients = getFromLocalStorage(CACHE_KEY, null);
-
   const [clients, setClients] = useState(cachedClients || []);
   const [selectedClient, setSelectedClient] = useState(null);
   const [initialLoading, setInitialLoading] = useState(!cachedClients);
   const [spinning, setSpinning] = useState(false);
-
-  const { showPopup } = usePopup();
-  const { colWidths, tableRef, handleMouseDown } = useResizableTable();
 
   const loadClients = async (force = false) => {
     if (!force && cachedClients) return;
@@ -41,7 +38,10 @@ export const ClientsPage = () => {
       saveToLocalStorage(CACHE_KEY, data);
     } catch (err) {
       console.error("Ошибка при загрузке клиентов:", err);
-      showPopup("Ошибка при загрузке клиентов!", { type: false });
+
+      if (err.response?.status !== 401) {
+        showPopup("Ошибка при загрузке клиентов!", { type: false });
+      }
     } finally {
       setInitialLoading(false);
       setSpinning(false);
@@ -49,9 +49,7 @@ export const ClientsPage = () => {
   };
 
   useEffect(() => {
-    if (!cachedClients) {
-      loadClients();
-    }
+    if (!cachedClients) loadClients();
   }, []);
 
   const handleRefresh = async () => {

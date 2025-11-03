@@ -7,7 +7,6 @@ import { useUpdateSchedule } from "./hooks/useUpdateSchedule";
 import { ReloadIcon } from "../../../../UI/ReloadIcon/ReloadIcon";
 
 export const UpdateScheduleTable = ({ theme }) => {
-
   const today = new Date();
   const monthStr = today.toLocaleString("ru-RU", { month: "long", year: "numeric" });
   const monthTitle = monthStr.charAt(0).toUpperCase() + monthStr.slice(1);
@@ -18,9 +17,10 @@ export const UpdateScheduleTable = ({ theme }) => {
 
   const { showPopup } = usePopup(); 
 
+  // Показываем popup только если ошибка НЕ 401
   useEffect(() => {
-    if (!loading && error) {
-      showPopup("Ошибка загрузки расписания", false);
+    if (!loading && error && error.response?.status !== 401) {
+      showPopup("Ошибка загрузки расписания", { type: false });
     }
   }, [loading, error, showPopup]);
 
@@ -31,7 +31,10 @@ export const UpdateScheduleTable = ({ theme }) => {
       await loadSchedule(true);
     } catch (err) {
       console.error("Ошибка при обновлении расписания:", err);
-      showPopup("Ошибка при обновлении расписания", false);
+      if (err.response?.status !== 401) {
+        showPopup("Ошибка при обновлении расписания", { type: false });
+      }
+      // 401 уже обработан interceptor'ом
     } finally {
       setTimeout(() => setSpinning(false), 1000);
     }
@@ -77,9 +80,9 @@ export const UpdateScheduleTable = ({ theme }) => {
         <div className={s.centerWrapper}>
           <Loading className={s.loading} />
         </div>
-      ) : error ? (
+      ) : schedule.length === 0 ? (
         <div className={s.centerWrapper}>
-          <p className={s.errorText}>Не удалось загрузить расписание</p>
+          <p className={s.errorText}>Нет данных для отображения</p>
         </div>
       ) : (
         <div className={s.tableWrapper}>

@@ -18,7 +18,6 @@ import {
 } from "date-fns";
 
 export const Calendar = ({ theme }) => {
-
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [displayMonth, setDisplayMonth] = useState(new Date());
   const [schedule, setSchedule] = useState([]);
@@ -31,6 +30,7 @@ export const Calendar = ({ theme }) => {
 
   const loadSchedule = async (month, year, force = false) => {
     const key = `schedule-${year}-${month}`;
+
     if (!force) {
       const cached = loadCache(key);
       if (cached) {
@@ -40,12 +40,20 @@ export const Calendar = ({ theme }) => {
 
     try {
       const data = await getSchedule(month, year);
-      const normalized = data.map((item) => ({ ...item, date: new Date(item.date) }));
+      const normalized = data.map((item) => ({
+        ...item,
+        date: new Date(item.date),
+      }));
       saveCache(key, normalized);
       return normalized;
     } catch (err) {
       console.error("Ошибка при загрузке расписания:", err);
-      showPopup("Ошибка загрузки данных", false); 
+
+      // Показываем popup только если ошибка НЕ 401
+      if (err.response?.status !== 401) {
+        showPopup("Ошибка загрузки данных", { type: false });
+      }
+
       return null;
     }
   };
@@ -54,8 +62,10 @@ export const Calendar = ({ theme }) => {
     if (spinning) return;
     setSpinning(true);
     setInitialLoading(true);
+
     const month = currentMonth.getMonth() + 1;
     const year = currentMonth.getFullYear();
+
     const data = await loadSchedule(month, year, true);
     if (data) setSchedule(data);
     setInitialLoading(false);
@@ -92,7 +102,9 @@ export const Calendar = ({ theme }) => {
   const renderDays = () => {
     const days = [];
     const dateFormat = "EEEEEE";
-    const startDate = startOfWeek(startOfMonth(displayMonth), { weekStartsOn: 1 });
+    const startDate = startOfWeek(startOfMonth(displayMonth), {
+      weekStartsOn: 1,
+    });
 
     for (let i = 0; i < 7; i++) {
       days.push(
@@ -139,7 +151,9 @@ export const Calendar = ({ theme }) => {
             } ${isPastDay ? s.closen_day : ""}`}
             key={day.toISOString()}
           >
-            <span className={s.dateNum}>{format(day, "d", { locale: ru })}</span>
+            <span className={s.dateNum}>
+              {format(day, "d", { locale: ru })}
+            </span>
             <div className={s.dataStub}>
               {dutyNames && (
                 <span

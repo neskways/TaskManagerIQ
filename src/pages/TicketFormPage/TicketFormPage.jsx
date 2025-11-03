@@ -1,26 +1,28 @@
 import s from "./TicketFormPage.module.scss";
-import { PageTitle } from "../../components/PageTitle/PageTitle";
-import { Link, useParams } from "react-router-dom";
-import { TaskTitleAndText } from "./components/TaskTitleAndText/TaskTitleAndText";
-import { TaskTextBlock } from "./components/TaskTextBlock/TaskTextBlock";
-import { MultipleInput } from "../../UI/MultipleInput/MultipleInput";
-import { ContentWrapper } from "../../UI/ContentWrapper/ContentWrapper";
-import { getFromLocalStorage } from "../../modules/localStorageUtils";
-import { BackIcon } from "../../UI/BackIcon/BackIcon";
-import { useTheme } from "../../context/ThemeContext";
 import { useEffect, useState } from "react";
-import { getTaskInfo } from "../../api/get/getTaskInfo";
 import { Loading } from "../../UI/Loading/Loading";
+import { useTheme } from "../../context/ThemeContext";
+import { usePopup } from "../../context/PopupContext";
+import { BackIcon } from "../../UI/BackIcon/BackIcon";
+import { getTaskInfo } from "../../api/get/getTaskInfo";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { PageTitle } from "../../components/PageTitle/PageTitle";
+import { MultipleInput } from "../../UI/MultipleInput/MultipleInput";
+import { getFromLocalStorage } from "../../modules/localStorageUtils";
+import { ContentWrapper } from "../../UI/ContentWrapper/ContentWrapper";
+import { TaskTextBlock } from "./components/TaskTextBlock/TaskTextBlock";
+import { TaskTitleAndText } from "./components/TaskTitleAndText/TaskTitleAndText";
 
 export const TicketFormPage = () => {
   const { id } = useParams();
   const lastSecondaryPath = getFromLocalStorage("last_link_path");
   const { theme } = useTheme();
+  const navigate = useNavigate();
+  const { showPopup } = usePopup();
 
   const [task, setTask] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Форматируем дату в dd.mm.yyyy hh:mm:ss
   const formatDate = (date) => {
     if (!date) return "";
     const d = String(date.getDate()).padStart(2, "0");
@@ -36,14 +38,13 @@ export const TicketFormPage = () => {
     const fetchTask = async () => {
       setLoading(true);
       try {
-        // Формируем 9-значный ID с ведущими нулями
         const taskId = String(id).padStart(9, "0");
         const data = await getTaskInfo(taskId);
 
         if (data) {
           setTask({
             taskId: parseInt(data.taskId, 10),
-            client: data.clientid,
+            client: data.client,
             title: data.title,
             description: data.description,
             conf: data.conf,
@@ -57,9 +58,14 @@ export const TicketFormPage = () => {
               date: new Date(c.date),
             })),
           });
+        } else {
+          setTask(null);
         }
       } catch (err) {
         console.error("Ошибка при загрузке заявки:", err);
+        if (err?.response?.status !== 401) {
+          showPopup("Не удалось загрузить заявку.", { type: false });
+        }
         setTask(null);
       } finally {
         setLoading(false);
@@ -67,7 +73,7 @@ export const TicketFormPage = () => {
     };
 
     fetchTask();
-  }, [id]);
+  }, [id, navigate, showPopup]);
 
   if (loading) {
     return (
@@ -89,13 +95,21 @@ export const TicketFormPage = () => {
 
   return (
     <ContentWrapper>
-      <Link to={lastSecondaryPath} className={s.btn_back} title="Вернуться назад">
+      <Link
+        to={lastSecondaryPath}
+        className={s.btn_back}
+        title="Вернуться назад"
+      >
         <BackIcon theme={theme} />
       </Link>
 
       <div className={s.left_side}>
-        <PageTitle titleText={`Заявка №${task.taskId}`} center={true} />
-        <TaskTitleAndText title={task.title} date={formatDate(task.date)} description={task.description} />
+        <PageTitle titleText={`Заявка №${task.taskId}`} center />
+        <TaskTitleAndText
+          title={task.title}
+          date={formatDate(task.date)}
+          description={task.description}
+        />
 
         {task.comments.map((c, i) => (
           <TaskTextBlock

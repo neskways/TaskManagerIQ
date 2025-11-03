@@ -6,7 +6,7 @@ export const useUpdateSchedule = (cacheKey = "update-schedule") => {
   const [schedule, setSchedule] = useState([]);
   const [daysInMonth, setDaysInMonth] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null); // ✅ добавлено
+  const [error, setError] = useState(null);
 
   const processData = (data) => {
     if (!data || data.length === 0) return [];
@@ -44,7 +44,7 @@ export const useUpdateSchedule = (cacheKey = "update-schedule") => {
         }));
         setSchedule(restored);
         setDaysInMonth(restored[0]?.updates.length || 0);
-        setError(null); // ✅ очистим ошибку, если загрузка из кэша успешна
+        setError(null); 
         return;
       }
     }
@@ -62,7 +62,7 @@ export const useUpdateSchedule = (cacheKey = "update-schedule") => {
       saveCache(cacheKey, processed);
     } catch (err) {
       console.error("Ошибка загрузки расписания:", err);
-      setError(err); // ✅ сохраняем ошибку
+      setError(err); 
       setSchedule([]);
       setDaysInMonth(0);
     } finally {

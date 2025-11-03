@@ -2,6 +2,7 @@ import s from "./TasksTable.module.scss";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { Loading } from "../../../../UI/Loading/Loading";
+import { usePopup } from "../../../../context/PopupContext";
 import { TaskGridCell } from "../TaskGridCell/TaskGridCell";
 import { getTasksList } from "../../../../api/get/getTasksList";
 import { headersTitleTickets } from "../../../../modules/TitlesForTables";
@@ -11,6 +12,7 @@ const DEFAULT_WIDTHS = [5, 30, 20, 10, 13, 12, 10]; // 7 колонок
 
 export const TasksTable = ({ setShowFilter }) => {
   const navigate = useNavigate();
+  const { showPopup } = usePopup();
 
   const [colWidths, setColWidths] = useState(
     () =>
@@ -36,8 +38,8 @@ export const TasksTable = ({ setShowFilter }) => {
     const fetchTasks = async () => {
       setLoading(true);
       try {
-        const states = ["000000003", "000000004"]
-        const data = await getTasksList(states);
+        const data = await getTasksList([]);
+
         const mapped = data.map((item) => ({
           number: parseInt(item.number, 10),
           title: item.title,
@@ -47,15 +49,22 @@ export const TasksTable = ({ setShowFilter }) => {
           priority: item.priority,
           timeSpent: item.timeSpent,
         }));
+
         setTasks(mapped);
       } catch (err) {
         console.error("Ошибка при загрузке задач:", err);
+          if (err.response?.status !== 401) {
+          showPopup("Не удалось загрузить задачи. Попробуйте позже.", {
+            type: false,
+          });
+        }
       } finally {
         setLoading(false);
       }
     };
+
     fetchTasks();
-  }, []);
+  }, [navigate, showPopup]);
 
   const handleMouseDown = (e, index) => {
     e.preventDefault();
@@ -113,7 +122,6 @@ export const TasksTable = ({ setShowFilter }) => {
       </div>
 
       <div className={s.gridTableWrapper}>
-        {/* 🔹 Фиксированная шапка */}
         <div className={s.gridHeaderRow} style={{ gridTemplateColumns }}>
           {headersTitleTickets.map((header, i) => (
             <div key={i} className={s.gridHeader}>
@@ -128,7 +136,6 @@ export const TasksTable = ({ setShowFilter }) => {
           ))}
         </div>
 
-        {/* 🔹 Скроллируемое тело */}
         <div className={s.gridBody} ref={tableRef}>
           {tasks.map((task, index) => (
             <div

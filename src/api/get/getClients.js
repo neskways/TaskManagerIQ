@@ -2,10 +2,10 @@ import { api } from "../axios";
 import Cookies from "js-cookie";
 
 export const getClients = async () => {
-  try {
-    const token = Cookies.get("token");
-    const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  const token = Cookies.get("token");
 
+  try {
     const response = await api.post(
       `${BASE_URL}/ClientGetList`,
       { Token: token },
@@ -18,6 +18,6 @@ export const getClients = async () => {
     return parsed || [];
   } catch (error) {
     console.error("Ошибка при загрузке клиентов:", error);
-    throw error;
+    throw error; 
   }
 };

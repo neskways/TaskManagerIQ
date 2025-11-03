@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Input } from "../../UI/Input/Input";
 import { Button } from "../../UI/Button/Button";
 import { useContacts } from "./hooks/useContacts";
+import { MESSAGES } from "../../modules/messages";
 import { Link, useNavigate } from "react-router-dom";
 import { usePopup } from "../../context/PopupContext";
 import { Selector } from "../../UI/Selector/Selector";
@@ -11,11 +12,11 @@ import { createTask } from "../../api/create/createTask";
 import { useConfigurations } from "./hooks/useConfigurations";
 import { PageTitle } from "../../components/PageTitle/PageTitle";
 import { MultipleInput } from "../../UI/MultipleInput/MultipleInput";
+import { ClientSearch } from "./components/ClientSearch/ClientSearch";
 import { getFromLocalStorage } from "../../modules/localStorageUtils";
 import { useClientsAndEmployees } from "./hooks/useClientsAndEmployees";
-import { ClientSearch } from "./components/ClientSearch/ClientSearch";
-import { NewContactForm } from "./components/NewContactForm/NewContactForm";
 import { ContentWrapper } from "../../UI/ContentWrapper/ContentWrapper";
+import { NewContactForm } from "./components/NewContactForm/NewContactForm";
 
 export const CreateTicketPage = () => {
   const lastSecondaryPath = getFromLocalStorage("last_link_path");
@@ -31,7 +32,11 @@ export const CreateTicketPage = () => {
   const { showPopup } = usePopup();
 
   // Хуки
-  const { clients, employeeOptions, loading: clientsLoading } = useClientsAndEmployees();
+  const {
+    clients,
+    employeeOptions,
+    loading: clientsLoading,
+  } = useClientsAndEmployees();
   const {
     contactOptions,
     selectedContactId,
@@ -40,10 +45,15 @@ export const CreateTicketPage = () => {
     setContactDetails,
     handleSelectContact,
   } = useContacts(selectedClient);
-  const { configOptions, selectedConfig, setSelectedConfig, loading: configsLoading } =
-    useConfigurations(selectedClient);
+  const {
+    configOptions,
+    selectedConfig,
+    setSelectedConfig,
+    loading: configsLoading,
+  } = useConfigurations(selectedClient);
 
-  const dataReady = !configsLoading && configOptions.length > 0 && contactOptions.length > 0;
+  const dataReady =
+    !configsLoading && configOptions.length > 0 && contactOptions.length > 0;
 
   const showValidationPopup = (text) => {
     showPopup(text, { type: false });
@@ -53,12 +63,18 @@ export const CreateTicketPage = () => {
     e.preventDefault();
 
     // Валидация
-    if (!title.trim()) return showValidationPopup("Пожалуйста, заполните заголовок!");
-    if (!selectedClient) return showValidationPopup("Пожалуйста, выберите клиента!");
-    if (!selectedEmployee) return showValidationPopup("Пожалуйста, выберите исполнителя!");
-    if (!description.trim()) return showValidationPopup("Пожалуйста, заполните описание задачи!");
-    if (!selectedConfig) return showValidationPopup("Пожалуйста, выберите конфигурацию!");
-    if (!contactDetails.name.trim()) return showValidationPopup("Пожалуйста, заполните контакт!");
+    if (!title.trim())
+      return showValidationPopup("Пожалуйста, заполните заголовок!");
+    if (!selectedClient)
+      return showValidationPopup("Пожалуйста, выберите клиента!");
+    if (!selectedEmployee)
+      return showValidationPopup("Пожалуйста, выберите исполнителя!");
+    if (!description.trim())
+      return showValidationPopup("Пожалуйста, заполните описание задачи!");
+    if (!selectedConfig)
+      return showValidationPopup("Пожалуйста, выберите конфигурацию!");
+    if (!contactDetails.name.trim())
+      return showValidationPopup("Пожалуйста, заполните контакт!");
 
     const token = Cookies.get("token");
     const userCode = Cookies.get("userCode");
@@ -79,10 +95,8 @@ export const CreateTicketPage = () => {
     try {
       let result = await createTask(payload);
 
-      // Если приходит строка — парсим её
       if (typeof result === "string") {
-        const fixed = result.replace(/'/g, '"');
-        result = JSON.parse(fixed);
+        result = JSON.parse(result.replace(/'/g, '"'));
       }
 
       if (result?.Error) {
@@ -91,15 +105,13 @@ export const CreateTicketPage = () => {
       }
 
       const cleanId = parseInt(result.taskid, 10);
-
       showPopup("Заявка успешно создана!", { type: true });
 
-      setTimeout(() => {
-        navigate(`/ticket/${cleanId}`);
-      }, 100);
+      setTimeout(() => navigate(`/ticket/${cleanId}`), 100);
     } catch (error) {
-      console.error(error);
-      showPopup("Не удалось создать заявку, попробуйте позже.", { type: false });
+      showPopup("Не удалось создать заявку, попробуйте позже.", {
+        type: false,
+      });
     }
   };
 
