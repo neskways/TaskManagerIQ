@@ -5,6 +5,7 @@
   height: 140px;
   padding: 5px;
   padding-right: 40px;
+  padding-left: 10px;
 }
 
 .headerBox {
@@ -16,6 +17,7 @@
   box-sizing: border-box;
   display: flex;
   align-items: center;
+  border: 1px solid var(--border-color);
 }
 
 .headerInner {
@@ -103,6 +105,7 @@
 
 /* правая панель 50% */
 .listBox {
+  border: 1px solid var(--border-color);
   flex: 1 1 50%;
   height: 130px;
   background: var(--bg-color);
@@ -167,21 +170,17 @@
 }
 
 .taskTime {
-  color: var(--text-color-secondary);
-  font-weight: 600;
+  color: var(--text-color);
+  font-weight: 500;
 }
-
-/* ========================================= */
-/* Разворот на весь экран — улучшенная версия */
-/* ========================================= */
 
 .expanded {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 80vw; /* было 90vw */
-  height: 80vh; /* стало меньше */
+  width: 80vw; 
+  height: 80vh; 
   z-index: 1001;
   display: flex;
   flex-direction: column;
@@ -197,6 +196,7 @@
 .expanded .listBox {
   flex: 1 1 100%;
   height: auto;
+  border: none;
 }
 
 .expanded .headerBox {
