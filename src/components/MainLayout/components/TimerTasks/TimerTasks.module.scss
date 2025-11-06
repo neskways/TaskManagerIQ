@@ -4,9 +4,9 @@
   align-items: stretch;
   height: 140px;
   padding: 5px;
+  padding-right: 40px;
 }
 
-/* левая шапка 50% */
 .headerBox {
   flex: 1 1 50%;
   height: 130px;
@@ -25,7 +25,6 @@
   justify-content: space-between;
 }
 
-/* Контролы (кнопки) */
 .controls {
   display: flex;
   gap: 8px;
@@ -134,18 +133,17 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 6px;
 }
 
 .taskItem {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 6px 8px;
-  border-radius: var(--border-radius);
+  padding: 10px 8px;
+  border-radius: 5px;
   cursor: pointer;
   transition: var(--transition);
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-color);
 }
 
@@ -154,7 +152,7 @@
 }
 
 .selected {
-  background: var(--accent-color-secondary);
+  background: var(--accent-color-secondary) !important;
 }
 
 .running {
@@ -171,4 +169,111 @@
 .taskTime {
   color: var(--text-color-secondary);
   font-weight: 600;
+}
+
+/* ========================================= */
+/* Разворот на весь экран — улучшенная версия */
+/* ========================================= */
+
+.expanded {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80vw; /* было 90vw */
+  height: 80vh; /* стало меньше */
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-color);
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 0 35px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+}
+
+/* В развёрнутом виде — делаем всё по центру */
+.expanded .headerBox,
+.expanded .listBox {
+  flex: 1 1 100%;
+  height: auto;
+}
+
+.expanded .headerBox {
+  border-bottom: 3px solid var(--border-color);
+  border-radius: 5px;
+}
+
+.expanded .headerInner {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 16px;
+}
+
+.expanded .controls {
+  justify-content: center;
+  gap: 16px;
+}
+
+.expanded .btn,
+.expanded .btnEnd {
+  padding: 12px 20px;
+  font-size: 16px;
+  border-radius: var(--border-radius);
+  width: 150px;
+}
+
+.expanded .timerBig {
+  font-size: 48px;
+  color: var(--accent-color);
+}
+
+.expanded .titleText {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-color);
+  text-align: center;
+  max-width: 80%;
+  white-space: normal;
+}
+
+/* Разделитель между шапкой и списком */
+.expanded {
+  gap: 20px;
+}
+
+.expanded .timerAndTitle {
+  justify-content: center;
+  align-items: center;
+  width: 80%;
+  order: -1;
+}
+
+/* Иконка разворота в углу */
+.expandIcon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: var(--text-color-secondary);
+  font-size: 22px;
+  cursor: pointer;
+  z-index: 1002;
+  transition: 0.2s;
+}
+
+.expandIcon:hover {
+  color: var(--accent-color);
+}
+
+/* затемнение заднего фона */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 1000;
+  backdrop-filter: blur(2px);
 }

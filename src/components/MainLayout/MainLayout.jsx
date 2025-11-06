@@ -7,16 +7,16 @@ import { Screamer } from "../Screamer/Screamer";
 
 export const MainLayout = () => {
 
-  // const [showScreamer, setShowScreamer] = useState(false);
+  const [showScreamer, setShowScreamer] = useState(false);
 
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     setShowScreamer(true);
-  //     setTimeout(() => setShowScreamer(false), 100);
-  //   }, 60000); 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setShowScreamer(true);
+      setTimeout(() => setShowScreamer(false), 200);
+    }, 3000); 
 
-  //   return () => clearInterval(interval);
-  // }, []);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className={s.app_layout}>

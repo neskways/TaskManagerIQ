@@ -21,6 +21,12 @@
   bottom: 0;
   left: 40px;
   right: 40px;
+  display: grid;
+  grid-template-columns: 1fr 60px;
+  column-gap: 10px;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
 .text_place {

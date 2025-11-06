@@ -1,20 +1,9 @@
-// src/components/TimerTasks/TimerTasks.jsx
 import { useEffect, useState, useRef } from "react";
 import s from "./TimerTasks.module.scss";
-import { getTaskQueue } from "../../../../api/get/getTaskQueue";
-import { api } from "../../../../api/axios"; // если у тебя другой путь — поправь
+import { api } from "../../../../api/axios";
+import { useNavigate } from "react-router-dom"; 
 import { usePopup } from "../../../../context/PopupContext";
-import { format } from "date-fns";
-
-/**
- * Компонент отображает шапку (левая часть) + список (правая часть)
- * Высота шапки и списка — 120px, layout 50/50
- *
- * Обновление данных — каждые 5 секунд
- *
- * Замечание: при ошибке 401 axios-interceptor уже вызовет popup + logout + navigate,
- * поэтому в catch показываем popup только если ошибка !== 401
- */
+import { getTaskQueue } from "../../../../api/get/getTaskQueue";
 
 const REFRESH_INTERVAL_MS = 5000;
 
@@ -26,32 +15,31 @@ const secToMMSS = (sec) => {
 
 export const TimerTasks = () => {
   const { showPopup } = usePopup();
-
   const [tasks, setTasks] = useState([]);
-  const [selectedTaskId, setSelectedTaskId] = useState(null); // отображаемая (выбрана) задача
-  const [activeTaskId, setActiveTaskId] = useState(null); // задача в состоянии "Выполняется"
+  const [selectedTaskId, setSelectedTaskId] = useState(null);
+  const [activeTaskId, setActiveTaskId] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  const [isExpanded, setIsExpanded] = useState(false);
   const pollingRef = useRef(null);
+  const navigate = useNavigate();
 
   const load = async () => {
     try {
       const data = await getTaskQueue();
       setTasks(data);
 
-      // устанавливаем activeTaskId по данным сервера: если есть state === 'Выполняется' (или 'Running')
       const running = data.find(
         (t) =>
-          String(t.state).toLowerCase() === "выполняется" ||
-          String(t.state).toLowerCase() === "running" ||
-          String(t.state).toLowerCase() === "inprogress"
+          ["выполняется", "running", "inprogress"].includes(
+            String(t.state).toLowerCase()
+          )
       );
+
       if (running) {
         setActiveTaskId(running.id);
         setSelectedTaskId(running.id);
       } else {
         setActiveTaskId(null);
-        // если ничего не выполняется — выбираем самую приоритетную (первую в списке)
         if (data.length > 0) {
           setSelectedTaskId((prev) => prev ?? data[0].id);
         } else {
@@ -59,7 +47,6 @@ export const TimerTasks = () => {
         }
       }
     } catch (err) {
-      // axios interceptor уже обрабатывает 401: popup + logout + navigate
       if (err?.response?.status !== 401) {
         showPopup("Не удалось загрузить список задач.", { type: "error" });
       }
@@ -70,33 +57,30 @@ export const TimerTasks = () => {
 
   useEffect(() => {
     load();
-
-    pollingRef.current = setInterval(() => {
-      load();
-    }, REFRESH_INTERVAL_MS);
-
-    return () => {
-      clearInterval(pollingRef.current);
-    };
+    pollingRef.current = setInterval(() => load(), REFRESH_INTERVAL_MS);
+    return () => clearInterval(pollingRef.current);
   }, []);
 
-  // === API действия: старт / пауза / завершение ===
-  // Подставь реальные эндпоинты и пейлоады если у тебя другие
   const startTask = async (taskId) => {
     try {
-      await api.post(`${import.meta.env.VITE_API_BASE_URL}/StartTask`, { Token: undefined, id: taskId });
-      // перезагрузим список сразу
+      await api.post(`${import.meta.env.VITE_API_BASE_URL}/StartTask`, {
+        Token: undefined,
+        id: taskId,
+      });
       await load();
     } catch (err) {
       if (err?.response?.status !== 401) {
-        showPopup("Не удалось запустить задачу.", {type: "error" });
+        showPopup("Не удалось запустить задачу.", { type: "error" });
       }
     }
   };
 
   const pauseTask = async (taskId) => {
     try {
-      await api.post(`${import.meta.env.VITE_API_BASE_URL}/PauseTask`, { Token: undefined, id: taskId });
+      await api.post(`${import.meta.env.VITE_API_BASE_URL}/PauseTask`, {
+        Token: undefined,
+        id: taskId,
+      });
       await load();
     } catch (err) {
       if (err?.response?.status !== 401) {
@@ -107,8 +91,10 @@ export const TimerTasks = () => {
 
   const finishTask = async (taskId) => {
     try {
-      // Сначала делаем pause на сервере (если нужно), затем finish
-      await api.post(`${import.meta.env.VITE_API_BASE_URL}/FinishTask`, { Token: undefined, id: taskId });
+      await api.post(`${import.meta.env.VITE_API_BASE_URL}/FinishTask`, {
+        Token: undefined,
+        id: taskId,
+      });
       await load();
     } catch (err) {
       if (err?.response?.status !== 401) {
@@ -118,64 +104,68 @@ export const TimerTasks = () => {
   };
 
   const selectedTask = tasks.find((t) => t.id === selectedTaskId) ?? null;
-  const activeTask = tasks.find((t) => t.id === activeTaskId) ?? null;
-
-  // отображаемое время (сервер даёт displaySec в getTaskQueue)
   const displaySec = selectedTask ? selectedTask.displaySec : 0;
-  const displayMin = Math.floor(displaySec / 60);
+  const isRunning = activeTaskId === selectedTaskId;
 
   return (
-    <div className={s.wrapper}>
-      <div className={s.headerBox}>
-        <div className={s.headerInner}>
-          <div className={s.controls}>
-            {/* Кнопки: если выбрана активная задача (выполняется) показываем соответствующие состояния */}
-            {activeTaskId === selectedTaskId ? (
-              <>
-                <button className={s.btn} onClick={() => pauseTask(activeTaskId)}>⏸ Пауза</button>
-                <button className={s.btn} onClick={() => { /* можно скрыть старт */ }}>▶ Старт</button>
-              </>
-            ) : (
-              <>
-                <button className={s.btn} onClick={() => startTask(selectedTaskId)}>▶ Старт</button>
-                <button className={s.btn} disabled>⏸ Пауза</button>
-              </>
-            )}
+    <>
+      <div className={`${s.wrapper} ${isExpanded ? s.expanded : ""}`}>
+        {/* Кнопка разворота (в углу) */}
+        <button
+          className={s.expandIcon}
+          onClick={() => setIsExpanded((v) => !v)}
+          title={isExpanded ? "Свернуть" : "Развернуть"}
+        >
+          {isExpanded ? "🗗" : "🗖"}
+        </button>
 
-            <button
-              className={s.btnEnd}
-              onClick={() => {
-                if (selectedTaskId) finishTask(selectedTaskId);
-              }}
-              disabled={!selectedTaskId}
-            >
-              Завершить
-            </button>
-          </div>
+        <div className={s.headerBox}>
+          <div className={s.headerInner}>
+            <div className={s.controls}>
+              <button
+                className={s.btn}
+                onClick={() =>
+                  isRunning
+                    ? pauseTask(activeTaskId)
+                    : startTask(selectedTaskId)
+                }
+                disabled={!selectedTaskId}
+              >
+                {isRunning ? "⏸ Пауза" : "▶ Старт"}
+              </button>
 
-          <div className={s.timerAndTitle}>
-            <div className={s.timerBig}>{secToMMSS(displaySec)}</div>
-            <div className={s.titleRow}>
+              <button
+                className={s.btnEnd}
+                onClick={() => selectedTaskId && finishTask(selectedTaskId)}
+                disabled={!selectedTaskId}
+              >
+                ⏹ Завершить
+              </button>
+            </div>
+
+            <div className={s.timerAndTitle}>
+              <div className={s.timerBig}>{secToMMSS(displaySec)}</div>
               <div className={s.titleText}>
                 {selectedTask ? selectedTask.title : "Нет выбранной задачи"}
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div className={s.listBox}>
+        <div className={s.listBox}>
         <div className={s.listInner}>
           {loading && <div className={s.empty}>Загрузка...</div>}
-
           {!loading && tasks.length === 0 && <div className={s.empty}>Задач нет</div>}
 
           <div className={s.items}>
             {tasks.map((task) => (
               <div
                 key={task.id}
-                className={`${s.taskItem} ${task.id === selectedTaskId ? s.selected : ""} ${task.id === activeTaskId ? s.running : ""}`}
+                className={`${s.taskItem} 
+                            ${task.id === selectedTaskId ? s.selected : ""} 
+                            ${task.id === activeTaskId ? s.running : ""}`}
                 onClick={() => setSelectedTaskId(task.id)}
+                onDoubleClick={() => navigate(`/ticket/${task.id}`)} 
               >
                 <div className={s.taskTitle} title={task.title}>
                   {task.title}
@@ -188,6 +178,9 @@ export const TimerTasks = () => {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+
+      {isExpanded && <div className={s.overlay} onClick={() => setIsExpanded(false)} />}
+    </>
   );
 };

@@ -42,7 +42,7 @@ export const getTaskQueue = async () => {
       }
 
       return {
-        id: item.id ?? item.TaskID ?? item.ID ?? item.idTask ?? "",
+        id: parseInt(item.id ?? item.TaskID ?? item.ID ?? item.idTask ?? "", 10),
         title: item.title ?? item.Title ?? item.Name ?? "",
         state: item.state ?? item.State ?? item.status ?? "",
         executor: item.userid ?? item.UserId ?? item.user ?? "",

@@ -9,7 +9,7 @@ import { headersTitleTickets } from "../../../../modules/TitlesForTables";
 import { MESSAGES } from "../../../../modules/messages";
 
 const LOCAL_STORAGE_KEY_TICKETS = "tickets_table_col_widths";
-const DEFAULT_WIDTHS = [5, 30, 20, 10, 13, 12, 10]; // 7 колонок
+const DEFAULT_WIDTHS = [5, 32, 20, 10, 13, 12, 10]; // 7 колонок
 
 export const TasksTable = ({ setShowFilter }) => {
   const navigate = useNavigate();

@@ -5,6 +5,7 @@ import { useTheme } from "../../context/ThemeContext";
 import { usePopup } from "../../context/PopupContext";
 import { BackIcon } from "../../UI/BackIcon/BackIcon";
 import { getTaskInfo } from "../../api/get/getTaskInfo";
+import { SendButton } from "./components/SendButton/SendButton";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { PageTitle } from "../../components/PageTitle/PageTitle";
 import { MultipleInput } from "../../UI/MultipleInput/MultipleInput";
@@ -122,7 +123,8 @@ export const TicketFormPage = () => {
       </div>
 
       <div className={s.fixed_block}>
-        <MultipleInput type="text" rows={3} />
+        <MultipleInput type="text" rows={4} />
+        <SendButton theme={theme} />
       </div>
     </ContentWrapper>
   );
