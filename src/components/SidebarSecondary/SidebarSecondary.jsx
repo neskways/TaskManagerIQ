@@ -41,7 +41,6 @@ const handleLinkClick = (path) => {
                   onClick={() => handleLinkClick(link.to)}
                 >
                   <span>{link.label}</span>
-                  <span className={s.count}>{count}</span>
                 </NavLink>
               </li>
             ))}

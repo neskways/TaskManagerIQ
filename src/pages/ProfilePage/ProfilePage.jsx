@@ -45,7 +45,7 @@ export const ProfilePage = () => {
             </div>
           </div>
           <h4 className={s.second_title}>Текущие задачи</h4>
-          {/* <p className={s.role}> {token} </p> */}
+          <p className={s.role}> {token} </p>
           {UserCode === "000000002" && <ProfileBlock />}
         </div>
         <img

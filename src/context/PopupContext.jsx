@@ -1,40 +1,34 @@
 import { createContext, useContext, useState, useCallback } from "react";
-import { Popup } from "../UI/Popup/Popup";
+import { PopupList } from "../UI/Popup/PopupList";
 
 const PopupContext = createContext();
 
 export const PopupProvider = ({ children }) => {
-  const [popup, setPopup] = useState({
-    show: false,
-    text: "",
-    type: null, // true = успех, false = ошибка
-    marginNone: false,
-  });
+  const [popups, setPopups] = useState([]);
 
   const showPopup = useCallback((text, options = {}) => {
-    const { type = null, duration = 3000, marginNone = false } = options;
-    setPopup({ show: true, text, type, marginNone });
+    const { type = "info", duration = 3000 } = options;
 
-    if (duration) {
-      setTimeout(() => {
-        setPopup({ show: false, text: "", type: null, marginNone: false });
-      }, duration);
-    }
+    const id = Date.now();
+
+    setPopups((prev) => {
+      const next = [...prev, { id, text, type, duration }];
+      return next.slice(-3); 
+    });
+
+    setTimeout(() => {
+      setPopups((prev) => prev.filter((p) => p.id !== id));
+    }, duration);
   }, []);
 
-  const hidePopup = useCallback(() => {
-    setPopup({ show: false, text: "", type: null, marginNone: false });
+  const removePopup = useCallback((id) => {
+    setPopups((prev) => prev.filter((p) => p.id !== id));
   }, []);
 
   return (
-    <PopupContext.Provider value={{ showPopup, hidePopup }}>
+    <PopupContext.Provider value={{ showPopup }}>
       {children}
-      <Popup
-        showPopup={popup.show}
-        text={popup.text}
-        type={popup.type}
-        marginNone={popup.marginNone}
-      />
+      <PopupList popups={popups} removePopup={removePopup} />
     </PopupContext.Provider>
   );
 };

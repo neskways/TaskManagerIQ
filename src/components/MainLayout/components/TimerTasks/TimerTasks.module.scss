@@ -1,93 +1,174 @@
-.timer_wrapper {
+.wrapper {
+  display: flex;
+  gap: 16px;
+  align-items: stretch;
+  height: 140px;
+  padding: 5px;
+}
+
+/* левая шапка 50% */
+.headerBox {
+  flex: 1 1 50%;
+  height: 130px;
+  background: var(--bg-color);
+  border-radius: var(--border-radius);
+  padding: 12px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+}
+
+.headerInner {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 16px;
-  background: var(--bg-color);
-  border-bottom: 1px solid var(--border-color-secondary);
-  gap: 20px;
-  height: 116px;
 }
 
-.current_task {
+/* Контролы (кнопки) */
+.controls {
   display: flex;
+  gap: 8px;
   align-items: center;
-  gap: 12px;
 }
 
-.task_title {
+.btn {
+  background: var(--accent-color);
+  color: var(--text-color);
+  border: none;
+  padding: 8px 10px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
   font-weight: 600;
+  transition: var(--transition);
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--accent-color-secondary);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btnEnd {
+  background: var(--false);
+  color: var(--text-color);
+  border: none;
+  padding: 8px 10px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btnEnd:hover:not(:disabled) {
+  background: hsl(0, 71%, 45%);
+}
+
+/* Таймер и заголовок */
+.timerAndTitle {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.timerBig {
+  font-family: monospace;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+.titleRow {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.titleText {
   font-size: 16px;
-  width: 400px;
-  max-width: 400px;
+  font-weight: 600;
+  max-width: 420px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text-color);
+}
+
+.timeMinutes {
+  font-size: 14px;
+  color: var(--text-color-secondary);
+}
+
+/* правая панель 50% */
+.listBox {
+  flex: 1 1 50%;
+  height: 130px;
+  background: var(--bg-color);
+  border-radius: var(--border-radius);
+  padding: 8px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.listInner {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.listHeader {
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: var(--text-color);
+}
+
+/* Скролл списка */
+.items {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.taskItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 8px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 13px;
+  color: var(--text-color);
+}
+
+.taskItem:hover {
+  background: var(--bg-color-hover);
+}
+
+.selected {
+  background: var(--accent-color-secondary);
+}
+
+.running {
+  outline: 2px solid var(--true);
+}
+
+.taskTitle {
+  max-width: 70%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.time_display {
-  font-family: monospace;
-  font-size: 18px;
-}
-
-.btn {
-  padding: 8px 12px;
-  background: var(--accent-color);
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  width: 80px;
-  transition: var(--transition);
-  &:hover {
-    background: var(--accent-color-secondary);
-  }
-}
-
-.task_list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  max-height: 120px;
-  overflow-y: scroll;
-  min-width: 600px;
-  padding: 4px;
-  border-left: 1px solid var(--border-color-secondary);
-}
-
-.task_item {
-  display: grid;
-  grid-template-columns: 2fr 1fr 70px;
-  align-items: center;
-  padding: 4px;
-  background: var(--bg-color-secondary);
-  border-radius: 4px;
-  border: 1px solid var(--border-color-secondary);
-  font-size: 14px;
-
-  button {
-    background: none;
-    border: none;
-    color: var(--text-color);
-    cursor: pointer;
-    padding: 2px 4px;
-
-    &:hover {
-      text-decoration: underline;
-      color: var(--accent-color);
-    }
-  }
-}
-
-.btn_new {
-  padding: 4px 8px;
-  background: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-
-  &:hover {
-    background: #43a047;
-  }
+.taskTime {
+  color: var(--text-color-secondary);
+  font-weight: 600;
 }

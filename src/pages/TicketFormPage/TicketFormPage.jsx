@@ -64,7 +64,7 @@ export const TicketFormPage = () => {
       } catch (err) {
         console.error("Ошибка при загрузке заявки:", err);
         if (err?.response?.status !== 401) {
-          showPopup("Не удалось загрузить заявку.", { type: false });
+          showPopup("Не удалось загрузить заявку.", { type: "error" });
         }
         setTask(null);
       } finally {

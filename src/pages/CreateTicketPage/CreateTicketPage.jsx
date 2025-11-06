@@ -31,7 +31,6 @@ export const CreateTicketPage = () => {
 
   const { showPopup } = usePopup();
 
-  // Хуки
   const {
     clients,
     employeeOptions,
@@ -56,7 +55,7 @@ export const CreateTicketPage = () => {
     !configsLoading && configOptions.length > 0 && contactOptions.length > 0;
 
   const showValidationPopup = (text) => {
-    showPopup(text, { type: false });
+    showPopup(text, { type: "error" });
   };
 
   const handleSubmit = async (e) => {
@@ -100,18 +99,15 @@ export const CreateTicketPage = () => {
       }
 
       if (result?.Error) {
-        showPopup(`Ошибка: ${result.Error}`, { type: false });
-        return;
+        return showPopup(`Ошибка: ${result.Error}`, { type: "error" });
       }
 
       const cleanId = parseInt(result.taskid, 10);
-      showPopup("Заявка успешно создана!", { type: true });
+      showPopup(MESSAGES.createTaskSuccess, { type: "success" });
 
       setTimeout(() => navigate(`/ticket/${cleanId}`), 100);
     } catch (error) {
-      showPopup("Не удалось создать заявку, попробуйте позже.", {
-        type: false,
-      });
+      showPopup(MESSAGES.createTaskError, { type: "error" });
     }
   };
 

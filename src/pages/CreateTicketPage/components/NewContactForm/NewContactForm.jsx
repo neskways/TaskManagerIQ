@@ -21,6 +21,7 @@ export const NewContactForm = ({ contactDetails, setContactDetails }) => {
       />
       <Input
         text="Email"
+        type={"email"}
         value={contactDetails.mail}
         setUserData={(v) => setContactDetails({ ...contactDetails, mail: v })}
       />

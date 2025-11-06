@@ -6,6 +6,7 @@ import { usePopup } from "../../../../context/PopupContext";
 import { TaskGridCell } from "../TaskGridCell/TaskGridCell";
 import { getTasksList } from "../../../../api/get/getTasksList";
 import { headersTitleTickets } from "../../../../modules/TitlesForTables";
+import { MESSAGES } from "../../../../modules/messages";
 
 const LOCAL_STORAGE_KEY_TICKETS = "tickets_table_col_widths";
 const DEFAULT_WIDTHS = [5, 30, 20, 10, 13, 12, 10]; // 7 колонок
@@ -54,8 +55,8 @@ export const TasksTable = ({ setShowFilter }) => {
       } catch (err) {
         console.error("Ошибка при загрузке задач:", err);
           if (err.response?.status !== 401) {
-          showPopup("Не удалось загрузить задачи. Попробуйте позже.", {
-            type: false,
+          showPopup(MESSAGES.loadTaskError, {
+            type: "error",
           });
         }
       } finally {

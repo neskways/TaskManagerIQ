@@ -51,7 +51,7 @@ export const Calendar = ({ theme }) => {
 
       // Показываем popup только если ошибка НЕ 401
       if (err.response?.status !== 401) {
-        showPopup("Ошибка загрузки данных", { type: false });
+        showPopup("Ошибка загрузки данных", { type: "error" });
       }
 
       return null;

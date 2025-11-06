@@ -1,15 +1,14 @@
 .modalOverlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  top: calc(-50%);
+  left: -50%;
+  width: 200%;
+  height: 200%;
   background-color: rgba(0, 0, 0, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 9999;
-
   /* Анимация появления */
   opacity: 0;
   pointer-events: none;
@@ -25,10 +24,9 @@
   background: var(--bg-color);
   padding: 20px;
   border-radius: 8px;
-  min-width: 1100px;
-  height: 700px;
+  min-width: 50%;
+  height: 50%;
   position: relative;
-
   /* Анимация появления */
   transform: translateY(+20px);
   opacity: 0;

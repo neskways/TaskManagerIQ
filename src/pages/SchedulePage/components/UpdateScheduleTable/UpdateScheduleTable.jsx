@@ -20,7 +20,7 @@ export const UpdateScheduleTable = ({ theme }) => {
   // Показываем popup только если ошибка НЕ 401
   useEffect(() => {
     if (!loading && error && error.response?.status !== 401) {
-      showPopup("Ошибка загрузки расписания", { type: false });
+      showPopup("Ошибка загрузки расписания", { type: "error" });
     }
   }, [loading, error, showPopup]);
 
@@ -32,7 +32,7 @@ export const UpdateScheduleTable = ({ theme }) => {
     } catch (err) {
       console.error("Ошибка при обновлении расписания:", err);
       if (err.response?.status !== 401) {
-        showPopup("Ошибка при обновлении расписания", { type: false });
+        showPopup("Ошибка при обновлении расписания", { type: "error" });
       }
       // 401 уже обработан interceptor'ом
     } finally {

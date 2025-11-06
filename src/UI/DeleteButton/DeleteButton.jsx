@@ -1,25 +1,22 @@
 import s from "./DeleteButton.module.scss";
-import { Popup } from "../../UI/Popup/Popup";
-import { useState } from "react";
-
+import { usePopup } from "../../context/PopupContext";
+import { MESSAGES } from "../../modules/messages";
 
 export const DeleteButton = () => {
-  const [showPopup, setShowPopup] = useState(false);
+  const { showPopup } = usePopup();
 
   const clearLocalStorage = () => {
     localStorage.clear();
-    setShowPopup(true);
 
-    const timer = setTimeout(() => {
-      setShowPopup(false);
-    }, 3000);
-
-    return () => clearTimeout(timer);
+    showPopup(MESSAGES.cleaningCache, {
+      type: "success",
+      duration: 3000,
+    });
   };
 
   return (
     <>
-      <button className={s.button} onClick={() => clearLocalStorage()}>
+      <button className={s.button} onClick={clearLocalStorage}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -58,8 +55,6 @@ export const DeleteButton = () => {
           </defs>
         </svg>
       </button>
-
-      <Popup showPopup={showPopup} text={"Макисмальный успех в очистке кэша!"} type={true} />
     </>
   );
 };

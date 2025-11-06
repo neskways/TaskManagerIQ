@@ -36,11 +36,13 @@ export const ClientsPage = () => {
       const data = await getClients();
       setClients(data);
       saveToLocalStorage(CACHE_KEY, data);
+
+      showPopup("Данные успешно обновлены!", { type: "success" });
     } catch (err) {
       console.error("Ошибка при загрузке клиентов:", err);
 
       if (err.response?.status !== 401) {
-        showPopup("Ошибка при загрузке клиентов!", { type: false });
+        showPopup("Ошибка при загрузке клиентов!", { type: "error" });
       }
     } finally {
       setInitialLoading(false);

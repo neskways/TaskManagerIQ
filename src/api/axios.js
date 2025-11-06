@@ -1,11 +1,12 @@
 import axios from "axios";
-import { MESSAGES } from "../modules/messages";
+import Cookies from "js-cookie";
 
 const IP = import.meta.env.VITE_IP;
+const TIMEOUT = import.meta.env.VITE_TIMEOUT;
 
 export const api = axios.create({
   baseURL: IP,
-  timeout: 600000,
+  timeout: TIMEOUT,
 });
 
 let logoutHandler = null;
@@ -22,12 +23,12 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     const status = error.response?.status;
+    const token = Cookies.get("token");
 
-    // === Токен недействителен ===
-    if (status === 401) {
+    if (status === 401 && token !== undefined) {
       console.warn();
 
-      if (popupHandler) popupHandler(MESSAGES.invalidToken, { type: false, marginNone: true });
+      if (popupHandler) popupHandler("Сессия истекла. Авторизуйтесь снова.", { type: "error" });
       if (logoutHandler) logoutHandler();
       if (navigateHandler) navigateHandler("/login");
 

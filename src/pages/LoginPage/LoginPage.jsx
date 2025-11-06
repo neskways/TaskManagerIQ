@@ -12,7 +12,7 @@ import { getFromLocalStorage } from "../../modules/localStorageUtils";
 export const LoginPage = () => {
   const navigate = useNavigate();
   const { theme } = useTheme();
-  const { showPopup } = usePopup(); // 🔹 хук глобального попапа
+  const { showPopup } = usePopup(); 
   const darkLogo = "/images/logo/logo_dark.png";
   const lightLogo = "/images/logo/logo.png";
 
@@ -28,7 +28,7 @@ export const LoginPage = () => {
     try {
       await loginUser(login, password);
 
-      showPopup("Вы успешно вошли в систему!", { type: true });
+      showPopup("Вы успешно вошли в систему!", { type: "success" });
       navigate(savedPath, { replace: true });
 
     } catch (error) {
@@ -36,7 +36,7 @@ export const LoginPage = () => {
 
       setIsErrorIn(true);
 
-      showPopup("Неправильный логин или пароль!", { type: false, marginNone: true });
+      showPopup("Неправильный логин или пароль!", { type: "error", marginNone: true });
       setTimeout(() => {
         setIsErrorIn(false);
       }, 3000);
