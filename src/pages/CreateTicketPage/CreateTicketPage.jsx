@@ -7,6 +7,7 @@ import { useContacts } from "./hooks/useContacts";
 import { MESSAGES } from "../../modules/messages";
 import { Link, useNavigate } from "react-router-dom";
 import { usePopup } from "../../context/PopupContext";
+import { Checkbox } from "../../UI/Checkbox/Checkbox";
 import { Selector } from "../../UI/Selector/Selector";
 import { createTask } from "../../api/create/createTask";
 import { useConfigurations } from "./hooks/useConfigurations";
@@ -143,7 +144,7 @@ export const CreateTicketPage = () => {
           setUserData={setDescription}
         />
 
-        <div className={s.filling_data_inner}>
+        <div className={s.filling_data_inner_2}>
           <Selector
             items={configOptions}
             value={selectedConfig}
@@ -171,6 +172,13 @@ export const CreateTicketPage = () => {
             setContactDetails={setContactDetails}
           />
         )}
+
+        <div className={s.return_task}>
+          <div className={s.checkbox}>
+            <Checkbox />
+            <p>Возврат к задаче</p>
+          </div>
+        </div>
 
         <div className={s.button_wrap}>
           <Button name="Создать" type="submit" />

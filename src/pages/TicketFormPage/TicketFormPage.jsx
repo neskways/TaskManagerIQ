@@ -13,6 +13,7 @@ import { getFromLocalStorage } from "../../modules/localStorageUtils";
 import { ContentWrapper } from "../../UI/ContentWrapper/ContentWrapper";
 import { TaskTextBlock } from "./components/TaskTextBlock/TaskTextBlock";
 import { TaskTitleAndText } from "./components/TaskTitleAndText/TaskTitleAndText";
+import { TicketSidebar } from "./components/TicketSidebar/TicketSidebar";
 
 export const TicketFormPage = () => {
   const { id } = useParams();
@@ -103,28 +104,33 @@ export const TicketFormPage = () => {
       >
         <BackIcon theme={theme} />
       </Link>
+      <div className={s.wrapper}>
+        <div className={s.block}>
+          <div className={s.left_side}>
+            <PageTitle titleText={`Заявка №${task.taskId}`} center />
+            <TaskTitleAndText
+              title={task.title}
+              date={formatDate(task.date)}
+              description={task.description}
+            />
 
-      <div className={s.left_side}>
-        <PageTitle titleText={`Заявка №${task.taskId}`} center />
-        <TaskTitleAndText
-          title={task.title}
-          date={formatDate(task.date)}
-          description={task.description}
-        />
+            {task.comments.map((c, i) => (
+              <TaskTextBlock
+                key={i}
+                user={c.user}
+                text={c.comment}
+                date={formatDate(c.date)}
+              />
+            ))}
+          </div>
 
-        {task.comments.map((c, i) => (
-          <TaskTextBlock
-            key={i}
-            user={c.user}
-            text={c.comment}
-            date={formatDate(c.date)}
-          />
-        ))}
-      </div>
+          <div className={s.fixed_block}>
+            <MultipleInput type="text" rows={4} />
+            <SendButton />
+          </div>
+        </div>
 
-      <div className={s.fixed_block}>
-        <MultipleInput type="text" rows={4} />
-        <SendButton theme={theme} />
+        <TicketSidebar />
       </div>
     </ContentWrapper>
   );

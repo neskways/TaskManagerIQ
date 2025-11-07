@@ -1,7 +1,8 @@
 import s from "./SendButton.module.scss";
 
-export const SendButton = ({ theme }) => {
-  const color = theme === "dark" ? "#fff" : "#000";
+export const SendButton = () => {
+
+  const color = "#fff";
 
   return (
     <button className={s.button}>
@@ -15,16 +16,16 @@ export const SendButton = ({ theme }) => {
         <path
           d="M27.5 2.5L13.75 16.25"
           stroke={color}
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
           d="M27.5 2.5L18.75 27.5L13.75 16.25L2.5 11.25L27.5 2.5Z"
           stroke={color}
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
       </svg>
     </button>

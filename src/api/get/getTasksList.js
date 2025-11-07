@@ -5,10 +5,14 @@ export const getTasksList = async (states, handleInvalidToken) => {
   try {
     const BASE_URL = import.meta.env.VITE_API_BASE_URL;
     const token = Cookies.get("token");
-
+    const clientID = undefined
     const response = await api.post(
       `${BASE_URL}/GetTasksList`,
-      { Token: token, State: states },
+      { 
+        Token: token, 
+        State: states, 
+        ClientId: clientID 
+      },
       { responseType: "text" }
     );
 

@@ -1,0 +1,9 @@
+.wrapper {
+    background-color: var(--bg-color-secondary);
+    height: 100%;
+    padding: 20px;
+    border-radius: var(--border-radius);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}

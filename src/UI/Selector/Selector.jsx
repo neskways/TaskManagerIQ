@@ -1,6 +1,7 @@
 import s from "./Selector.module.scss";
 
 export const Selector = ({
+  alignTitle,
   items = [],
   value,
   defaultValue = "",
@@ -15,7 +16,7 @@ export const Selector = ({
 
   return (
     <div className={s.wrapper}>
-      {title && <h4 className={s.title}>{title}</h4>}
+      {title && <h4 className={`${s.title} ${alignTitle === "center" ? s.titleCenter : ""}`}>{title}</h4>}
       <select
         className={s.select}
         value={isControlled ? value : undefined}

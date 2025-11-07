@@ -24,7 +24,14 @@
 .filling_data_inner {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 30px;
+  gap: 20px;
+}
+
+.filling_data_inner_2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
 }
 
 .disable {
@@ -44,4 +51,20 @@
   color: var(--text-color-secondary);
   left: 20px;
   bottom: 30px;
+}
+
+.return_task {
+  width: 49%;
+  background-color: var(--bg-color-tertiary);
+  padding: 10px;
+  border-radius: var(--border-radius);
+  display: flex;
+  align-items: center;
+}
+
+.checkbox {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 16px;
 }
