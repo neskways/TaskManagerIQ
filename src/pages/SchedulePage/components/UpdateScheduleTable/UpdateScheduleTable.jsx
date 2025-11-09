@@ -1,40 +1,56 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import s from "./UpdateScheduleTable.module.scss";
 import { ModalWindow } from "./ModalWindow/ModalWindow";
 import { Loading } from "../../../../UI/Loading/Loading";
-import { usePopup } from "../../../../context/PopupContext"; 
+import { usePopup } from "../../../../context/PopupContext";
 import { useUpdateSchedule } from "./hooks/useUpdateSchedule";
 import { ReloadIcon } from "../../../../UI/ReloadIcon/ReloadIcon";
 
 export const UpdateScheduleTable = ({ theme }) => {
   const today = new Date();
-  const monthStr = today.toLocaleString("ru-RU", { month: "long", year: "numeric" });
+  const monthStr = today.toLocaleString("ru-RU", {
+    month: "long",
+    year: "numeric",
+  });
   const monthTitle = monthStr.charAt(0).toUpperCase() + monthStr.slice(1);
 
-  const { schedule, daysInMonth, loading, loadSchedule, error } = useUpdateSchedule();
+  const { schedule, daysInMonth, loading, loadSchedule, error } =
+    useUpdateSchedule();
   const [selectedClientUpdates, setSelectedClientUpdates] = useState(null);
   const [spinning, setSpinning] = useState(false);
 
-  const { showPopup } = usePopup(); 
+  const { showPopup } = usePopup();
+  const emptyPopupShownRef = useRef(false); // ref, чтобы не сбрасывался при ререндере
 
-  // Показываем popup только если ошибка НЕ 401
+  // Показываем pop-up только один раз, когда данные загрузились и пустые
   useEffect(() => {
-    if (!loading && error && error.response?.status !== 401) {
-      showPopup("Ошибка загрузки расписания", { type: "error" });
+    if (
+      !loading &&
+      !error &&
+      schedule.length === 0 &&
+      !emptyPopupShownRef.current
+    ) {
+      showPopup("Нет данных для отображения", { type: "info" });
+      emptyPopupShownRef.current = true;
     }
-  }, [loading, error, showPopup]);
+  }, [loading, error, schedule, showPopup]);
 
   const handleRefresh = async () => {
     if (spinning) return;
     setSpinning(true);
+    emptyPopupShownRef.current = false; // сбрасываем, чтобы pop-up снова мог появиться
+
     try {
-      await loadSchedule(true);
+      const updatedSchedule = await loadSchedule(true); // force reload
+      if (!updatedSchedule || updatedSchedule.length === 0) {
+        showPopup("Нет данных для отображения", { type: "info" });
+        emptyPopupShownRef.current = true;
+      }
     } catch (err) {
       console.error("Ошибка при обновлении расписания:", err);
       if (err.response?.status !== 401) {
         showPopup("Ошибка при обновлении расписания", { type: "error" });
       }
-      // 401 уже обработан interceptor'ом
     } finally {
       setTimeout(() => setSpinning(false), 1000);
     }
@@ -82,7 +98,7 @@ export const UpdateScheduleTable = ({ theme }) => {
         </div>
       ) : schedule.length === 0 ? (
         <div className={s.centerWrapper}>
-          <p className={s.errorText}>Нет данных для отображения</p>
+          <p className={s.errorText}>График обновления пуст</p>
         </div>
       ) : (
         <div className={s.tableWrapper}>

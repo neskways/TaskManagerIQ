@@ -1,6 +1,6 @@
 import s from "./CreateTicketPage.module.scss";
 import Cookies from "js-cookie";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "../../UI/Input/Input";
 import { Button } from "../../UI/Button/Button";
 import { useContacts } from "./hooks/useContacts";
@@ -10,6 +10,8 @@ import { usePopup } from "../../context/PopupContext";
 import { Checkbox } from "../../UI/Checkbox/Checkbox";
 import { Selector } from "../../UI/Selector/Selector";
 import { createTask } from "../../api/create/createTask";
+import { getTasksList } from "../../api/get/getTasksList";
+import { taskStatuses } from "../../modules/TaskStatuses";
 import { useConfigurations } from "./hooks/useConfigurations";
 import { PageTitle } from "../../components/PageTitle/PageTitle";
 import { MultipleInput } from "../../UI/MultipleInput/MultipleInput";
@@ -22,7 +24,9 @@ import { NewContactForm } from "./components/NewContactForm/NewContactForm";
 export const CreateTicketPage = () => {
   const lastSecondaryPath = getFromLocalStorage("last_link_path");
   const navigate = useNavigate();
+  const { showPopup } = usePopup();
 
+  // Основные состояния
   const [selectedClient, setSelectedClient] = useState(null);
   const [selectedEmployee, setSelectedEmployee] = useState(
     Cookies.get("userCode")
@@ -30,8 +34,12 @@ export const CreateTicketPage = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
-  const { showPopup } = usePopup();
+  // Возврат к задаче
+  const [isReturnTask, setIsReturnTask] = useState(false);
+  const [tasksList, setTasksList] = useState([]);
+  const [selectedReturnTask, setSelectedReturnTask] = useState("");
 
+  // Хуки
   const {
     clients,
     employeeOptions,
@@ -55,14 +63,37 @@ export const CreateTicketPage = () => {
   const dataReady =
     !configsLoading && configOptions.length > 0 && contactOptions.length > 0;
 
-  const showValidationPopup = (text) => {
-    showPopup(text, { type: "error" });
-  };
+  // 🔹 Загружаем список завершённых задач, если активирован возврат
+  useEffect(() => {
+    const loadTasks = async () => {
+      if (isReturnTask) {
+        try {
+          const tasks = await getTasksList([taskStatuses.DONE.code]);
+          const mapped = tasks.map((t) => ({
+            id: t.number,
+            name: `${t.title} (${t.client})`,
+          }));
+          setTasksList(mapped);
+        } catch (error) {
+          console.error("Ошибка при загрузке задач:", error);
+          showPopup("Не удалось загрузить завершённые задачи", {
+            type: "error",
+          });
+        }
+      } else {
+        setTasksList([]);
+        setSelectedReturnTask("");
+      }
+    };
+    loadTasks();
+  }, [isReturnTask, showPopup]);
 
+  // 🔹 Валидация + создание заявки
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Валидация
+    const showValidationPopup = (text) => showPopup(text, { type: "error" });
+
     if (!title.trim())
       return showValidationPopup("Пожалуйста, заполните заголовок!");
     if (!selectedClient)
@@ -74,7 +105,9 @@ export const CreateTicketPage = () => {
     if (!selectedConfig)
       return showValidationPopup("Пожалуйста, выберите конфигурацию!");
     if (!contactDetails.name.trim())
-      return showValidationPopup("Пожалуйста, заполните контакт!");
+      return showValidationPopup("Пожалуйста, заполните контакт!");   
+    if (!selectedReturnTask && isReturnTask)
+      return showValidationPopup("Пожалуйста, выберите возвратную задачу!");
 
     const token = Cookies.get("token");
     const userCode = Cookies.get("userCode");
@@ -89,12 +122,12 @@ export const CreateTicketPage = () => {
         confId: selectedConfig,
         contacts: { ...contactDetails },
         owner: selectedEmployee || userCode,
+        return: isReturnTask ? selectedReturnTask : null,
       },
     };
 
     try {
       let result = await createTask(payload);
-
       if (typeof result === "string") {
         result = JSON.parse(result.replace(/'/g, '"'));
       }
@@ -105,9 +138,9 @@ export const CreateTicketPage = () => {
 
       const cleanId = parseInt(result.taskid, 10);
       showPopup(MESSAGES.createTaskSuccess, { type: "success" });
-
       setTimeout(() => navigate(`/ticket/${cleanId}`), 100);
     } catch (error) {
+      console.error("Ошибка при создании заявки:", error);
       showPopup(MESSAGES.createTaskError, { type: "error" });
     }
   };
@@ -173,11 +206,26 @@ export const CreateTicketPage = () => {
           />
         )}
 
+        {/* --- Возврат к задаче --- */}
         <div className={s.return_task}>
           <div className={s.checkbox}>
-            <Checkbox />
+            <Checkbox
+              checked={isReturnTask}
+              onChange={(e) => setIsReturnTask(e.target.checked)}
+            />
             <p>Возврат к задаче</p>
           </div>
+
+          {isReturnTask && (
+            <Selector
+              items={tasksList}
+              value={selectedReturnTask}
+              onChange={setSelectedReturnTask}
+              labelKey="name"
+              valueKey="id"
+              disabled={tasksList.length === 0}
+            />
+          )}
         </div>
 
         <div className={s.button_wrap}>

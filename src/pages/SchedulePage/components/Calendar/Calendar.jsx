@@ -1,12 +1,12 @@
 import s from "./Calendar.module.scss";
 import Cookies from "js-cookie";
 import { ru } from "date-fns/locale";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Loading } from "../../../../UI/Loading/Loading";
 import { usePopup } from "../../../../context/PopupContext";
 import { getSchedule } from "../../../../api/get/getShedule";
 import { ReloadIcon } from "../../../../UI/ReloadIcon/ReloadIcon";
-import { loadCache, saveCache } from "../../../../modules/cookieCache";
+import { getFromLocalStorage, saveToLocalStorage } from "../../../../modules/localStorageUtils";
 import {
   format,
   startOfMonth,
@@ -17,6 +17,9 @@ import {
   isSameMonth,
 } from "date-fns";
 
+
+const CACHE_PREFIX = "schedule-";
+
 export const Calendar = ({ theme }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [displayMonth, setDisplayMonth] = useState(new Date());
@@ -25,76 +28,51 @@ export const Calendar = ({ theme }) => {
   const [spinning, setSpinning] = useState(false);
 
   const { showPopup } = usePopup();
-
-  const cacheRef = useRef({});
+  const username = Cookies.get("username"); // полное имя текущего пользователя
 
   const loadSchedule = async (month, year, force = false) => {
-    const key = `schedule-${year}-${month}`;
+    const key = `${CACHE_PREFIX}${year}-${month}`;
 
     if (!force) {
-      const cached = loadCache(key);
-      if (cached) {
-        return cached.map((item) => ({ ...item, date: new Date(item.date) }));
-      }
+      const cached = getFromLocalStorage(key, null);
+      if (cached) return cached.map((item) => ({ ...item, date: new Date(item.date) }));
     }
 
     try {
       const data = await getSchedule(month, year);
-      const normalized = data.map((item) => ({
-        ...item,
-        date: new Date(item.date),
-      }));
-      saveCache(key, normalized);
+      const normalized = data.map((item) => ({ ...item, date: new Date(item.date) }));
+      saveToLocalStorage(key, normalized);
       return normalized;
     } catch (err) {
       console.error("Ошибка при загрузке расписания:", err);
-
-      // Показываем popup только если ошибка НЕ 401
       if (err.response?.status !== 401) {
         showPopup("Ошибка загрузки данных", { type: "error" });
       }
-
       return null;
     }
   };
 
-  const handleRefresh = async () => {
-    if (spinning) return;
-    setSpinning(true);
+  const fetchData = async (force = false) => {
     setInitialLoading(true);
-
     const month = currentMonth.getMonth() + 1;
     const year = currentMonth.getFullYear();
 
-    const data = await loadSchedule(month, year, true);
+    const data = await loadSchedule(month, year, force);
     if (data) setSchedule(data);
+
+    setDisplayMonth(new Date(currentMonth));
     setInitialLoading(false);
-    setTimeout(() => setSpinning(false), 1000);
   };
 
   useEffect(() => {
-    const month = currentMonth.getMonth() + 1;
-    const year = currentMonth.getFullYear();
-    loadSchedule(month, year).then((data) => {
-      if (data) {
-        setSchedule(data);
-        setDisplayMonth(new Date(currentMonth));
-      }
-      setInitialLoading(false);
-    });
+    fetchData();
   }, []);
 
   useEffect(() => {
-    if (initialLoading) return;
-    const month = currentMonth.getMonth() + 1;
-    const year = currentMonth.getFullYear();
-    loadSchedule(month, year).then((data) => {
-      if (data) {
-        setSchedule(data);
-        setDisplayMonth(new Date(currentMonth));
-      }
-    });
-  }, [currentMonth, initialLoading]);
+    if (!initialLoading) fetchData();
+  }, [currentMonth]);
+
+  const handleRefresh = () => fetchData(true);
 
   const currentYear = new Date().getFullYear();
   const years = [currentYear - 1, currentYear, currentYear + 1];
@@ -102,9 +80,7 @@ export const Calendar = ({ theme }) => {
   const renderDays = () => {
     const days = [];
     const dateFormat = "EEEEEE";
-    const startDate = startOfWeek(startOfMonth(displayMonth), {
-      weekStartsOn: 1,
-    });
+    const startDate = startOfWeek(startOfMonth(displayMonth), { weekStartsOn: 1 });
 
     for (let i = 0; i < 7; i++) {
       days.push(
@@ -122,7 +98,6 @@ export const Calendar = ({ theme }) => {
     const monthEnd = endOfMonth(displayMonth);
     const startDate = startOfWeek(monthStart, { weekStartsOn: 1 });
     const endDate = endOfWeek(monthEnd, { weekStartsOn: 1 });
-    const username = Cookies.get("username");
 
     const rows = [];
     let days = [];
@@ -139,28 +114,28 @@ export const Calendar = ({ theme }) => {
             item.date.getFullYear() === day.getFullYear()
         );
 
-        const dutyNames = duties.map((d) => d.user).join(" и ");
+        const dutyNames = duties
+          .map((d) => {
+            const parts = d.user.split(" ");
+            return parts.length > 1 ? parts[1] : parts[0]; // выводим только имя
+          })
+          .join(" и ");
+
         const isPastDay = day < today;
         const isToday = day.getTime() === today.getTime();
         const isActiveUser = duties.some((d) => d.user === username);
 
         days.push(
           <div
-            className={`${s.cell} ${
-              !isSameMonth(day, monthStart) ? s.disabled : ""
-            } ${isPastDay ? s.closen_day : ""}`}
+            className={`${s.cell} ${!isSameMonth(day, monthStart) ? s.disabled : ""} ${
+              isPastDay ? s.closen_day : ""
+            }`}
             key={day.toISOString()}
           >
-            <span className={s.dateNum}>
-              {format(day, "d", { locale: ru })}
-            </span>
+            <span className={s.dateNum}>{format(day, "d", { locale: ru })}</span>
             <div className={s.dataStub}>
               {dutyNames && (
-                <span
-                  className={`${isActiveUser ? s.active_duty : ""} ${
-                    isToday ? s.today : ""
-                  }`}
-                >
+                <span className={`${isActiveUser ? s.active_duty : ""} ${isToday ? s.today : ""}`}>
                   {dutyNames}
                 </span>
               )}
@@ -176,7 +151,6 @@ export const Calendar = ({ theme }) => {
           {days}
         </div>
       );
-
       days = [];
     }
 

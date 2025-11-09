@@ -16,6 +16,15 @@ import { ParametersPage } from "../pages/ParametersPage/ParametersPage";
 import { CreateTicketPage } from "../pages/CreateTicketPage/CreateTicketPage";
 import { RoleProtectedRoute } from "../components/RoleProtectedRoute/RoleProtectedRoute";
 import { UniversalTicketsSheet } from "../pages/UniversalTicketsSheet/UniversalTicketsSheet";
+import { MainPage } from "../pages/MainPage/MainPage";
+import { MyAssignedTasks } from "../pages/TicketsSheetPages/MyAssignedTasks";
+import { CurrentTasks } from "../pages/TicketsSheetPages/CurrentTasks";
+import { AllTickets } from "../pages/TicketsSheetPages/AllTickets";
+import { BackToTickets } from "../pages/TicketsSheetPages/BackToTickets";
+import { ClosedToday } from "../pages/TicketsSheetPages/ClosedToday";
+import { OpenTickets } from "../pages/TicketsSheetPages/OpenTickets";
+import { OverdueTickets } from "../pages/TicketsSheetPages/OverdueTickets";
+import { ClosedTickets } from "../pages/TicketsSheetPages/ClosedTickets";
 
 const PrivateRoute = ({ children }) => {
   const token = Cookies.get("token");
@@ -68,27 +77,27 @@ export const AppRoutes = () => {
         <Route index element={<Navigate to="/tasks" />} />
         {/* Блок задач */}
         <Route path="/tasks" element={<TicketPage />}>
-          {/* если просто /tasks → перенаправляем на последнее место */}
           <Route index element={<TaskRedirect />} />
 
           <Route
             path="my_assigned"
-            element={
-              <UniversalTicketsSheet
-                url="my_assigned"
-                titleText="Назначенные мне заявки"
-              />
-            }
+            element={<MyAssignedTasks titleText="Назначенные мне" />}
           />
 
           <Route
             path="open_tickets"
             element={
               <RoleProtectedRoute allowDuty allowManagement>
-                <UniversalTicketsSheet
-                  url="open_tickets"
-                  titleText="Открытые заявки"
-                />
+                <OpenTickets titleText="Открытые заявки" />
+              </RoleProtectedRoute>
+            }
+          />
+
+          <Route
+            path="current_tasks"
+            element={
+              <RoleProtectedRoute allowEveryone allowDuty allowManagement>
+                <CurrentTasks titleText="Текущие задачи сотрудников" />
               </RoleProtectedRoute>
             }
           />
@@ -97,10 +106,7 @@ export const AppRoutes = () => {
             path="overdue_tickets"
             element={
               <RoleProtectedRoute allowManagement>
-                <UniversalTicketsSheet
-                  url="overdue_tickets"
-                  titleText="Просроченные заявки"
-                />
+                <OverdueTickets titleText="Просроченные заявки" />
               </RoleProtectedRoute>
             }
           />
@@ -109,10 +115,7 @@ export const AppRoutes = () => {
             path="closed_today"
             element={
               <RoleProtectedRoute allowEveryone allowDuty allowManagement>
-                <UniversalTicketsSheet
-                  url="closed_today"
-                  titleText="Закрытые сегодня"
-                />
+                <ClosedToday titleText="Закрытые сегодня" />
               </RoleProtectedRoute>
             }
           />
@@ -121,10 +124,7 @@ export const AppRoutes = () => {
             path="closed_tickets"
             element={
               <RoleProtectedRoute allowManagement>
-                <UniversalTicketsSheet
-                  url="closed_tickets"
-                  titleText="Закрытые заявки"
-                />
+                <ClosedTickets titleText="Закрытые заявки" />
               </RoleProtectedRoute>
             }
           />
@@ -133,10 +133,7 @@ export const AppRoutes = () => {
             path="back_to_tickets"
             element={
               <RoleProtectedRoute allowEveryone allowDuty allowManagement>
-                <UniversalTicketsSheet
-                  url="back_to_tickets"
-                  titleText="Возврат к заявкам"
-                />
+                <BackToTickets titleText="Возврат к заявкам" />
               </RoleProtectedRoute>
             }
           />
@@ -145,10 +142,7 @@ export const AppRoutes = () => {
             path="all_tickets"
             element={
               <RoleProtectedRoute allowEveryone allowDuty allowManagement>
-                <UniversalTicketsSheet
-                  url="all_tickets"
-                  titleText="Все заявки"
-                />
+                <AllTickets titleText="Все заявки" />
               </RoleProtectedRoute>
             }
           />
@@ -162,6 +156,8 @@ export const AppRoutes = () => {
             </RoleProtectedRoute>
           }
         />
+        //Страница Главная
+        <Route path="/main" element={<MainPage />} />
         //Страница задачи
         <Route path="/ticket/:id" element={<TicketFormPage />} />
         //Страница статистики пользователя по выполненым задачам

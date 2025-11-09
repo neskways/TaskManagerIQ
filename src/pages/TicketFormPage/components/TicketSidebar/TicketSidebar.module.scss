@@ -5,5 +5,31 @@
     border-radius: var(--border-radius);
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    row-gap: 20px;
+    position: relative;
+}
+
+.btn_wrap {
+    margin-top: auto;
+}
+
+
+
+.dirtyIndicator {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: #ffcc80;
+  box-shadow: 0 0 4px rgba(0,0,0,0.2);
+  text-align: center;
+}
+
+.z {
+    cursor: default;
+    color: black;
+    margin-top: 2px;
+    height: 100%;
 }

@@ -1,7 +1,7 @@
 .checkbox_container {
   display: flex;
-  gap: 20px;
-  padding: 10px;
+  gap: 10px;
+  padding: 5px;
   background: var(--bg-color);
   border-radius: 12px;
   box-shadow:
@@ -10,7 +10,7 @@
 }
 
 .ios_checkbox {
-  --checkbox-size: 16px;
+  --checkbox-size: 14px;
 
   position: relative;
   display: inline-block;

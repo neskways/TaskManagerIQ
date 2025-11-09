@@ -1,16 +1,14 @@
 .wrapper {
   display: flex;
-  gap: 16px;
+  gap: 10px;
   align-items: stretch;
-  height: 140px;
-  padding: 5px;
-  padding-right: 40px;
-  padding-left: 10px;
+  height: 120px;
+  padding: 10px 38px 10px 20px;
 }
 
 .headerBox {
   flex: 1 1 50%;
-  height: 130px;
+  height: 120px;
   background: var(--bg-color);
   border-radius: var(--border-radius);
   padding: 12px;
@@ -34,6 +32,7 @@
 }
 
 .btn {
+  width: 110px;
   background: var(--accent-color);
   color: #fff;
   border: none;
@@ -54,6 +53,7 @@
 }
 
 .btnEnd {
+  width: 110px;
   color: #fff;
   background: var(--false);
   border: none;
@@ -61,6 +61,15 @@
   border-radius: var(--border-radius);
   cursor: pointer;
   transition: var(--transition);
+}
+
+.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 18px;
+  font-weight: 600;
 }
 
 .btnEnd:hover:not(:disabled) {
@@ -107,7 +116,7 @@
 .listBox {
   border: 1px solid var(--border-color);
   flex: 1 1 50%;
-  height: 130px;
+  height: 120px;
   background: var(--bg-color);
   border-radius: var(--border-radius);
   padding: 8px;
@@ -154,13 +163,8 @@
   background: var(--bg-color-hover);
 }
 
-.selected {
-  background: var(--accent-color-secondary) !important;
-  color: #fff;
-}
-
 .running {
-  outline: 2px solid var(--true);
+  background-color: var(--accent-color-secondary);
 }
 
 .taskTitle {
@@ -173,6 +177,15 @@
 .taskTime {
   color: var(--text-color);
   font-weight: 500;
+}
+
+.selected {
+  background: var(--accent-color-secondary) !important;
+  color: #fff !important;
+}
+
+.selected .taskTime  {
+  color: #fff !important;
 }
 
 .expanded {

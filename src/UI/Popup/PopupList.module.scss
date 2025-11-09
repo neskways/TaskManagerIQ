@@ -1,10 +1,10 @@
 .stackContainer {
   position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 20px;        
+  left: 50%;         
+  transform: translateX(-50%); 
   display: flex;
-  flex-direction: column;
+  flex-direction: column; 
   gap: 10px;
   z-index: 2000;
   pointer-events: none;
@@ -34,20 +34,17 @@
   align-items: center;
 }
 
-/* ==== THEMES ==== */
+/* THEMES */
 .success {
   background: linear-gradient(135deg, #2ecc71, #27ae60);
 }
-
 .error {
   background: linear-gradient(135deg, #e74c3c, #c0392b);
 }
-
 .warning {
   background: linear-gradient(135deg, #f1c40f, #e1b000);
   color: #292929;
 }
-
 .info {
   background: linear-gradient(135deg, #3498db, #2980b9);
 }

@@ -2,11 +2,8 @@
 import { api } from "../axios";
 import Cookies from "js-cookie";
 
-/**
- * Получаем очередь задач с сервера, нормализуем и возвращаем top-10 по priority (desc).
- * Сервер должен отдавать поля: id, title, time (в секундах), state, userid, deadline, priority, startedAt (опционально)
- */
-export const getTaskQueue = async () => {
+
+export const getTaskQueue = async (state) => {
   try {
     const BASE_URL = import.meta.env.VITE_API_BASE_URL;
     const token = Cookies.get("token");
@@ -14,10 +11,10 @@ export const getTaskQueue = async () => {
 
     const response = await api.post(
       `${BASE_URL}/GetTaskQueue`,
-      { Token: token, userid: userCode },
+      { Token: token, userid: userCode, state },
       { responseType: "text" }
     );
-
+    
     const jsonString = (response.data || "").replace(/'/g, '"');
     const parsed = JSON.parse(jsonString);
 
@@ -25,7 +22,6 @@ export const getTaskQueue = async () => {
       throw new Error("Неверный формат ответа от GetTaskQueue");
     }
 
-    // Нормализуем данные, вычисляем актуальное время (серверный таймер: time + delta если startedAt)
     const normalized = parsed.map((item) => {
       const timeSec = Number(item.time) || 0;
       const startedAt = item.startedAt || item.startTime || item.StartedAt || null;

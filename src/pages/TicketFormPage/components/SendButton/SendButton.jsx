@@ -1,11 +1,10 @@
 import s from "./SendButton.module.scss";
 
-export const SendButton = () => {
-
+export const SendButton = ({ onClick }) => {
   const color = "#fff";
 
   return (
-    <button className={s.button}>
+    <button className={s.button} onClick={onClick}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="30"

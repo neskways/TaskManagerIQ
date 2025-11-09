@@ -7,8 +7,7 @@ import { saveToLocalStorage } from "../../modules/localStorageUtils";
 export const SidebarSecondary = () => {
  
   const role = Cookies.get("role");
-  const count = 0;
-  
+
 const handleLinkClick = (path) => {
   if (path.startsWith("/tasks/")) {
     saveToLocalStorage("last_tasks_path", path);

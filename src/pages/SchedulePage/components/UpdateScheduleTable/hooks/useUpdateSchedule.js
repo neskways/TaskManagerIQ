@@ -74,5 +74,5 @@ export const useUpdateSchedule = (cacheKey = "update-schedule") => {
     loadSchedule();
   }, []);
 
-  return { schedule, daysInMonth, loading, loadSchedule, error }; // ✅ возвращаем error
+  return { schedule, daysInMonth, loading, loadSchedule, error }; 
 };

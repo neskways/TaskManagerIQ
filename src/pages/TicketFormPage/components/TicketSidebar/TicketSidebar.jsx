@@ -1,29 +1,69 @@
-// TicketSidebar.jsx
+import { useState, useEffect } from "react";
 import s from "./TicketSidebar.module.scss";
-import { Selector } from "../../../../UI/Selector/Selector";
-import { TaskStatuses } from "../../../../modules/taskStates";
 import { Button } from "../../../../UI/Button/Button";
+import { Selector } from "../../../../UI/Selector/Selector";
+import { taskStatuses } from "../../../../modules/TaskStatuses";
+import { useClientsAndEmployees } from "../../../CreateTicketPage/hooks/useClientsAndEmployees";
 
-export const TicketSidebar = () => {
-  // Преобразуем объект в массив для селектора
-  const statusItems = Object.entries(TaskStatuses).map(([key, { code, title }]) => ({
+export const TicketSidebar = ({ currentStatus, currentExecutor }) => {
+  const { employeeOptions, loading: employeesLoading } = useClientsAndEmployees();
+
+  const statusItems = Object.entries(taskStatuses).map(([key, { code, title }]) => ({
     id: code,
     name: title,
   }));
 
+  const [selectedStatus, setSelectedStatus] = useState(currentStatus || "");
+  const [selectedExecutor, setSelectedExecutor] = useState(currentExecutor || "");
+  const [hasChanges, setHasChanges] = useState(false);
+
+  // отслеживаем изменения
+  useEffect(() => {
+    setHasChanges(
+      selectedStatus !== currentStatus || selectedExecutor !== currentExecutor
+    );
+  }, [selectedStatus, selectedExecutor, currentStatus, currentExecutor]);
+
+  const handleStatusChange = (value) => setSelectedStatus(value);
+  const handleExecutorChange = (value) => setSelectedExecutor(value);
+
   return (
     <div className={s.wrapper}>
+      {/* Индикатор изменений в верхнем правом углу */}
+      {hasChanges && <div className={s.dirtyIndicator}><p className={s.z}>*</p></div>}
+
       <Selector
         title="Статус задачи"
         alignTitle="center"
         items={statusItems}
-        labelKey="name"     // Что отображать
-        valueKey="id"       // Что будет значением
-        defaultValue=""
-        onChange={(value) => console.log("Выбран статус:", value)}
+        labelKey="name"
+        valueKey="id"
+        value={selectedStatus}
+        onChange={handleStatusChange}
       />
 
-      <Button name={"Сохранить"} />
+      <Selector
+        title="Исполнитель"
+        alignTitle="center"
+        items={employeeOptions}
+        labelKey="name"
+        valueKey="id"
+        value={selectedExecutor}
+        onChange={handleExecutorChange}
+        disabled={employeesLoading}
+      />
+
+      <div className={s.btn_wrap}>
+        <Button
+          name="Сохранить"
+          onClick={() =>
+            console.log("Сохраняем изменения:", {
+              статус: selectedStatus,
+              исполнитель: selectedExecutor,
+            })
+          }
+        />
+      </div>
     </div>
   );
 };

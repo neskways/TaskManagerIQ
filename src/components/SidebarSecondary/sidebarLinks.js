@@ -15,6 +15,13 @@ export const sidebarSecondaryItems = [
     availability_to_management: true,
   },
   {
+    label: "Текущие задачи",
+    to: "/tasks/current_tasks",
+    availability_to_everyone: false,
+    availability_to_dute: false,
+    availability_to_management: true,
+  },
+  {
     label: "Возврат к заявкам",
     to: "/tasks/back_to_tickets",
     availability_to_everyone: true,

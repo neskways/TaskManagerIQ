@@ -9,9 +9,19 @@ import { headersTitleTickets } from "../../../../modules/TitlesForTables";
 import { MESSAGES } from "../../../../modules/messages";
 
 const LOCAL_STORAGE_KEY_TICKETS = "tickets_table_col_widths";
-const DEFAULT_WIDTHS = [5, 32, 20, 10, 13, 12, 10]; // 7 колонок
+const DEFAULT_WIDTHS = [5, 30, 20, 10, 13, 12, 10];
 
-export const TasksTable = ({ setShowFilter }) => {
+export const TasksTable = ({ setShowFilter, queryParams }) => {
+  const secToHHMMSS = (sec) => {
+    const h = Math.floor(sec / 3600);
+    const m = Math.floor((sec % 3600) / 60);
+    const s = sec % 60;
+    return `${String(h).padStart(2, "0")}:${String(m).padStart(
+      2,
+      "0"
+    )}:${String(s).padStart(2, "0")}`;
+  };
+
   const navigate = useNavigate();
   const { showPopup } = usePopup();
 
@@ -39,7 +49,10 @@ export const TasksTable = ({ setShowFilter }) => {
     const fetchTasks = async () => {
       setLoading(true);
       try {
-        const data = await getTasksList([]);
+        const data = await getTasksList(
+          queryParams.states,
+          queryParams.userCode
+        );
 
         const mapped = data.map((item) => ({
           number: parseInt(item.number, 10),
@@ -48,16 +61,14 @@ export const TasksTable = ({ setShowFilter }) => {
           status: item.status,
           executor: item.executor,
           priority: item.priority,
-          timeSpent: item.timeSpent,
+          timeSpent: secToHHMMSS(item.timeSpent), 
         }));
 
         setTasks(mapped);
       } catch (err) {
         console.error("Ошибка при загрузке задач:", err);
-          if (err.response?.status !== 401) {
-          showPopup(MESSAGES.loadTaskError, {
-            type: "error",
-          });
+        if (err.response?.status !== 401) {
+          showPopup(MESSAGES.loadTaskError, { type: "error" });
         }
       } finally {
         setLoading(false);
@@ -65,7 +76,7 @@ export const TasksTable = ({ setShowFilter }) => {
     };
 
     fetchTasks();
-  }, [navigate, showPopup]);
+  }, []);
 
   const handleMouseDown = (e, index) => {
     e.preventDefault();
