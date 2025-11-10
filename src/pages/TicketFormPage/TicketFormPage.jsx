@@ -176,7 +176,7 @@ export const TicketFormPage = () => {
 
         <TicketSidebar
           currentStatus={task.state}
-          currentExecutor={task.userId}
+          currentExecutor={task.owner}
         />
       </div>
     </ContentWrapper>
