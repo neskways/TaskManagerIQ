@@ -25,6 +25,7 @@ import { ClosedToday } from "../pages/TicketsSheetPages/ClosedToday";
 import { OpenTickets } from "../pages/TicketsSheetPages/OpenTickets";
 import { OverdueTickets } from "../pages/TicketsSheetPages/OverdueTickets";
 import { ClosedTickets } from "../pages/TicketsSheetPages/ClosedTickets";
+import { FirstLineTask } from "../pages/TicketsSheetPages/FirstLineTask";
 
 const PrivateRoute = ({ children }) => {
   const token = Cookies.get("token");
@@ -125,6 +126,15 @@ export const AppRoutes = () => {
             element={
               <RoleProtectedRoute allowManagement>
                 <ClosedTickets titleText="Закрытые заявки" />
+              </RoleProtectedRoute>
+            }
+          />
+
+          <Route
+            path="first_line_task"
+            element={
+              <RoleProtectedRoute allowManagement allowDuty>
+                <FirstLineTask titleText="Задачи первой линии" />
               </RoleProtectedRoute>
             }
           />
