@@ -7,4 +7,5 @@ export const MESSAGES = {
   taskListErroe: "Не удалось получить список задач.",
   cleaningCache: "Максимальный успех в очистке кэша!",
   loadTaskError: "Не удалось загрузить задачи. Попробуйте позже.",
+  dataUpdate: "Данные успешно обновлены!",
 };

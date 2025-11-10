@@ -14,6 +14,7 @@ import { getClients } from "../../api/get/getClients";
 import { ReloadIcon } from "../../UI/ReloadIcon/ReloadIcon";
 import { Loading } from "../../UI/Loading/Loading";
 import { useTheme } from "../../context/ThemeContext";
+import { MESSAGES } from "../../modules/messages";
 
 const CACHE_KEY = "clientsCache";
 
@@ -36,11 +37,9 @@ export const ClientsPage = () => {
       const data = await getClients();
       setClients(data);
       saveToLocalStorage(CACHE_KEY, data);
-
-      showPopup("Данные успешно обновлены!", { type: "success" });
+      showPopup(MESSAGES.dataUpdate, { type: "info" });
     } catch (err) {
-      console.error("Ошибка при загрузке клиентов:", err);
-
+        console.error("Ошибка при загрузке клиентов:", err);
       if (err.response?.status !== 401) {
         showPopup("Ошибка при загрузке клиентов!", { type: "error" });
       }

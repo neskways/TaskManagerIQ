@@ -18,7 +18,7 @@ export const ProfilePage = () => {
   const { theme } = useTheme();
   const darkLogo = "/images/logo/logo_dark.png";
   const lightLogo = "/images/logo/logo.png";
-  const token = Cookies.get("token");
+  const userCode = Cookies.get("userCode");
   const role = Cookies.get("role");
   const UserCode = Cookies.get("userCode");
 
@@ -45,7 +45,7 @@ export const ProfilePage = () => {
             </div>
           </div>
           <h4 className={s.second_title}>Текущие задачи</h4>
-          <p className={s.role}> {token} </p>
+          <p className={s.role}> {userCode} </p>
           {UserCode === "000000002" && <ProfileBlock />}
         </div>
         <img
