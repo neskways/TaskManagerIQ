@@ -88,7 +88,6 @@ export const CreateTicketPage = () => {
     loadTasks();
   }, [isReturnTask, showPopup]);
 
-  // 🔹 Валидация + создание заявки
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -102,15 +101,14 @@ export const CreateTicketPage = () => {
       return showValidationPopup("Пожалуйста, выберите исполнителя!");
     if (!description.trim())
       return showValidationPopup("Пожалуйста, заполните описание задачи!");
-    if (!selectedConfig)
-      return showValidationPopup("Пожалуйста, выберите конфигурацию!");
     if (!contactDetails.name.trim())
-      return showValidationPopup("Пожалуйста, заполните контакт!");   
+      return showValidationPopup("Пожалуйста, заполните контакт!");
     if (!selectedReturnTask && isReturnTask)
       return showValidationPopup("Пожалуйста, выберите возвратную задачу!");
 
     const token = Cookies.get("token");
     const userCode = Cookies.get("userCode");
+    const role = Cookies.get("role");
 
     const payload = {
       token,
@@ -119,10 +117,11 @@ export const CreateTicketPage = () => {
         clientId: selectedClient.code,
         title: title.trim(),
         description: description.trim(),
-        confId: selectedConfig,
+        confId: selectedConfig || null,
         contacts: { ...contactDetails },
         owner: selectedEmployee || userCode,
         return: isReturnTask ? selectedReturnTask : null,
+        firstline: role === import.meta.env.VITE_TOKEN_DUTE ? "true" : "",
       },
     };
 
