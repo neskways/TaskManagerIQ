@@ -29,7 +29,7 @@ export const ProfilePage = () => {
           <PageTitle titleText={"Профиль"} center={true} />
           <div className={s.profile_wrapper}>
             <div className={s.img_block}>
-              <img className={s.img} src="/images/avatars/ava2.jpg" alt="" />
+              <img className={s.img} src={`/images/avatars/${UserCode}.jpg`} alt="" />
             </div>
             <div className={s.text_block}>
               <h3 className={s.username}> {username} </h3>
