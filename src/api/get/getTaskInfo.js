@@ -51,6 +51,7 @@ export const getTaskInfo = async (taskID, handleInvalidToken) => {
         const [hours, minutes, seconds] = t.split(":").map(Number);
         return {
           user: c.user,
+          userid: c.userid,
           comment: c.comment,
           date: new Date(year, month - 1, day, hours, minutes, seconds),
         };

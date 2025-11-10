@@ -36,7 +36,6 @@ export const getTaskQueue = async (state) => {
           }
         }
       }
-
       return {
         id: parseInt(item.id ?? item.TaskID ?? item.ID ?? item.idTask ?? "", 10),
         title: item.title ?? item.Title ?? item.Name ?? "",

@@ -1,4 +1,5 @@
 import s from "./TicketFormPage.module.scss";
+import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { Loading } from "../../UI/Loading/Loading";
 import { useTheme } from "../../context/ThemeContext";
@@ -20,7 +21,6 @@ export const TicketFormPage = () => {
   const { id } = useParams();
   const lastSecondaryPath = getFromLocalStorage("last_link_path");
   const { theme } = useTheme();
-  const navigate = useNavigate();
   const { showPopup } = usePopup();
 
   const [task, setTask] = useState(null);
@@ -57,6 +57,7 @@ export const TicketFormPage = () => {
           state: data.state,
           comments: data.comments.map((c) => ({
             user: c.user,
+            userId: c.userid,
             comment: c.comment,
             date: new Date(c.date),
           })),
@@ -78,7 +79,6 @@ export const TicketFormPage = () => {
     fetchTask();
   }, [id]);
 
-  // обработчик отправки комментария
   const handleSendComment = async () => {
     if (!commentText.trim()) {
       showPopup("Комментарий не может быть пустым", { type: "warning" });
@@ -87,14 +87,18 @@ export const TicketFormPage = () => {
 
     try {
       const formattedTaskId = String(task.taskId).padStart(9, "0");
+
       await createComment({
         taskid: formattedTaskId,
         comment: commentText.trim(),
       });
 
-      // Добавляем комментарий локально
+      const currentUserId = String(Cookies.get("userCode") ?? "");
+      const currentUserName = String(Cookies.get("userName") ?? "Вы");
+
       const newComment = {
-        user: "Вы",
+        user: currentUserName,
+        userId: currentUserId,
         comment: commentText.trim(),
         date: new Date(),
       };
@@ -104,14 +108,13 @@ export const TicketFormPage = () => {
         comments: [...prev.comments, newComment],
       }));
 
-      setCommentText(""); // очищаем поле
+      setCommentText("");
       showPopup("Комментарий добавлен", { type: "success" });
-    } catch {
+    } catch (err) {
       showPopup("Не удалось добавить комментарий", { type: "error" });
     }
   };
 
-  // Общий лоадер только по задаче
   if (loading) {
     return (
       <ContentWrapper>
@@ -153,13 +156,14 @@ export const TicketFormPage = () => {
 
             <div className={s.comment_wrap}>
               {task.comments.map((c, i) => (
-              <TaskTextBlock
-                key={i}
-                user={c.user}
-                text={c.comment}
-                date={formatDate(c.date)}
-              />
-            ))}
+                <TaskTextBlock
+                  key={i}
+                  user={c.user}
+                  userId={c.userId}
+                  text={c.comment}
+                  date={c.date}
+                />
+              ))}
             </div>
           </div>
 
@@ -175,6 +179,7 @@ export const TicketFormPage = () => {
         </div>
 
         <TicketSidebar
+          currentClient={task.client}
           currentStatus={task.state}
           currentExecutor={task.owner}
         />

@@ -1,9 +1,14 @@
 import s from "./Screamer.module.scss";
 
-export const Screamer = () => {
+export const Screamer = ({ type = "light" }) => {
+  const imgSrc =
+    type === "hard"
+      ? "/images/memes/kavabanka.jpg" 
+      : "/images/memes/kavabankLight.jpg"; 
+
   return (
     <div className={s.block}>
-      <img src="/images/kavabanka.jpg" alt="screamer" />
+      <img src={imgSrc} alt="screamer" />
     </div>
   );
 };

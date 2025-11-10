@@ -8,12 +8,13 @@ import s from "./TimerTasks.module.scss";
 
 const REFRESH_INTERVAL_MS = 15000;
 
-// Формат секунд в HH:MM:SS
 const secToHHMMSS = (sec) => {
   const h = Math.floor(sec / 3600);
   const m = Math.floor((sec % 3600) / 60);
   const s = sec % 60;
-  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(
+    s
+  ).padStart(2, "0")}`;
 };
 
 const formatTaskId = (id) => String(id).padStart(9, "0");
@@ -37,7 +38,11 @@ export const TimerTasks = () => {
     if (a.length !== b.length) return false;
     return a.every((task, i) => {
       const t = b[i];
-      return task.id === t.id && task.state === t.state && task.displaySec === t.displaySec;
+      return (
+        task.id === t.id &&
+        task.state === t.state &&
+        task.displaySec === t.displaySec
+      );
     });
   };
 
@@ -49,22 +54,28 @@ export const TimerTasks = () => {
         taskStatuses.TRANSFERRED.code,
       ];
       const data = await getTaskQueue(state);
-
-      if (tasksAreEqual(prevTasksRef.current, data)) {
-        setLoading(false);
-        return;
-      }
-
+      const now = Date.now();
       const secs = {};
+
       data.forEach((t) => {
-        secs[t.id] = secondsMap[t.id] || t.displaySec || 0;
+        const prev = secondsMap[t.id] || 0;
+
+        // если задача в процессе, добавляем прошедшее время с момента последнего обновления
+        if (t.state === taskStatuses.IN_PROGRESS.title && t.lastUpdate) {
+          const elapsed = Math.floor((now - new Date(t.lastUpdate)) / 1000);
+          secs[t.id] = (t.displaySec || 0) + elapsed;
+        } else {
+          secs[t.id] = t.displaySec || 0;
+        }
       });
 
       setTasks(data);
       setSecondsMap(secs);
       prevTasksRef.current = data;
 
-      const running = data.find((t) => t.state === taskStatuses.IN_PROGRESS.title);
+      const running = data.find(
+        (t) => t.state === taskStatuses.IN_PROGRESS.title
+      );
       if (running) {
         if (activeTaskId !== running.id) setActiveTaskId(running.id);
         if (!selectedTaskId) setSelectedTaskId(running.id);
@@ -104,14 +115,15 @@ export const TimerTasks = () => {
       await curentTaskManage(formattedTaskId, newState);
       await loadTasks();
 
-      // Попапы для действий
       const task = tasks.find((t) => t.id === taskId);
       if (!task) return;
 
       if (newState === taskStatuses.IN_PROGRESS.code) {
         showPopup(`Задача "${task.title}" запущена`, { type: "info" });
       } else if (newState === taskStatuses.PAUSED.code) {
-        showPopup(`Задача "${task.title}" поставлена на паузу`, { type: "info" });
+        showPopup(`Задача "${task.title}" поставлена на паузу`, {
+          type: "info",
+        });
       } else if (newState === taskStatuses.READY.code) {
         showPopup(`Задача "${task.title}" завершена`, { type: "info" });
       }
@@ -171,16 +183,26 @@ export const TimerTasks = () => {
         <div className={s.headerBox}>
           <div className={s.headerInner}>
             <div className={s.controls}>
-              <button className={s.btn} onClick={startPauseTask} disabled={!selectedTaskId}>
+              <button
+                className={s.btn}
+                onClick={startPauseTask}
+                disabled={!selectedTaskId}
+              >
                 {isRunning ? "⏸ Пауза" : "▶ Старт"}
               </button>
-              <button className={s.btnEnd} onClick={finishTask} disabled={!selectedTaskId}>
+              <button
+                className={s.btnEnd}
+                onClick={finishTask}
+                disabled={!selectedTaskId}
+              >
                 ⏹ Завершить
               </button>
             </div>
 
             <div className={s.timerAndTitle}>
-              <div className={s.titleText}>{selectedTask ? selectedTask.title : "Нет выбранной задачи"}</div>
+              <div className={s.titleText}>
+                {selectedTask ? selectedTask.title : "Нет выбранной задачи"}
+              </div>
               <div className={s.timerBig}>{secToHHMMSS(displaySec)}</div>
             </div>
           </div>
@@ -188,19 +210,29 @@ export const TimerTasks = () => {
 
         <div className={s.listBox}>
           <div className={s.listInner}>
-            {loading && tasks.length === 0 && <div className={s.empty}>Загрузка...</div>}
-            {!loading && tasks.length === 0 && <div className={s.empty}>Задач нет</div>}
+            {loading && tasks.length === 0 && (
+              <div className={s.empty}>Загрузка...</div>
+            )}
+            {!loading && tasks.length === 0 && (
+              <div className={s.empty}>Задач нет</div>
+            )}
 
             <div className={s.items}>
               {tasks.map((task) => (
                 <div
                   key={task.id}
-                  className={`${s.taskItem} ${task.id === selectedTaskId ? s.selected : ""}`}
+                  className={`${s.taskItem} ${
+                    task.id === selectedTaskId ? s.selected : ""
+                  }`}
                   onClick={() => onSelectTask(task.id)}
                   onDoubleClick={() => navigate(`/ticket/${task.id}`)}
                 >
-                  <div className={s.taskTitle} title={task.title}>{task.title}</div>
-                  <div className={s.taskTime}>{secToHHMMSS(secondsMap[task.id] || 0)}</div>
+                  <div className={s.taskTitle} title={task.title}>
+                    {task.title}
+                  </div>
+                  <div className={s.taskTime}>
+                    {secToHHMMSS(secondsMap[task.id] || 0)}
+                  </div>
                 </div>
               ))}
             </div>
@@ -208,7 +240,9 @@ export const TimerTasks = () => {
         </div>
       </div>
 
-      {isExpanded && <div className={s.overlay} onClick={() => setIsExpanded(false)} />}
+      {isExpanded && (
+        <div className={s.overlay} onClick={() => setIsExpanded(false)} />
+      )}
     </>
   );
 };

@@ -15,20 +15,22 @@
   resize: none;
   overflow: hidden;
   text-align: center;
-  margin-bottom: 5px;
+  margin-bottom: 3px;
 }
 
 .date_text {
     text-align: center;
     font-size: 14px;
+    opacity: 0.6;
     color: var(--text-color-secondary);
 }
 
 .task_text {
-  margin-top: 25px;
+  margin-top: 14px;
   width: 90%;
+  font-size: 14px;
   margin: 5px auto 0;
   background: var(--bg-color-secondary);
   border-radius: var(--border-radius);
-  padding: 10px;
+  padding: 20px;
 }

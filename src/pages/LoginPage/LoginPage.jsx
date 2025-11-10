@@ -1,5 +1,4 @@
 import s from "./LoginPage.module.scss";
-import Cookies from "js-cookie";
 import { useState } from "react";
 import { Input } from "../../UI/Input/Input";
 import { Button } from "../../UI/Button/Button";

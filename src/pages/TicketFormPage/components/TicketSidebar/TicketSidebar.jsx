@@ -5,7 +5,7 @@ import { Selector } from "../../../../UI/Selector/Selector";
 import { taskStatuses } from "../../../../modules/TaskStatuses";
 import { useClientsAndEmployees } from "../../../CreateTicketPage/hooks/useClientsAndEmployees";
 
-export const TicketSidebar = ({ currentStatus, currentExecutor }) => {
+export const TicketSidebar = ({ currentClient, currentStatus, currentExecutor }) => {
   const { employeeOptions, loading: employeesLoading } = useClientsAndEmployees();
 
   const statusItems = Object.entries(taskStatuses).map(([key, { code, title }]) => ({
@@ -31,6 +31,11 @@ export const TicketSidebar = ({ currentStatus, currentExecutor }) => {
     <div className={s.wrapper}>
       {/* Индикатор изменений в верхнем правом углу */}
       {hasChanges && <div className={s.dirtyIndicator}><p className={s.z}>*</p></div>}
+
+      <div className={s.block}>
+        <h4 className={s.title}> Клиент </h4>
+        <p className={s.text}> { currentClient } </p>
+      </div>
 
       <Selector
         title="Статус задачи"

@@ -7,34 +7,43 @@ import { ContentWrapper } from "../../UI/ContentWrapper/ContentWrapper";
 import { SecretSettingsBlock } from "./components/SecretSettingsBlock/SecretSettingsBlock";
 
 export const ParametersPage = () => {
-
   const role = Cookies.get("role");
 
   return (
     <ContentWrapper>
       <PageTitle titleText={"Параметры"} center={true} />
       <div className={s.parameters_block}>
-        <h4 className={s.parameters_title}>Внешний вид</h4>
-        <div className={s.parameters_item}>
-          <span>Изменить тему</span> <ThemeToggle />
+        <div className="">
+          <h4 className={s.parameters_title}>Внешний вид</h4>
+          <div className={s.parameters_item}>
+            <span>Изменить тему</span> <ThemeToggle />
+          </div>
         </div>
       </div>
 
       {role !== import.meta.env.VITE_TOKEN_MANAGER && (
         <div className={s.parameters_block}>
-          <h4 className={s.parameters_title}>Настройка пасхалок</h4>
-          <div className={s.parameters_item}>
-            <SecretSettingsBlock />
+          <div className={s.parameters_wrap}>
+            <h4 className={s.parameters_title}>Настройка пасхалок</h4>
+            <div className={s.parameters_item}>
+              <SecretSettingsBlock />
+            </div>
+          </div>
+
+          <div className={s.img_block}>
+            <img src="/images/memes/spotti.png" alt="" />
           </div>
         </div>
       )}
 
       <div className={s.parameters_block}>
-        <h4 className={s.parameters_title}>Кэша приложения</h4>
-        <div className={s.parameters_item}>
+        <div className="">
+          <h4 className={s.parameters_title}>Кэша приложения</h4>
           <div className={s.parameters_item}>
-            <span>Очистить кэш</span>
-            <DeleteButton />
+            <div className={s.parameters_item}>
+              <span>Очистить кэш</span>
+              <DeleteButton />
+            </div>
           </div>
         </div>
       </div>
