@@ -45,7 +45,7 @@ export const ProfilePage = () => {
           </div>
           <h4 className={s.second_title}>Текущие задачи</h4>
           <p className={s.role}> {userCode} </p>
-          {UserCode === "000000002" && <ProfileBlock />}
+          {userCode === "000000002" && <ProfileBlock />}
         </div>
         <img
           className={s.logo_opacity}
