@@ -20,7 +20,6 @@ export const ProfilePage = () => {
   const lightLogo = "/images/logo/logo.png";
   const userCode = Cookies.get("userCode");
   const role = Cookies.get("role");
-  const UserCode = Cookies.get("userCode");
 
   return (
     <>
@@ -29,7 +28,7 @@ export const ProfilePage = () => {
           <PageTitle titleText={"Профиль"} center={true} />
           <div className={s.profile_wrapper}>
             <div className={s.img_block}>
-              <img className={s.img} src={`/images/avatars/${UserCode}.jpg`} alt="" />
+              <img className={s.img} src={`/images/avatars/${userCode}.jpg`} alt="" />
             </div>
             <div className={s.text_block}>
               <h3 className={s.username}> {username} </h3>
