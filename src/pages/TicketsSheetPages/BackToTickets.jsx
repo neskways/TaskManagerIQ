@@ -2,7 +2,9 @@ import { UniversalTicketsSheet } from "../UniversalTicketsSheet/UniversalTickets
 import { taskStatuses } from "../../modules/TaskStatuses";
 
 export const BackToTickets = ({ titleText }) => {
-  const queryParams = {};
+  const queryParams = {
+    return: "true"
+  };
 
   return (
     <UniversalTicketsSheet

@@ -32,20 +32,8 @@ export const TimerTasks = () => {
 
   const timerRef = useRef(null);
   const pollingRef = useRef(null);
-  const prevTasksRef = useRef([]);
 
-  const tasksAreEqual = (a, b) => {
-    if (a.length !== b.length) return false;
-    return a.every((task, i) => {
-      const t = b[i];
-      return (
-        task.id === t.id &&
-        task.state === t.state &&
-        task.displaySec === t.displaySec
-      );
-    });
-  };
-
+  // Загрузка задач
   const loadTasks = async () => {
     try {
       const state = [
@@ -56,11 +44,9 @@ export const TimerTasks = () => {
       const data = await getTaskQueue(state);
       const now = Date.now();
       const secs = {};
-
+      
       data.forEach((t) => {
-        const prev = secondsMap[t.id] || 0;
-
-        // если задача в процессе, добавляем прошедшее время с момента последнего обновления
+        // Считаем секунды
         if (t.state === taskStatuses.IN_PROGRESS.title && t.lastUpdate) {
           const elapsed = Math.floor((now - new Date(t.lastUpdate)) / 1000);
           secs[t.id] = (t.displaySec || 0) + elapsed;
@@ -71,17 +57,14 @@ export const TimerTasks = () => {
 
       setTasks(data);
       setSecondsMap(secs);
-      prevTasksRef.current = data;
 
-      const running = data.find(
-        (t) => t.state === taskStatuses.IN_PROGRESS.title
-      );
+      const running = data.find((t) => t.state === taskStatuses.IN_PROGRESS.title);
       if (running) {
-        if (activeTaskId !== running.id) setActiveTaskId(running.id);
-        if (!selectedTaskId) setSelectedTaskId(running.id);
-      } else {
-        if (!activeTaskId) setActiveTaskId(null);
-        if (!selectedTaskId && data.length > 0) setSelectedTaskId(data[0].id);
+        setActiveTaskId((prev) => (prev !== running.id ? running.id : prev));
+        setSelectedTaskId((prev) => prev || running.id);
+      } else if (data.length > 0) {
+        setSelectedTaskId((prev) => prev || data[0].id);
+        setActiveTaskId(null);
       }
     } catch (err) {
       showPopup("Не удалось загрузить задачи.", { type: "error" });
@@ -96,6 +79,7 @@ export const TimerTasks = () => {
     return () => clearInterval(pollingRef.current);
   }, []);
 
+  // Таймер для активной задачи
   useEffect(() => {
     if (!activeTaskId) return;
 
@@ -109,57 +93,72 @@ export const TimerTasks = () => {
     return () => clearInterval(timerRef.current);
   }, [activeTaskId]);
 
+  // Управление состоянием задачи с ожиданием ответа сервера
   const manageTaskState = async (taskId, newState) => {
+    const task = tasks.find((t) => t.id === taskId);
+    if (!task) return;
+
     try {
       const formattedTaskId = formatTaskId(taskId);
       await curentTaskManage(formattedTaskId, newState);
-      await loadTasks();
 
-      const task = tasks.find((t) => t.id === taskId);
-      if (!task) return;
+      // После успешного ответа обновляем список задач
+      await loadTasks();
 
       if (newState === taskStatuses.IN_PROGRESS.code) {
         showPopup(`Задача "${task.title}" запущена`, { type: "info" });
       } else if (newState === taskStatuses.PAUSED.code) {
-        showPopup(`Задача "${task.title}" поставлена на паузу`, {
-          type: "info",
-        });
+        showPopup(`Задача "${task.title}" поставлена на паузу`, { type: "info" });
       } else if (newState === taskStatuses.READY.code) {
         showPopup(`Задача "${task.title}" завершена`, { type: "info" });
       }
     } catch (err) {
       showPopup("Не удалось обновить задачу.", { type: "error" });
+      throw err;
     }
   };
 
-  const startPauseTask = () => {
+  // Старт/Пауза задачи
+  const startPauseTask = async () => {
     if (!selectedTaskId) return;
 
     if (activeTaskId === selectedTaskId) {
-      manageTaskState(selectedTaskId, taskStatuses.PAUSED.code);
-      setActiveTaskId(null);
+      // Ставим на паузу
+      try {
+        await manageTaskState(selectedTaskId, taskStatuses.PAUSED.code);
+        setActiveTaskId(null); // таймер остановится
+      } catch {}
     } else {
-      // Ставим текущую активную задачу на паузу
-      if (activeTaskId) {
-        manageTaskState(activeTaskId, taskStatuses.PAUSED.code);
-      }
-      manageTaskState(selectedTaskId, taskStatuses.IN_PROGRESS.code);
-      setActiveTaskId(selectedTaskId);
+      try {
+        // При необходимости ставим текущую активную задачу на паузу
+        if (activeTaskId) {
+          await manageTaskState(activeTaskId, taskStatuses.PAUSED.code);
+        }
+
+        await manageTaskState(selectedTaskId, taskStatuses.IN_PROGRESS.code);
+        setActiveTaskId(selectedTaskId); // запуск таймера после ответа сервера
+      } catch {}
     }
   };
 
-  const finishTask = () => {
+  // Завершение задачи
+  const finishTask = async () => {
     if (!selectedTaskId) return;
-    manageTaskState(selectedTaskId, taskStatuses.READY.code);
-    if (activeTaskId === selectedTaskId) setActiveTaskId(null);
+
+    try {
+      await manageTaskState(selectedTaskId, taskStatuses.READY.code);
+      if (activeTaskId === selectedTaskId) setActiveTaskId(null);
+    } catch {}
   };
 
+  // Выбор задачи
   const onSelectTask = (taskId) => {
     if (taskId === selectedTaskId) return;
 
     if (activeTaskId && activeTaskId !== taskId) {
-      manageTaskState(activeTaskId, taskStatuses.PAUSED.code);
-      setActiveTaskId(null);
+      manageTaskState(activeTaskId, taskStatuses.PAUSED.code).then(() => {
+        setActiveTaskId(null);
+      });
     }
 
     setSelectedTaskId(taskId);

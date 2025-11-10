@@ -2,7 +2,9 @@ import { UniversalTicketsSheet } from "../UniversalTicketsSheet/UniversalTickets
 import { taskStatuses } from "../../modules/TaskStatuses";
 
 export const ClosedToday = ({ titleText }) => {
-  const queryParams = {};
+  const queryParams = {
+    states: [taskStatuses.DONE.code],
+  };
 
   return (
     <UniversalTicketsSheet

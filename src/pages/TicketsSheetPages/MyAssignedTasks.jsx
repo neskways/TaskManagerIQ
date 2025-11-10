@@ -9,7 +9,6 @@ export const MyAssignedTasks = () => {
   const params = {
     states: [taskStatuses.PAUSED.code, taskStatuses.IN_PROGRESS.code, taskStatuses.TRANSFERRED.code],
     userCode,
-    firstline: "true",
   };
 
   return <UniversalTicketsSheet titleText="Назначенные мне" queryParams={params} />;

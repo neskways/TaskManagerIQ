@@ -51,7 +51,8 @@ export const TasksTable = ({ setShowFilter, queryParams }) => {
       try {
         const data = await getTasksList(
           queryParams.states,
-          queryParams.userCode
+          queryParams.userCode,
+          queryParams.firstline
         );
 
         const mapped = data.map((item) => ({

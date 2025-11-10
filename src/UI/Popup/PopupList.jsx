@@ -13,11 +13,11 @@ export const PopupList = ({ popups, removePopup }) => {
   return (
     <div className={s.stackContainer}>
       <AnimatePresence>
-        {popups.map(({ id, text, type }) => (
+        {popups.map(({ id, text, type, center }) => (
           <motion.div
             key={id}
-            className={`${s.popup} ${s[type]}`}
-            layout 
+            className={`${s.popup} ${s[type]} ${!center ? s.marginTrue : ""}`}
+            layout
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}

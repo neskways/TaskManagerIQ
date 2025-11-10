@@ -35,7 +35,7 @@ export const LoginPage = () => {
 
       setIsErrorIn(true);
 
-      showPopup("Неправильный логин или пароль!", { type: "error", marginNone: true });
+      showPopup("Неправильный логин или пароль!", { type: "error" });
       setTimeout(() => {
         setIsErrorIn(false);
       }, 3000);

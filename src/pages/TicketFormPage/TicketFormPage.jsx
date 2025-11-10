@@ -43,7 +43,6 @@ export const TicketFormPage = () => {
     try {
       const taskId = String(id).padStart(9, "0");
       const data = await getTaskInfo(taskId);
-
       if (data) {
         setTask({
           taskId: parseInt(data.taskId, 10),
@@ -55,6 +54,7 @@ export const TicketFormPage = () => {
           owner: data.owner,
           date: new Date(data.date),
           state: data.state,
+          contacts: data.contacts,
           comments: data.comments.map((c) => ({
             user: c.user,
             userId: c.userid,
@@ -179,9 +179,11 @@ export const TicketFormPage = () => {
         </div>
 
         <TicketSidebar
+          taskId={task.taskId}
           currentClient={task.client}
           currentStatus={task.state}
           currentExecutor={task.owner}
+          contacts={task.contacts}
         />
       </div>
     </ContentWrapper>

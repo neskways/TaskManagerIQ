@@ -26,25 +26,22 @@ export const CreateTicketPage = () => {
   const navigate = useNavigate();
   const { showPopup } = usePopup();
 
-  // Основные состояния
   const [selectedClient, setSelectedClient] = useState(null);
   const [selectedEmployee, setSelectedEmployee] = useState(
     Cookies.get("userCode")
   );
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-
-  // Возврат к задаче
   const [isReturnTask, setIsReturnTask] = useState(false);
   const [tasksList, setTasksList] = useState([]);
   const [selectedReturnTask, setSelectedReturnTask] = useState("");
 
-  // Хуки
   const {
     clients,
     employeeOptions,
     loading: clientsLoading,
   } = useClientsAndEmployees();
+
   const {
     contactOptions,
     selectedContactId,
@@ -53,6 +50,7 @@ export const CreateTicketPage = () => {
     setContactDetails,
     handleSelectContact,
   } = useContacts(selectedClient);
+
   const {
     configOptions,
     selectedConfig,
@@ -63,30 +61,45 @@ export const CreateTicketPage = () => {
   const dataReady =
     !configsLoading && configOptions.length > 0 && contactOptions.length > 0;
 
-  // 🔹 Загружаем список завершённых задач, если активирован возврат
+  // 🔹 Загружаем возвратные задачи, если выбран клиент и включён чекбокс
   useEffect(() => {
     const loadTasks = async () => {
-      if (isReturnTask) {
-        try {
-          const tasks = await getTasksList([taskStatuses.DONE.code]);
-          const mapped = tasks.map((t) => ({
-            id: t.number,
-            name: `${t.title} (${t.client})`,
-          }));
-          setTasksList(mapped);
-        } catch (error) {
-          console.error("Ошибка при загрузке задач:", error);
-          showPopup("Не удалось загрузить завершённые задачи", {
-            type: "error",
-          });
-        }
-      } else {
+      if (!selectedClient || !isReturnTask) {
         setTasksList([]);
         setSelectedReturnTask("");
+        return;
+      }
+
+      try {
+        const tasks = await getTasksList(
+          [taskStatuses.DONE.code],
+          Cookies.get("userCode"),
+          null,
+          null,
+          selectedClient.code // фильтр по клиенту
+        );
+
+        const mapped = tasks.map((t) => ({
+          id: t.number,
+          name: `${t.title} (${t.client})`,
+        }));
+        setTasksList(mapped);
+      } catch (error) {
+        console.error("Ошибка при загрузке возвратных задач:", error);
+        showPopup("Не удалось загрузить завершённые задачи", { type: "error" });
       }
     };
+
     loadTasks();
-  }, [isReturnTask, showPopup]);
+  }, [isReturnTask, selectedClient, showPopup]);
+
+  // 🔹 Сбрасываем чекбокс, если клиент снимается
+  useEffect(() => {
+    if (!selectedClient) {
+      setIsReturnTask(false);
+      setSelectedReturnTask("");
+    }
+  }, [selectedClient]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -215,6 +228,7 @@ export const CreateTicketPage = () => {
             <Checkbox
               checked={isReturnTask}
               onChange={(e) => setIsReturnTask(e.target.checked)}
+              disabled={!selectedClient} // 🔹 недоступно, пока клиент не выбран
             />
             <p>Возврат к задаче</p>
           </div>

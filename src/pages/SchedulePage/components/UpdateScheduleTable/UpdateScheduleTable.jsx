@@ -43,7 +43,7 @@ export const UpdateScheduleTable = ({ theme }) => {
     try {
       const updatedSchedule = await loadSchedule(true); // force reload
       if (!updatedSchedule || updatedSchedule.length === 0) {
-        showPopup("Нет данных для отображения", { type: "info" });
+        showPopup("Нет данных для отображения", { type: "info", });
         emptyPopupShownRef.current = true;
       }
     } catch (err) {

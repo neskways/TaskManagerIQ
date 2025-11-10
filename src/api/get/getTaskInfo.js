@@ -34,7 +34,7 @@ export const getTaskInfo = async (taskID, handleInvalidToken) => {
       +timeParts[1],
       +timeParts[2]
     );
-
+    
     return {
       taskId: parsed.taskid.toString().padStart(9, "0"),
       client: parsed.clientid,
@@ -44,6 +44,7 @@ export const getTaskInfo = async (taskID, handleInvalidToken) => {
       userId: parsed.userId,
       owner: parsed.owner,
       date,
+      contacts: parsed.contacts,
       state: parsed.state,
       comments: parsed.comments.map((c) => {
         const [d, t] = c.date.split(" ");
