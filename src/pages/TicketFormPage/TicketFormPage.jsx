@@ -43,6 +43,7 @@ export const TicketFormPage = () => {
     try {
       const taskId = String(id).padStart(9, "0");
       const data = await getTaskInfo(taskId);
+        console.log(data)
       if (data) {
         setTask({
           taskId: parseInt(data.taskId, 10),
