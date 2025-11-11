@@ -8,11 +8,20 @@ import { getTasksList } from "../../api/get/getTasksList";
 import { taskStatuses } from "../../modules/TaskStatuses";
 import { usePopup } from "../../context/PopupContext";
 import { Loading } from "../../UI/Loading/Loading";
+import { ProfileTasksTable } from "./Components/ProfileTasksTable/ProfileTasksTable";
+
+// Утилита для преобразования секунд в HH:MM:SS
+const secToHHMMSS = (sec) => {
+  const h = Math.floor(sec / 3600);
+  const m = Math.floor((sec % 3600) / 60);
+  const s = sec % 60;
+  return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+};
 
 export const ProfilePage = () => {
   const [visible, setVisible] = useState(false);
   const [tasks, setTasks] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { showPopup } = usePopup();
   const username = Cookies.get("username");
   const userCode = Cookies.get("userCode");
@@ -46,7 +55,7 @@ export const ProfilePage = () => {
           client: item.client,
           status: item.status,
           executor: item.executor,
-          timeSpent: item.timeSpent,
+          timeSpent: secToHHMMSS(item.timeSpent), // форматируем время
         }));
 
         setTasks(mapped);
@@ -62,76 +71,61 @@ export const ProfilePage = () => {
   }, [userCode, showPopup]);
 
   return (
-    <div className={s.wrapper}>
-      <div className={`${s.inner} ${visible ? s.show : ""}`}>
-        <PageTitle titleText={"Профиль"} center={true} />
+    <>
+      <div className={s.wrapper}>
+        <div className={`${s.inner} ${visible ? s.show : ""}`}>
+          <PageTitle titleText={"Профиль"} center={true} />
 
-        <div className={s.profile_wrapper}>
-          <div className={s.img_block}>
-            <img
-              className={s.img}
-              src={`/images/avatars/${userCode}.jpg`}
-              alt={username}
-            />
-          </div>
-          <div className={s.text_block}>
-            <h3 className={s.username}>{username}</h3>
-            <p className={s.role}>{role}</p>
-            <a
-              className={s.iqcompany}
-              href="https://iqprog.ru/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              АйКю Компани
-            </a>
-          </div>
-        </div>
-
-        <h4 className={s.second_title}>Текущие задачи</h4>
-
-        <div className={s.tasks_table_wrapper}>
-          {loading ? (
-            <Loading />
-          ) : tasks.length === 0 ? (
-            <p>Нет текущих задач</p>
-          ) : (
-            <div className={s.tasks_table}>
-              <div className={s.table_header}>
-                <div>Номер</div>
-                <div>Название</div>
-                <div>Клиент</div>
-                <div>Статус</div>
-                <div>Исполнитель</div>
-                <div>Время</div>
-              </div>
-              <div className={s.table_body}>
-                {tasks.map((task) => (
-                  <div key={task.number} className={s.table_row}>
-                    <div>{task.number}</div>
-                    <div>{task.title}</div>
-                    <div>{task.client}</div>
-                    <div>{task.status}</div>
-                    <div>{task.executor}</div>
-                    <div>{task.timeSpent}</div>
-                  </div>
-                ))}
-              </div>
+          <div className={s.profile_wrapper}>
+            <div className={s.img_block}>
+              <img
+                className={s.img}
+                src={`/images/avatars/${userCode}.jpg`}
+                alt={username}
+              />
             </div>
-          )}
+            <div className={s.text_block}>
+              <h3 className={s.username}>{username}</h3>
+              <p className={s.role}>{role}</p>
+              <a
+                className={s.iqcompany}
+                href="https://iqprog.ru/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                АйКю Компани
+              </a>
+            </div>
+          </div>
+
+          <h4 className={s.second_title}>Текущие задачи</h4>
+
+          <div className={s.tasks_table_wrapper}>
+            {loading ? (
+              <div className={s.loading_wrap}>
+                <Loading />
+              </div>
+            ) : tasks.length === 0 ? (
+              <p>Нет текущих задач</p>
+            ) : (
+              <ProfileTasksTable tasks={tasks} theme={theme} />
+            )}
+          </div>
         </div>
+
+        <img
+          className={s.logo_opacity}
+          src={theme === "light" ? lightLogo : darkLogo}
+          onDoubleClick={() =>
+            window.open("https://vk.com/furryevent", "_blank")
+          }
+          alt=""
+        />
       </div>
 
-      { userCode === "000000002" && <ProfileBlock className={s.profile_block_absolute} /> }
-
-      <img
-        className={s.logo_opacity}
-        src={theme === "light" ? lightLogo : darkLogo}
-        onDoubleClick={() =>
-          window.open("https://vk.com/furryevent", "_blank")
-        }
-        alt=""
-      />
-    </div>
+      {(userCode === "000000002" || userCode === "000000005") && (
+        <ProfileBlock className={s.profile_block_absolute} />
+      )}
+    </>
   );
 };

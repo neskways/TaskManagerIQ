@@ -114,8 +114,18 @@ export const CreateTicketPage = () => {
       return showValidationPopup("Пожалуйста, выберите исполнителя!");
     if (!description.trim())
       return showValidationPopup("Пожалуйста, заполните описание задачи!");
-    if (!contactDetails.name.trim())
-      return showValidationPopup("Пожалуйста, заполните контакт!");
+
+    // 🔹 Проверка контакта
+    if (creatingNewContact) {
+      if (!contactDetails.name.trim())
+        return showValidationPopup("Пожалуйста, заполните ФИО нового контакта!");
+      if (!contactDetails.phone.trim())
+        return showValidationPopup("Пожалуйста, заполните номер телефона нового контакта!");
+    } else {
+      if (!contactDetails.name.trim())
+        return showValidationPopup("Пожалуйста, выберите контакт!");
+    }
+
     if (!selectedReturnTask && isReturnTask)
       return showValidationPopup("Пожалуйста, выберите возвратную задачу!");
 
@@ -135,8 +145,8 @@ export const CreateTicketPage = () => {
         owner: selectedEmployee || userCode,
         return: isReturnTask ? selectedReturnTask : null,
         firstline:
-          (role === import.meta.env.VITE_TOKEN_DUTE ||
-          role === import.meta.env.VITE_TOKEN_MANAGER)
+          role === import.meta.env.VITE_TOKEN_DUTE ||
+          role === import.meta.env.VITE_TOKEN_MANAGER
             ? "true"
             : null,
       },
@@ -199,7 +209,7 @@ export const CreateTicketPage = () => {
             value={selectedConfig}
             title="КОНФИГУРАЦИЯ"
             onChange={setSelectedConfig}
-            disabled={!selectedClient || !dataReady}
+            disabled={!selectedClient || configsLoading}
             labelKey="name"
             valueKey="id"
           />
@@ -209,7 +219,7 @@ export const CreateTicketPage = () => {
             value={selectedContactId}
             title="КОНТАКТЫ"
             onChange={handleSelectContact}
-            disabled={!selectedClient || !dataReady}
+            disabled={!selectedClient} // 🔹 доступно всегда, если выбран клиент
             labelKey="name"
             valueKey="id"
           />
@@ -228,7 +238,7 @@ export const CreateTicketPage = () => {
             <Checkbox
               checked={isReturnTask}
               onChange={(e) => setIsReturnTask(e.target.checked)}
-              disabled={!selectedClient} // 🔹 недоступно, пока клиент не выбран
+              disabled={!selectedClient}
             />
             <p>Возврат к задаче</p>
           </div>

@@ -13,7 +13,7 @@
 .block {
   background: var(--bg-color-tertiary);
   border-radius: var(--border-radius);
-  padding: 6px 10px 20px;
+  padding: 6px 10px 18px;
   position: relative;
   display: inline-block;
   min-width: 200px;
@@ -24,16 +24,16 @@
 
 .sender {
   color: var(--accent-color);
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .text {
   color: var(--color-primary);
   white-space: pre-wrap;
   line-height: 1.4;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .date {
@@ -54,8 +54,8 @@
 }
 
 .ava {
-  width: 38px;
-  height: 38px;
+  width: 42px;
+  height: 42px;
   background-color: var(--bg-color-tertiary);
   border-radius: 50%;
   flex-shrink: 0;

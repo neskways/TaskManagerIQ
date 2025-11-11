@@ -4,6 +4,7 @@
   margin: 0 auto;
   height: calc(100vh - 120px); /* 100vh минус высота таймера */
   box-sizing: border-box;
+  position: relative;
 }
 
 .inner {
@@ -79,5 +80,14 @@
 
 .second_title {
   text-align: center;
+  font-size: 18px;
+  margin-bottom: 14px;
+  font-weight: 500;
 }
 
+.loading_wrap {
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

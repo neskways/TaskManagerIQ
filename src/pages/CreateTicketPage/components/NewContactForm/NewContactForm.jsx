@@ -10,17 +10,17 @@ export const NewContactForm = ({ contactDetails, setContactDetails }) => {
         setUserData={(v) => setContactDetails({ ...contactDetails, name: v })}
       />
       <Input
-        text="Должность"
+        text="ДОЛЖНОСТЬ"
         value={contactDetails.post}
         setUserData={(v) => setContactDetails({ ...contactDetails, post: v })}
       />
       <Input
-        text="Телефон"
+        text="ТЕЛЕФОН"
         value={contactDetails.phone}
         setUserData={(v) => setContactDetails({ ...contactDetails, phone: v })}
       />
       <Input
-        text="Email"
+        text="EMAIL"
         type={"email"}
         value={contactDetails.mail}
         setUserData={(v) => setContactDetails({ ...contactDetails, mail: v })}

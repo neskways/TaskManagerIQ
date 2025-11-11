@@ -1,17 +1,40 @@
-// TaskGridCell.jsx
 import s from "./TaskGridCell.module.scss";
 import { useState } from "react";
-import { getStatusColor } from "../../../../modules/TaskStatuses";
 
-// утилита: hex -> rgba
-const hexToRgba = (hex, alpha = 1) => {
-  if (!hex) return null;
-  const h = hex.replace("#", "");
-  const bigint = parseInt(h.length === 3 ? h.split('').map(c=>c+c).join('') : h, 16);
-  const r = (bigint >> 16) & 255;
-  const g = (bigint >> 8) & 255;
-  const b = bigint & 255;
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+// Цвета по названию статуса (title)
+const statusStylesByTitle = {
+  "Новая": {
+    bg: "#e8f3ff",
+    color: "#007bff",
+  },
+  "На оценке": {
+    bg: "#f3e9ff",
+    color: "#8e44ad",
+  },
+  "Передана на выполнение": {
+    bg: "#e9f2ff",
+    color: "#2980b9",
+  },
+  "Выполняется": {
+    bg: "#fff7e0",
+    color: "#e67e22",
+  },
+  "Приостановлена": {
+    bg: "#fff0e0",
+    color: "#d35400",
+  },
+  "Готова к сдаче": {
+    bg: "#e8f9e9",
+    color: "#27ae60",
+  },
+  "Завершена": {
+    bg: "#e5f8f4",
+    color: "#16a085",
+  },
+  "Отменена/Не актуальна": {
+    bg: "#fdecea",
+    color: "#c0392b",
+  },
 };
 
 export const TaskGridCell = ({ taskData }) => {
@@ -26,37 +49,21 @@ export const TaskGridCell = ({ taskData }) => {
     taskData.number,
     taskData.title,
     taskData.client,
-    taskData.status,
+    taskData.status,   // ← здесь будет цветной бейдж
     taskData.executor,
     taskData.priority,
     taskData.timeSpent,
   ];
 
-  // Берём цвет через хелпер — он умеет и код, и title
-  const statusColor = getStatusColor(taskData.status) || "#95a5a6"; // fallback
-
   return (
     <>
       {cells.map((text, i) => {
         let extraClass = "";
-        let style = {};
-
         if (i === 0) extraClass = s.first_column;
         else if (i === 1) extraClass = s.second_column;
 
-        // колонка статуса (index 3)
-        if (i === 3) {
-          style = {
-            backgroundColor: hexToRgba(statusColor, 0.1), // слабый фон
-            color: statusColor,
-            fontWeight: 600,
-            borderRadius: 8,
-            padding: "6px 10px",
-            textAlign: "center",
-            display: "inline-block",
-            minWidth: 80,
-          };
-        }
+        const isStatus = i === 3;
+        const statusStyle = statusStylesByTitle[text] || null;
 
         return (
           <div
@@ -65,8 +72,25 @@ export const TaskGridCell = ({ taskData }) => {
             onMouseEnter={onEnter}
             onMouseLeave={onLeave}
           >
-            {/* если это статус — рендерим "пилл" с отдельным стилем */}
-            {i === 3 ? <span style={style}>{text}</span> : <span>{text}</span>}
+            {isStatus && statusStyle ? (
+              <span
+                style={{
+                  backgroundColor: statusStyle.bg,
+                  color: statusStyle.color,
+                  fontWeight: 600,
+                  borderRadius: "10px",
+                  padding: "4px 10px",
+                  textAlign: "center",
+                  display: "inline-block",
+                  minWidth: 90,
+                  boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.05)",
+                }}
+              >
+                {text}
+              </span>
+            ) : (
+              <span>{text}</span>
+            )}
           </div>
         );
       })}

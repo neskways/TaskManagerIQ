@@ -1,0 +1,60 @@
+.scrollWrapper {
+  max-height: 400px; // чуть больше, чтобы вместилось несколько задач
+  overflow-y: auto;
+  overflow-x: auto;
+  border-radius: 8px;
+}
+
+.tableWrapper {
+  width: 100%;
+  min-width: 700px;
+  font-family: sans-serif;
+  font-size: 13px; // чуть больше
+  border-collapse: collapse;
+}
+
+.tableHeader {
+  display: grid;
+  grid-template-columns: 7% 33% 17% 21% 17% 5%;
+  font-weight: 600;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg-color-secondary);
+  padding: 10px;
+}
+
+.tableBody {
+  display: flex;
+  flex-direction: column;
+}
+
+.tableRow {
+  display: grid;
+  grid-template-columns: 7% 33% 17% 21% 17% 5%;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--border-color);
+  align-items: center;
+  padding: 10px;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.03);
+  }
+}
+
+.statusBadge {
+  display: inline-block;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 3px 8px;
+  text-align: center;
+  min-width: 75px;
+  font-size: 12px;
+}
+
+.loadingText,
+.noTasksText {
+  padding: 20px;
+  text-align: center;
+  color: #555;
+  font-size: 14px;
+}
