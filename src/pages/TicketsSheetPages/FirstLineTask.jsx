@@ -3,6 +3,7 @@ import { UniversalTicketsSheet } from "../UniversalTicketsSheet/UniversalTickets
 
 export const FirstLineTask = () => {
   const params = {
+    states: [taskStatuses.PAUSED.code, taskStatuses.IN_PROGRESS.code, taskStatuses.TRANSFERRED.code, taskStatuses.CANCELED.code, taskStatuses.NEW.code, taskStatuses.READY.code],
     firstline: "true",
   };
 

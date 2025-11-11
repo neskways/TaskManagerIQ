@@ -25,6 +25,19 @@ export const TicketSidebar = ({
   const [selectedExecutor, setSelectedExecutor] = useState(currentExecutor || "");
   const [hasChanges, setHasChanges] = useState(false);
 
+  // фильтруем сотрудников без "пустых" или "-" значений
+  const validEmployeeOptions = employeeOptions.filter(
+    (e) => e.id && e.id !== "-" && e.name && e.name.trim() !== "-"
+  );
+
+  // формируем список статусов без "пустых"
+  const statusItems = Object.entries(taskStatuses)
+    .map(([_, { code, title }]) => ({
+      id: code,
+      name: title,
+    }))
+    .filter((item) => item.id && item.id !== "-" && item.name.trim() !== "-");
+
   // отслеживаем изменения
   useEffect(() => {
     setHasChanges(
@@ -36,27 +49,29 @@ export const TicketSidebar = ({
   const handleExecutorChange = (value) => setSelectedExecutor(value);
 
   const handleSave = async () => {
-    // Проверяем каждое поле
     const statusChanged = selectedStatus !== currentStatus;
     const executorChanged = selectedExecutor !== currentExecutor;
 
+    if (!selectedStatus || !selectedExecutor) {
+      showPopup("Выберите статус и исполнителя", { type: "warning" });
+      return;
+    }
+
     if (!statusChanged && !executorChanged) {
-      showPopup("Ничего не изменилось", { type: "info" });
+      showPopup("Данные не были изменены", { type: "info" });
       return;
     }
 
     try {
+      const formattedTaskId = String(taskId).padStart(9, "0");
 
       const stateToSend = statusChanged ? selectedStatus : currentStatus;
       const ownerToSend = executorChanged ? selectedExecutor : currentExecutor;
 
-      await updateTaskInfo(taskId, stateToSend, ownerToSend);
+      await updateTaskInfo(formattedTaskId, stateToSend, ownerToSend);
 
       showPopup("Изменения успешно сохранены", { type: "success" });
 
-      // обновляем текущие значения, чтобы * исчез
-      currentStatus = stateToSend;
-      currentExecutor = ownerToSend;
       setHasChanges(false);
     } catch (err) {
       console.error(err);
@@ -64,13 +79,9 @@ export const TicketSidebar = ({
     }
   };
 
-  const statusItems = Object.entries(taskStatuses).map(([key, { code, title }]) => ({
-    id: code,
-    name: title,
-  }));
-
   const selectedExecutorName =
-    employeeOptions.find((e) => e.id === selectedExecutor)?.name || selectedExecutor;
+    validEmployeeOptions.find((e) => e.id === selectedExecutor)?.name ||
+    selectedExecutor;
 
   return (
     <div className={s.wrapper}>
@@ -92,30 +103,30 @@ export const TicketSidebar = ({
         </div>
       )}
 
-      {role === import.meta.env.VITE_TOKEN_MANAGER && (
-        <Selector
-          title="Статус задачи"
-          alignTitle="center"
-          items={statusItems}
-          labelKey="name"
-          valueKey="id"
-          value={selectedStatus}
-          onChange={handleStatusChange}
-        />
-      )}
-
       {(role === import.meta.env.VITE_TOKEN_MANAGER ||
         role === import.meta.env.VITE_TOKEN_DUTY) && (
-        <Selector
-          title="Исполнитель"
-          alignTitle="center"
-          items={employeeOptions}
-          labelKey="name"
-          valueKey="id"
-          value={selectedExecutor}
-          onChange={handleExecutorChange}
-          disabled={employeesLoading}
-        />
+        <>
+          <Selector
+            title="Статус задачи"
+            alignTitle="center"
+            items={statusItems}
+            labelKey="name"
+            valueKey="id"
+            value={selectedStatus}
+            onChange={handleStatusChange}
+          />
+
+          <Selector
+            title="Исполнитель"
+            alignTitle="center"
+            items={validEmployeeOptions}
+            labelKey="name"
+            valueKey="id"
+            value={selectedExecutor}
+            onChange={handleExecutorChange}
+            disabled={employeesLoading}
+          />
+        </>
       )}
 
       <Contacts contacts={contacts} />

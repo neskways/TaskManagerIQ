@@ -135,8 +135,8 @@ export const CreateTicketPage = () => {
         owner: selectedEmployee || userCode,
         return: isReturnTask ? selectedReturnTask : null,
         firstline:
-          role === import.meta.env.VITE_TOKEN_DUTE ||
-          role === import.meta.env.VITE_TOKEN_MANAGER
+          (role === import.meta.env.VITE_TOKEN_DUTE ||
+          role === import.meta.env.VITE_TOKEN_MANAGER)
             ? "true"
             : null,
       },
