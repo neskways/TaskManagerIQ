@@ -2,12 +2,12 @@ import s from "./TaskTextBlock.module.scss";
 import Cookies from "js-cookie";
 
 export const TaskTextBlock = ({ text, user, userId, date, min }) => {
-  // Приводим оба ID к строке (защитно)
+
   const currentUserId = Cookies.get("userCode");
   const commentUserId = userId;
 
   const isMyMessage = currentUserId !== "" && currentUserId === commentUserId;
-  console.log(isMyMessage)
+
   const formatMessageDate = (dateInput) => {
     if (!dateInput) return "";
 
@@ -42,7 +42,6 @@ export const TaskTextBlock = ({ text, user, userId, date, min }) => {
     return `${day}.${month}.${year} ${hours}:${minutes}`;
   };
 
-  // безопасный путь к аватару — только если у нас есть userId
   const avatarSrc = commentUserId ? `/images/avatars/${commentUserId}.jpg` : null;
 
   return (

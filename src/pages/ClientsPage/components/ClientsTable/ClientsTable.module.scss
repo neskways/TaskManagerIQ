@@ -80,3 +80,16 @@
   background-color: var(--border-color);
   border-radius: 1px;
 }
+
+.headerCell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+
+  .sortArrow {
+    font-size: 12px;
+    margin-left: 4px;
+    margin-right: 8px;
+  }
+}

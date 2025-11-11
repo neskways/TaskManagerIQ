@@ -16,13 +16,16 @@ export const TicketSidebar = ({
   currentExecutor,
   contacts,
 }) => {
-  const { employeeOptions, loading: employeesLoading } = useClientsAndEmployees();
+  const { employeeOptions, loading: employeesLoading } =
+    useClientsAndEmployees();
   const { showPopup } = usePopup();
 
   const role = Cookies.get("role");
 
   const [selectedStatus, setSelectedStatus] = useState(currentStatus || "");
-  const [selectedExecutor, setSelectedExecutor] = useState(currentExecutor || "");
+  const [selectedExecutor, setSelectedExecutor] = useState(
+    currentExecutor || ""
+  );
   const [hasChanges, setHasChanges] = useState(false);
 
   // фильтруем сотрудников без "пустых" или "-" значений
@@ -68,7 +71,7 @@ export const TicketSidebar = ({
       const stateToSend = statusChanged ? selectedStatus : currentStatus;
       const ownerToSend = executorChanged ? selectedExecutor : currentExecutor;
 
-      await updateTaskInfo(formattedTaskId, stateToSend, ownerToSend);
+      response = await updateTaskInfo(formattedTaskId, stateToSend, ownerToSend);
 
       showPopup("Изменения успешно сохранены", { type: "success" });
 
@@ -83,6 +86,15 @@ export const TicketSidebar = ({
     validEmployeeOptions.find((e) => e.id === selectedExecutor)?.name ||
     selectedExecutor;
 
+  // Получаем название статуса для отображения вместо кода
+  const selectedStatusName =
+    statusItems.find((e) => e.id === selectedStatus)?.name || selectedStatus;
+
+  const isEmployee = role === import.meta.env.VITE_TOKEN_EMPLOYEE;
+  const isManagerOrDuty =
+    role === import.meta.env.VITE_TOKEN_MANAGER ||
+    role === import.meta.env.VITE_TOKEN_DUTY;
+
   return (
     <div className={s.wrapper}>
       {hasChanges && (
@@ -96,26 +108,21 @@ export const TicketSidebar = ({
         <p className={s.text}>{currentClient}</p>
       </div>
 
-      {role === import.meta.env.VITE_TOKEN_EMPLOYEE && (
-        <div className={s.block}>
-          <h4 className={s.title}>Исполнитель</h4>
-          <p className={s.text}>{selectedExecutorName}</p>
-        </div>
+      {isEmployee && (
+        <>
+          <div className={s.block}>
+            <h4 className={s.title}>Исполнитель</h4>
+            <p className={s.text}>{selectedExecutorName}</p>
+          </div>
+          <div className={s.block}>
+            <h4 className={s.title}>Статус</h4>
+            <p className={s.text}>{selectedStatusName}</p>
+          </div>
+        </>
       )}
 
-      {(role === import.meta.env.VITE_TOKEN_MANAGER ||
-        role === import.meta.env.VITE_TOKEN_DUTY) && (
+      {isManagerOrDuty && (
         <>
-          <Selector
-            title="Статус задачи"
-            alignTitle="center"
-            items={statusItems}
-            labelKey="name"
-            valueKey="id"
-            value={selectedStatus}
-            onChange={handleStatusChange}
-          />
-
           <Selector
             title="Исполнитель"
             alignTitle="center"
@@ -126,6 +133,16 @@ export const TicketSidebar = ({
             onChange={handleExecutorChange}
             disabled={employeesLoading}
           />
+          <Selector
+            title="Статус задачи"
+            alignTitle="center"
+            items={statusItems}
+            labelKey="name"
+            valueKey="id"
+            value={selectedStatus}
+            onChange={handleStatusChange}
+          />
+
         </>
       )}
 
