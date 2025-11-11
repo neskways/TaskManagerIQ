@@ -71,7 +71,7 @@ export const TicketSidebar = ({
       const stateToSend = statusChanged ? selectedStatus : currentStatus;
       const ownerToSend = executorChanged ? selectedExecutor : currentExecutor;
 
-      response = await updateTaskInfo(formattedTaskId, stateToSend, ownerToSend);
+      const response = await updateTaskInfo(formattedTaskId, stateToSend, ownerToSend);
 
       showPopup("Изменения успешно сохранены", { type: "success" });
 

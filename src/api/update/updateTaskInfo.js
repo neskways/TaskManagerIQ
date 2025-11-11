@@ -7,13 +7,6 @@ export const updateTaskInfo = async (taskId, state, ownerId) => {
     const token = Cookies.get("token");
     const userId = Cookies.get("userCode");
     
-    console.log({
-        token,
-        userid: userId,
-        taskid: String(taskId).padStart(9, "0"),
-        state,
-        owner: ownerId,
-      })
     const response = await api.post(
       `${import.meta.env.VITE_API_BASE_URL}/UpdateTaskStatus`,
       {

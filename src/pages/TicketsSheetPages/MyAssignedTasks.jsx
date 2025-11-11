@@ -7,7 +7,7 @@ export const MyAssignedTasks = () => {
   const userCode = Cookies.get("userCode");
 
   const params = {
-    states: [taskStatuses.PAUSED.code, taskStatuses.IN_PROGRESS.code, taskStatuses.TRANSFERRED.code],
+    states: [taskStatuses.PAUSED.code, taskStatuses.IN_PROGRESS.code, taskStatuses.TRANSFERRED.code, taskStatuses.READY.code],
     userCode,
   };
 
