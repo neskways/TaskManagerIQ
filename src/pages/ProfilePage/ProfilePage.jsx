@@ -49,7 +49,8 @@ export const ProfilePage = () => {
   }, []);
 
   const handleAvatarClick = () => {
-  if (!memeSoundsEnabled) return; // если выключено — не играем звук
+    console.log(!memeSoundsEnabled || String(import.meta.env.VITE_TOKEN_MANAGER) === role)
+  if (!memeSoundsEnabled || String(import.meta.env.VITE_TOKEN_MANAGER) === role) return; 
 
   const randomSound = memeSounds[Math.floor(Math.random() * memeSounds.length)];
   const audio = new Audio(randomSound);
