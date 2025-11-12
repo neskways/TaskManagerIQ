@@ -30,15 +30,12 @@ export const SidebarFilter = ({ showFilter, setShowFilter }) => {
       </div>
 
       <div className={s.block}>
-        {/* Фильтр клиента (статический вид) */}
         <ClientSearch clients={clients} text="КЛИЕНТ" />
 
-        {/* Фильтр по статусу */}
         <div className={s.selecter_wrap}>
           <Selector items={statusOptions} title="СТАТУС" />
         </div>
 
-        {/* Фильтр по исполнителю */}
         <div className={s.selecter_wrap}>
           <Selector items={employees} title="ИСПОЛНИТЕЛЬ" />
         </div>

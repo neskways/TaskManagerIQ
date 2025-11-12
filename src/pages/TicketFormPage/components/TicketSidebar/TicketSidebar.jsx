@@ -8,6 +8,7 @@ import { taskStatuses } from "../../../../modules/TaskStatuses";
 import { useClientsAndEmployees } from "../../../CreateTicketPage/hooks/useClientsAndEmployees";
 import { usePopup } from "../../../../context/PopupContext";
 import { updateTaskInfo } from "../../../../api/update/updateTaskInfo";
+import { TextAlignCenter } from "lucide-react";
 
 export const TicketSidebar = ({
   taskId,
@@ -72,7 +73,7 @@ export const TicketSidebar = ({
       const ownerToSend = executorChanged ? selectedExecutor : currentExecutor;
 
       const response = await updateTaskInfo(formattedTaskId, stateToSend, ownerToSend);
-
+      
       showPopup("Изменения успешно сохранены", { type: "success" });
 
       setHasChanges(false);
@@ -147,6 +148,11 @@ export const TicketSidebar = ({
 
         </>
       )}
+
+      <div className={s.block}>
+        <h4 className={s.title}>Время</h4>
+        <p className={s.text}>00:00:00</p>
+      </div>
 
       <Contacts contacts={contacts} />
 

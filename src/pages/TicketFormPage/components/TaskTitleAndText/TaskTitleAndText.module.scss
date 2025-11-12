@@ -16,6 +16,9 @@
   overflow: hidden;
   text-align: center;
   margin-bottom: 3px;
+  word-wrap: break-word;      // старый вариант, для совместимости
+  overflow-wrap: break-word;   // современный вариант
+  white-space: pre-wrap;       // сохраняет переносы, но переносит длинные слова
 }
 
 .date_text {
@@ -26,11 +29,15 @@
 }
 
 .task_text {
-  margin-top: 14px;
+  margin: 14px auto 0;
   width: 90%;
   font-size: 18px;
-  margin: 5px auto 0;
   background: var(--bg-color-secondary);
   border-radius: var(--border-radius);
   padding: 20px;
+  text-align: center;
+  /* Новое */
+  word-wrap: break-word;      // старый вариант, для совместимости
+  overflow-wrap: break-word;   // современный вариант
+  white-space: pre-wrap;       // сохраняет переносы, но переносит длинные слова
 }

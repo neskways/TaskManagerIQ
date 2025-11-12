@@ -61,7 +61,6 @@ export const CreateTicketPage = () => {
   const dataReady =
     !configsLoading && configOptions.length > 0 && contactOptions.length > 0;
 
-  // 🔹 Загружаем возвратные задачи, если выбран клиент и включён чекбокс
   useEffect(() => {
     const loadTasks = async () => {
       if (!selectedClient || !isReturnTask) {
@@ -76,7 +75,7 @@ export const CreateTicketPage = () => {
           Cookies.get("userCode"),
           null,
           null,
-          selectedClient.code // фильтр по клиенту
+          selectedClient.code 
         );
 
         const mapped = tasks.map((t) => ({
@@ -93,7 +92,7 @@ export const CreateTicketPage = () => {
     loadTasks();
   }, [isReturnTask, selectedClient, showPopup]);
 
-  // 🔹 Сбрасываем чекбокс, если клиент снимается
+
   useEffect(() => {
     if (!selectedClient) {
       setIsReturnTask(false);
@@ -115,12 +114,15 @@ export const CreateTicketPage = () => {
     if (!description.trim())
       return showValidationPopup("Пожалуйста, заполните описание задачи!");
 
-    // 🔹 Проверка контакта
     if (creatingNewContact) {
       if (!contactDetails.name.trim())
-        return showValidationPopup("Пожалуйста, заполните ФИО нового контакта!");
+        return showValidationPopup(
+          "Пожалуйста, заполните ФИО нового контакта!"
+        );
       if (!contactDetails.phone.trim())
-        return showValidationPopup("Пожалуйста, заполните номер телефона нового контакта!");
+        return showValidationPopup(
+          "Пожалуйста, заполните номер телефона нового контакта!"
+        );
     } else {
       if (!contactDetails.name.trim())
         return showValidationPopup("Пожалуйста, выберите контакт!");
@@ -172,20 +174,20 @@ export const CreateTicketPage = () => {
       <PageTitle titleText="Новая заявка" center />
 
       <form onSubmit={handleSubmit}>
-        <Input text="ЗАГОЛОВОК" value={title} setUserData={setTitle} />
+        <Input text="Заголовок" value={title} setUserData={setTitle} />
 
         <div className={s.filling_data_inner}>
           <ClientSearch
             clients={clients}
             onSelect={setSelectedClient}
-            text="КЛИЕНТ"
+            text="Клиент"
             disabled={clientsLoading}
           />
 
           <Selector
             items={employeeOptions}
             value={selectedEmployee}
-            title="ИСПОЛНИТЕЛЬ"
+            title="Исполнитель"
             onChange={setSelectedEmployee}
             labelKey="name"
             valueKey="id"
@@ -203,19 +205,19 @@ export const CreateTicketPage = () => {
           <Selector
             items={configOptions}
             value={selectedConfig}
-            title="КОНФИГУРАЦИЯ"
+            title="Конфигурации"
             onChange={setSelectedConfig}
             disabled={!selectedClient || configsLoading}
-            labelKey="name"
+            labelKey="displayName"
             valueKey="id"
           />
 
           <Selector
             items={contactOptions}
             value={selectedContactId}
-            title="КОНТАКТЫ"
+            title="Контакты"
             onChange={handleSelectContact}
-            disabled={!selectedClient} // 🔹 доступно всегда, если выбран клиент
+            disabled={!selectedClient}
             labelKey="name"
             valueKey="id"
           />
@@ -228,7 +230,6 @@ export const CreateTicketPage = () => {
           />
         )}
 
-        {/* --- Возврат к задаче --- */}
         <div className={s.return_task}>
           <div className={s.checkbox}>
             <Checkbox

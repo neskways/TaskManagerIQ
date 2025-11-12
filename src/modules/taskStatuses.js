@@ -6,5 +6,5 @@ export const taskStatuses = {
   PAUSED:      { code: "000000007", title: "Приостановлена" },
   READY:       { code: "000000004", title: "Готова к сдаче" },
   DONE:        { code: "000000005", title: "Завершена" },
-  CANCELED:    { code: "000000006", title: "Отменена" },
+  CANCELED:    { code: "000000006", title: "Отменена/Не актуальная" },
 };

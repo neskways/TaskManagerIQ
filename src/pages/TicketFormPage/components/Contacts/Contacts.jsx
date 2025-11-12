@@ -23,17 +23,17 @@ export const Contacts = ({ contacts }) => {
       <div className={s.text_block}>
         {contacts.name && (
           <div className={s.text}>
-            <span className={s.span}>ФИО:</span> {contacts.name}
+            <span className={s.span}>{contacts.name}</span> 
           </div>
         )}
         {contacts.post && (
           <div className={s.text}>
-            <span className={s.span}>Должность:</span> {contacts.post}
+            <span className={s.span}>{contacts.post}</span> 
           </div>
         )}
         {contacts.phone && (
           <div className={s.text}>
-            <span className={s.span}>Телефон:</span> {contacts.phone}
+            <span className={s.span}>{contacts.phone}</span> 
           </div>
         )}
         {contacts.mail && (

@@ -7,12 +7,13 @@
 .select {
   width: 100%;
   padding: 0.7em 1em;
+  padding-right: 40px;
   font-size: 1rem;
   border-radius: var(--border-radius);
   border: 1.5px solid var(--border-color);
   background-color: var(--bg-color-input);
   color: var(--text-color);
-  appearance: none;  // чтобы убрать дефолтный стрелочный стиль браузера
+  appearance: none;  
   cursor: pointer;
   transition: var(--transition);
   outline: none;
@@ -51,6 +52,39 @@
   font-size: 16px;
 }
 
-.smallFont {
-  font-size: 14px;
+.selectCustomWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.selected {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0.7em 1em;
+  border-radius: var(--border-radius);
+  border: 1.5px solid var(--border-color);
+  background-color: var(--bg-color-input);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  z-index: 10;
+}
+.options li {
+  padding: 0.5em 1em;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

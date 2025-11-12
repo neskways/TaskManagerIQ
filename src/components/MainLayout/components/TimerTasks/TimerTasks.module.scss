@@ -1,14 +1,13 @@
 .wrapper {
-  display: flex;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: 813px 813px;
+  gap: 9px;
   align-items: stretch;
   height: 130px;
   padding: 15px 38px 0px 15px;
 }
 
-/* Левая панель (текущая задача) */
 .headerBox {
-  flex: 1 1 50%;
   height: 120px;
   background: var(--bg-color);
   border-radius: var(--border-radius);
@@ -122,10 +121,8 @@
   color: var(--text-color);
 }
 
-/* Правая панель (список задач) */
 .listBox {
   border: 1px solid var(--border-color);
-  flex: 1 1 50%;
   height: 120px;
   background: var(--bg-color);
   border-radius: var(--border-radius);
@@ -178,7 +175,7 @@
 }
 
 .taskTitle {
-  max-width: 70%;
+  max-width: 82%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -273,7 +270,7 @@
   color: var(--text-color-secondary);
   font-size: 20px;
   cursor: pointer;
-  z-index: 1002;
+  z-index: 1;
   transition: 0.2s ease;
 }
 

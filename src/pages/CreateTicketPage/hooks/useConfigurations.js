@@ -33,7 +33,9 @@ export const useConfigurations = (client) => {
 
   const configOptions = configurations.map((c, index) => ({
     id: c.id || `conf-${index}`,
-    name: c.config || c.name || "Без имени",
+    name: c.name || "Без имени",
+    config: c.config || "",
+    displayName: `${c.name || "Без имени"} (${c.config || ""})`,
   }));
 
   return {

@@ -15,7 +15,7 @@ export const getClientConfigurations = async (clientID) => {
     
     const fixed = (response.data || "").replace(/'/g, '"');
     const parsed = JSON.parse(fixed);
-
+    
     return parsed || [];
   } catch (error) {
     console.error(`Ошибка при загрузке конфигураций клиента ${clientID}:`, error);

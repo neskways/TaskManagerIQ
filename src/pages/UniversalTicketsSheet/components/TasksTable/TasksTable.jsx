@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Loading } from "../../../../UI/Loading/Loading";
 import { usePopup } from "../../../../context/PopupContext";
 import { TaskGridCell } from "../TaskGridCell/TaskGridCell";
+import { SidebarFilter } from "../SidebarFilter/SidebarFilter";
 import { getTasksList } from "../../../../api/get/getTasksList";
 import { headersTitleTickets } from "../../../../modules/TitlesForTables";
 import { MESSAGES } from "../../../../modules/messages";
@@ -11,7 +12,7 @@ import { MESSAGES } from "../../../../modules/messages";
 const LOCAL_STORAGE_KEY_TICKETS = "tickets_table_col_widths";
 const DEFAULT_WIDTHS = [5, 30, 20, 10, 13, 12, 10];
 
-export const TasksTable = ({ setShowFilter, queryParams }) => {
+export const TasksTable = ({ queryParams }) => {
   const secToHHMMSS = (sec) => {
     const h = Math.floor(sec / 3600);
     const m = Math.floor((sec % 3600) / 60);
@@ -30,6 +31,7 @@ export const TasksTable = ({ setShowFilter, queryParams }) => {
       JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_TICKETS)) ||
       DEFAULT_WIDTHS
   );
+  const [showFilter, setShowFilter] = useState(false);
   const tableRef = useRef(null);
   const startX = useRef(0);
   const isResizing = useRef(false);
@@ -62,7 +64,7 @@ export const TasksTable = ({ setShowFilter, queryParams }) => {
           status: item.status,
           executor: item.executor,
           priority: item.priority,
-          timeSpent: secToHHMMSS(item.timeSpent), 
+          timeSpent: secToHHMMSS(item.timeSpent),
         }));
 
         setTasks(mapped);
@@ -124,11 +126,11 @@ export const TasksTable = ({ setShowFilter, queryParams }) => {
   }
 
   return (
-    <div>
+    <div className={s.wrapper}>
       <div className={s.btn_wrapper}>
         <button
           className={s.filter_btn}
-          onClick={() => setShowFilter((prev) => !prev)}
+          onClick={() => setShowFilter(true)}
         >
           Фильтр
         </button>
@@ -162,6 +164,14 @@ export const TasksTable = ({ setShowFilter, queryParams }) => {
           ))}
         </div>
       </div>
+
+      {/* затемнение при открытии фильтра */}
+      <div
+        className={`${s.overlay} ${showFilter ? s.show : ""}`}
+        onClick={() => setShowFilter(false)}
+      ></div>
+
+      <SidebarFilter showFilter={showFilter} setShowFilter={setShowFilter} />
     </div>
   );
 };

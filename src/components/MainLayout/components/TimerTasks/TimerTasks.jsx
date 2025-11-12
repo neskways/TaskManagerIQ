@@ -152,7 +152,6 @@ export const TimerTasks = () => {
   const task = tasks.find((t) => t.id === selectedTaskId);
   if (!task) return;
 
-  // Проверяем, что задача в статусе "Выполняется"
   if (task.state !== taskStatuses.IN_PROGRESS.title) {
     showPopup(
       'Завершить можно только задачу в статусе "Выполняется".',
@@ -200,15 +199,13 @@ export const TimerTasks = () => {
 
         <div className={s.headerBox}>
           <div className={s.headerInner}>
-            {/* Заголовок */}
+
             <div className={s.sectionHeader}>Текущая задача</div>
 
-            {/* Название задачи */}
             <div className={s.taskTitleCenter}>
               {selectedTask ? selectedTask.title : "Нет выбранной задачи"}
             </div>
 
-            {/* Нижняя панель: кнопки + таймер */}
             <div className={s.bottomRow}>
               <div className={s.controls}>
                 <button
@@ -251,11 +248,14 @@ export const TimerTasks = () => {
                   onClick={() => onSelectTask(task.id)}
                   onDoubleClick={() => navigate(`/ticket/${task.id}`)}
                 >
-                  <div className={s.taskTitle} title={task.title}>
+                  <div className={s.taskTitle}>
+                    {task.id} |
+                  </div>
+                  <div className={s.taskTitle}>
                     {task.title}
                   </div>
                   <div className={s.taskTime}>
-                    {secToHHMMSS(secondsMap[task.id] || 0)}
+                    | {secToHHMMSS(secondsMap[task.id] || 0)}
                   </div>
                 </div>
               ))}

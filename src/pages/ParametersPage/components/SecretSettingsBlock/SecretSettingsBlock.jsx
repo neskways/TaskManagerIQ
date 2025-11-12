@@ -45,7 +45,7 @@ export const SecretSettingsBlock = () => {
             checked={settings.screamer_soft}
             onChange={handleChange("screamer_soft")}
           />
-          <p>Скримеры раз в 10 минут</p>
+          <p>Скримеры раз в 2 минуты</p>
         </div>
 
         <div className={s.item}>
@@ -53,7 +53,7 @@ export const SecretSettingsBlock = () => {
             checked={settings.screamer_hard}
             onChange={handleChange("screamer_hard")}
           />
-          <p>Скримеры раз в 30 минут по жёстче</p>
+          <p>Скримеры раз в 10 минут по жёстче</p>
         </div>
 
         <div className={s.item}>

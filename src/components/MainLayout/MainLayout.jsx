@@ -22,8 +22,8 @@ export const MainLayout = () => {
         setInterval(() => {
           setScreamerType("light");
           setShowScreamer(true);
-          setTimeout(() => setShowScreamer(false), 300);
-        }, 10 * 60 * 950) 
+          setTimeout(() => setShowScreamer(false), 500);
+        }, 120000) 
       );
     }
     
@@ -32,8 +32,8 @@ export const MainLayout = () => {
         setInterval(() => {
           setScreamerType("hard");
           setShowScreamer(true);
-          setTimeout(() => setShowScreamer(false), 300);
-        }, 30 * 60 * 1000)
+          setTimeout(() => setShowScreamer(false), 100);
+        }, 360000)
       );
     }
 

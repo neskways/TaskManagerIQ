@@ -12,7 +12,6 @@ export const Selector = ({
   labelKey = "name",   
   valueKey = "id",     
 }) => {
-  
   const isControlled = value !== undefined && onChange;
 
   return (
