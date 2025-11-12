@@ -1,7 +1,7 @@
 import s from "./ProfilePage.module.scss";
 import Cookies from "js-cookie";
 import { Loading } from "../../UI/Loading/Loading";
-import { useState, useEffect, useRef } from "react"; 
+import { useState, useEffect } from "react";
 import { usePopup } from "../../context/PopupContext";
 import { useTheme } from "../../context/ThemeContext";
 import { taskStatuses } from "../../modules/TaskStatuses";
@@ -27,7 +27,6 @@ const memeSounds = [
   "/sounds/hornet_gitgud.mp3",
 ];
 
-
 export const ProfilePage = () => {
   const [visible, setVisible] = useState(false);
   const [tasks, setTasks] = useState([]);
@@ -42,27 +41,46 @@ export const ProfilePage = () => {
   const lightLogo = "/images/logo/logo.png";
 
   const [memeSoundsEnabled, setMemeSoundsEnabled] = useState(false);
+  const [memeLinkEnabled, setMemeLinkEnabled] = useState(false);
 
+  // Загружаем сохранённые настройки
   useEffect(() => {
     const settings = getFromLocalStorage("secret_settings", {});
     setMemeSoundsEnabled(settings.meme_sounds);
+    setMemeLinkEnabled(settings.secret_links_images);
   }, []);
 
+  // Воспроизведение звука при двойном клике по аватарке
   const handleAvatarClick = () => {
-    console.log(!memeSoundsEnabled || String(import.meta.env.VITE_TOKEN_MANAGER) === role)
-  if (!memeSoundsEnabled || String(import.meta.env.VITE_TOKEN_MANAGER) === role) return; 
+    if (
+      !memeSoundsEnabled ||
+      String(import.meta.env.VITE_TOKEN_MANAGER) === role
+    )
+      return;
 
-  const randomSound = memeSounds[Math.floor(Math.random() * memeSounds.length)];
-  const audio = new Audio(randomSound);
-  audio.volume = 0.4;
-  audio.play().catch((err) => console.error("Audio play error:", err));
-};
+    const randomSound =
+      memeSounds[Math.floor(Math.random() * memeSounds.length)];
+    const audio = new Audio(randomSound);
+    audio.volume = 0.4;
+    audio.play().catch((err) => console.error("Audio play error:", err));
+  };
 
+  // Обработчик для "тайной ссылки" на логотипе
+  const handleLogoDoubleClick = () => {
+    const isManager = String(import.meta.env.VITE_TOKEN_MANAGER) === role;
+
+    if (memeLinkEnabled && !isManager) {
+      window.open("https://vk.com/furryevent", "_blank");
+    }
+  };
+
+  // Плавное появление страницы
   useEffect(() => {
     const timeout = setTimeout(() => setVisible(true), 10);
     return () => clearTimeout(timeout);
   }, []);
 
+  // Получение списка задач
   useEffect(() => {
     const fetchTasks = async () => {
       setLoading(true);
@@ -141,16 +159,16 @@ export const ProfilePage = () => {
           </div>
         </div>
 
+        {/* Тайная ссылка по двойному клику */}
         <img
           className={s.logo_opacity}
           src={theme === "light" ? lightLogo : darkLogo}
-          onDoubleClick={() =>
-            window.open("https://vk.com/furryevent", "_blank")
-          }
+          onDoubleClick={handleLogoDoubleClick}
           alt=""
         />
       </div>
 
+      {/* Скрытый профильный блок для спецпользователей */}
       {(userCode === "000000002" || userCode === "000000005") && (
         <ProfileBlock className={s.profile_block_absolute} />
       )}

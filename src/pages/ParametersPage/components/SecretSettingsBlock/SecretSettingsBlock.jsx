@@ -30,10 +30,10 @@ export const SecretSettingsBlock = () => {
   const handleChange = (key) => (e) => {
     const newValue = e.target.checked;
     const updated = { ...settings, [key]: newValue };
-
+    
     setSettings(updated);
     saveToLocalStorage(SECRET_SETTINGS_KEY, updated);
-    setHasChanges(true); // показываем уведомление
+    setHasChanges(true); 
   };
 
   return (
