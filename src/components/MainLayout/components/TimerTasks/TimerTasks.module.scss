@@ -6,25 +6,63 @@
   padding: 15px 38px 0px 15px;
 }
 
+/* Левая панель (текущая задача) */
 .headerBox {
   flex: 1 1 50%;
   height: 120px;
   background: var(--bg-color);
   border-radius: var(--border-radius);
-  padding: 12px;
+  padding: 12px 16px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
   border: 1px solid var(--border-color);
 }
 
-.headerInner {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.headerBox,
+.wrapper {
+  min-width: 0; 
 }
 
+.headerInner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Заголовок блока */
+.sectionHeader {
+  font-size: 12px;
+  text-align: center;
+  font-weight: 600;
+  color: var(--text-color-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.taskTitleCenter {
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--text-color);
+  margin-top: 5px;
+  margin-bottom: 10px;
+  overflow: hidden;     
+  white-space: nowrap;   
+  text-overflow: ellipsis;
+}
+
+
+/* Нижняя строка с кнопками и таймером */
+.bottomRow {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+}
+
+/* Кнопки управления */
 .controls {
   display: flex;
   gap: 8px;
@@ -36,7 +74,7 @@
   background: var(--accent-color);
   color: #fff;
   border: none;
-  padding: 8px 10px;
+  padding: 8px 8px;
   border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 600;
@@ -57,10 +95,14 @@
   color: #fff;
   background: var(--false);
   border: none;
-  padding: 8px 10px;
+  padding: 8px 8px;
   border-radius: var(--border-radius);
   cursor: pointer;
   transition: var(--transition);
+}
+
+.btnEnd:hover:not(:disabled) {
+  background: hsl(0, 71%, 45%);
 }
 
 .empty {
@@ -72,47 +114,15 @@
   font-weight: 600;
 }
 
-.btnEnd:hover:not(:disabled) {
-  background: hsl(0, 71%, 45%);
-}
-
-/* Таймер и заголовок */
-.timerAndTitle {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 6px;
-}
-
+/* Таймер */
 .timerBig {
   font-family: monospace;
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
   color: var(--text-color);
 }
 
-.titleRow {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.titleText {
-  font-size: 16px;
-  font-weight: 600;
-  max-width: 420px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  color: var(--text-color);
-}
-
-.timeMinutes {
-  font-size: 14px;
-  color: var(--text-color-secondary);
-}
-
-/* правая панель 50% */
+/* Правая панель (список задач) */
 .listBox {
   border: 1px solid var(--border-color);
   flex: 1 1 50%;
@@ -139,7 +149,7 @@
   color: var(--text-color);
 }
 
-/* Скролл списка */
+/* Список задач */
 .items {
   flex: 1;
   overflow-y: auto;
@@ -188,6 +198,7 @@
   color: #fff !important;
 }
 
+/* Развёрнутый режим */
 .expanded {
   position: fixed;
   top: 50%;
@@ -203,9 +214,9 @@
   padding: 30px;
   box-shadow: 0 0 35px rgba(0, 0, 0, 0.45);
   overflow: hidden;
+  gap: 20px;
 }
 
-/* В развёрнутом виде — делаем всё по центру */
 .expanded .headerBox,
 .expanded .listBox {
   flex: 1 1 100%;
@@ -219,7 +230,6 @@
 }
 
 .expanded .headerInner {
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
@@ -244,7 +254,7 @@
   color: var(--accent-color);
 }
 
-.expanded .titleText {
+.expanded .taskTitleCenter {
   font-size: 22px;
   font-weight: 700;
   color: var(--text-color);
@@ -253,19 +263,7 @@
   white-space: normal;
 }
 
-/* Разделитель между шапкой и списком */
-.expanded {
-  gap: 20px;
-}
-
-.expanded .timerAndTitle {
-  justify-content: center;
-  align-items: center;
-  width: 80%;
-  order: -1;
-}
-
-/* Иконка разворота в углу */
+/* Иконка разворота */
 .expandIcon {
   position: absolute;
   top: 10px;
@@ -273,17 +271,18 @@
   background: transparent;
   border: none;
   color: var(--text-color-secondary);
-  font-size: 22px;
+  font-size: 20px;
   cursor: pointer;
   z-index: 1002;
-  transition: 0.2s;
+  transition: 0.2s ease;
 }
 
 .expandIcon:hover {
   color: var(--accent-color);
+  transform: scale(1.05);
 }
 
-/* затемнение заднего фона */
+/* Затемнение при развороте */
 .overlay {
   position: fixed;
   inset: 0;

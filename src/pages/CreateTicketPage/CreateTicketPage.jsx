@@ -144,11 +144,7 @@ export const CreateTicketPage = () => {
         contacts: { ...contactDetails },
         owner: selectedEmployee || userCode,
         return: isReturnTask ? selectedReturnTask : null,
-        firstline:
-          role === import.meta.env.VITE_TOKEN_DUTE ||
-          role === import.meta.env.VITE_TOKEN_MANAGER
-            ? "true"
-            : null,
+        firstline: role === import.meta.env.VITE_TOKEN_DUTY ? "true" : null,
       },
     };
 

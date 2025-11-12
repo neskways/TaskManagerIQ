@@ -130,6 +130,7 @@ export const TicketSidebar = ({
             labelKey="name"
             valueKey="id"
             value={selectedExecutor}
+            smallFont={true}
             onChange={handleExecutorChange}
             disabled={employeesLoading}
           />
@@ -139,6 +140,7 @@ export const TicketSidebar = ({
             items={statusItems}
             labelKey="name"
             valueKey="id"
+            smallFont={true}
             value={selectedStatus}
             onChange={handleStatusChange}
           />

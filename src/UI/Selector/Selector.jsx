@@ -6,6 +6,7 @@ export const Selector = ({
   value,
   defaultValue = "",
   title,
+  smallFont,
   onChange,
   disabled,
   labelKey = "name",   
@@ -18,7 +19,7 @@ export const Selector = ({
     <div className={s.wrapper}>
       {title && <h4 className={`${s.title} ${alignTitle === "center" ? s.titleCenter : ""}`}>{title}</h4>}
       <select
-        className={s.select}
+        className={`${s.select} ${smallFont ? s.smallFont : ""}`}
         value={isControlled ? value : undefined}
         defaultValue={!isControlled ? defaultValue : undefined}
         onChange={(e) => onChange && onChange(e.target.value)}
