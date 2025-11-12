@@ -3,7 +3,6 @@
   text-align: center;
   margin: 0 auto;
   margin-top: -10px;
-  margin-bottom: 25px;
 }
 
 .task_title {
@@ -16,9 +15,9 @@
   overflow: hidden;
   text-align: center;
   margin-bottom: 3px;
-  word-wrap: break-word;      // старый вариант, для совместимости
-  overflow-wrap: break-word;   // современный вариант
-  white-space: pre-wrap;       // сохраняет переносы, но переносит длинные слова
+  word-wrap: break-word;      
+  overflow-wrap: break-word;  
+  white-space: pre-wrap;      
 }
 
 .date_text {
@@ -35,9 +34,8 @@
   background: var(--bg-color-secondary);
   border-radius: var(--border-radius);
   padding: 20px;
-  text-align: center;
-  /* Новое */
-  word-wrap: break-word;      // старый вариант, для совместимости
-  overflow-wrap: break-word;   // современный вариант
-  white-space: pre-wrap;       // сохраняет переносы, но переносит длинные слова
+  text-align: left;
+  word-wrap: break-word;     
+  overflow-wrap: break-word;  
+  white-space: pre-wrap;       
 }

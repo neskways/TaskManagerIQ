@@ -15,7 +15,7 @@
 
 .tableHeader {
   display: grid;
-  grid-template-columns: 7% 33% 17% 21% 17% 5%;
+  grid-template-columns: 6% 33% 17% 21% 17% 6%;
   font-weight: 600;
   padding: 6px 0;
   border-bottom: 1px solid var(--border-color);
@@ -30,7 +30,7 @@
 
 .tableRow {
   display: grid;
-  grid-template-columns: 7% 33% 17% 21% 17% 5%;
+  grid-template-columns: 6% 33% 17% 21% 17% 6%;
   padding: 5px 0;
   border-bottom: 1px solid var(--border-color);
   align-items: center;
@@ -39,6 +39,9 @@
   &:hover {
     background-color: rgba(0, 0, 0, 0.03);
   }
+  word-wrap: break-word;      // старый вариант, для совместимости
+  overflow-wrap: break-word;   // современный вариант
+  white-space: pre-wrap;       // сохраняет переносы, но переносит длинные слова
 }
 
 .statusBadge {

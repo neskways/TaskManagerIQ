@@ -1,26 +1,26 @@
 .wrapper {
   padding: 15px 40px 15px 15px;
-  height: calc(100vh - 130px); //Отнимаем высоту таймера
+  height: calc(100vh - 130px);
+  display: flex;
+  flex-direction: column;
 }
 
 .inner {
   background-color: var(--bg-color);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
-  height: 100%;
   padding: 30px 20px;
   margin-bottom: 20px;
-  position: relative;
+  flex: 1; /* растягиваем на всю высоту */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* скролл будет внутри дочерних блоков */
   animation: fadeIn 0.4s ease-out;
 }
 
 @keyframes fadeIn {
-  0% {
-    transform: translateY(0);
-  }
-  100% {
-    transform: translateY(0);
-  }
+  0% { transform: translateY(0); }
+  100% { transform: translateY(0); }
 }
 
 .inner {

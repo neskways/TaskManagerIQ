@@ -2,7 +2,6 @@ import s from "./TaskTitleAndText.module.scss";
 
 export const TaskTitleAndText = ( { title, date, description } ) => {
 
-    console.log();
     return (
         <div>
             <div className={s.task_title_wrapper}>

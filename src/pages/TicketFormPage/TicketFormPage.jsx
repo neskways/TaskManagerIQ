@@ -43,7 +43,7 @@ export const TicketFormPage = () => {
     try {
       const taskId = String(id).padStart(9, "0");
       const data = await getTaskInfo(taskId);
-        console.log(data)
+      console.log(data);
       if (data) {
         setTask({
           taskId: parseInt(data.taskId, 10),
@@ -144,49 +144,53 @@ export const TicketFormPage = () => {
         <BackIcon theme={theme} />
       </Link>
 
-      <div className={s.wrapper}>
-        <div className={s.block}>
-          <div className={s.left_side}>
-            <PageTitle titleText={`Заявка №${task.taskId}`} center />
-
-            <TaskTitleAndText
-              title={task.title}
-              date={formatDate(task.date)}
-              description={task.description}
-            />
-
-            <div className={s.comment_wrap}>
-              {task.comments.map((c, i) => (
-                <TaskTextBlock
-                  key={i}
-                  user={c.user}
-                  userId={c.userId}
-                  text={c.comment}
-                  date={c.date}
-                />
-              ))}
-            </div>
-          </div>
-
-          <div className={s.fixed_block}>
-            <MultipleInput
-              rows={4}
-              placeholder="Введите комментарий..."
-              setUserData={setCommentText}
-              value={commentText}
-            />
-            <SendButton onClick={handleSendComment} />
-          </div>
-        </div>
-
-        <TicketSidebar
-          taskId={task.taskId}
-          currentClient={task.client}
-          currentStatus={task.state}
-          currentExecutor={task.owner}
-          contacts={task.contacts}
+<div className={s.wrapper}>
+  {/* Левая колонка */}
+  <div className={s.left_side}>
+    <div className={s.left_content}>
+      <div className={s.task_wrapper}>
+        <PageTitle titleText={`Заявка №${task.taskId}`} center />
+        <TaskTitleAndText
+          title={task.title}
+          date={formatDate(task.date)}
+          description={task.description}
         />
       </div>
+
+      <div className={s.comment_wrap}>
+        {task.comments.map((c, i) => (
+          <TaskTextBlock
+            key={i}
+            user={c.user}
+            userId={c.userId}
+            text={c.comment}
+            date={c.date}
+          />
+        ))}
+      </div>
+    </div>
+
+    <div className={s.com_input}>
+      <MultipleInput
+        rows={4}
+        placeholder="Введите комментарий..."
+        setUserData={setCommentText}
+        value={commentText}
+      />
+      <SendButton onClick={handleSendComment} />
+    </div>
+  </div>
+
+  {/* Правая колонка */}
+  <TicketSidebar
+    taskId={task.taskId}
+    currentClient={task.client}
+    currentStatus={task.state}
+    currentExecutor={task.owner}
+    contacts={task.contacts}
+  />
+</div>
+
     </ContentWrapper>
   );
 };

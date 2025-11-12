@@ -1,56 +1,62 @@
 .wrapper {
   display: grid;
-  grid-template-columns: 1fr minmax(286px, 286px);
-  height: 100%;
-  gap: 20px; /* если нужен отступ между колонками */
-}
-
-.inner {
-  background-color: var(--bg-color);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
-  height: 100%;
-  display: grid;
-  grid-template-columns: 1fr minmax(286px, 30%);
-  overflow: hidden; 
-  position: relative;
+  grid-template-columns: 1fr 286px; /* левая + правая колонка */
+  height: calc(100vh - 130px); /* как было у тебя */
+  gap: 20px;
+  padding: 15px 40px 0px 15px;
 }
 
 .left_side {
-  overflow-wrap: break-word; /* перенос слов при переполнении */
+  display: grid;
+  grid-template-rows: 1fr 100px;
+  flex-direction: column;
+  max-height: 690px;
+  overflow: hidden; /* чтобы scroll работал только внутри left_content */
+}
+
+.left_content {
+  flex: 1 1 auto;
+  min-height: 0; /* обязательно для flex + scroll */
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 15px;
+}
+
+.task_wrapper {
+  overflow-wrap: break-word;
   word-break: break-word;
 }
 
+.comment_wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 
-.btn_back {
-  position: absolute;
-  left: 15px;
-  top: 12px;
-  z-index: 5;
+.com_input {
+  flex: 0 0 100px; /* фиксированная высота */
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 0 15px;
+  margin-top: 1px;
+  box-sizing: border-box;
+}
+
+.com_input .multipleInput {
+  flex-grow: 1;
+}
+
+.com_input .sendButton {
+  flex-shrink: 0;
 }
 
 .block {
+  display: flex;
+  flex-direction: column;
   height: 100%;
-  display: grid;
-  grid-template-rows: 1fr 105px;
-  margin-right: 20px;
-}
-
-.fixed_block {
-  display: grid;
-  grid-template-columns: 1fr 60px;
-  column-gap: 10px;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.text_place {
-  overflow: auto;
-  padding-right: 10px;
-  height: 380px;
-  padding-bottom: 20px;
-  margin-bottom: 40px;
 }
 
 .error {
@@ -67,8 +73,8 @@
 }
 
 
-.comment_wrap {
-  overflow-y: auto;
-  max-height: 454px; /* или height: 100% в блоке с ограничением */
-  padding: 25px 10px 20px;
+.btn_back {
+  position: absolute;
+  left: 20px;
+  top: 20px;
 }
