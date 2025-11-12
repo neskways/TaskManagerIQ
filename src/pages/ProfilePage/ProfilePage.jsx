@@ -1,22 +1,32 @@
-import { useState, useEffect } from "react";
 import s from "./ProfilePage.module.scss";
 import Cookies from "js-cookie";
+import { Loading } from "../../UI/Loading/Loading";
+import { useState, useEffect, useRef } from "react"; 
+import { usePopup } from "../../context/PopupContext";
 import { useTheme } from "../../context/ThemeContext";
+import { taskStatuses } from "../../modules/TaskStatuses";
+import { getTasksList } from "../../api/get/getTasksList";
 import { PageTitle } from "../../components/PageTitle/PageTitle";
 import { ProfileBlock } from "./Components/ProfileBlock/ProfileBlock";
-import { getTasksList } from "../../api/get/getTasksList";
-import { taskStatuses } from "../../modules/TaskStatuses";
-import { usePopup } from "../../context/PopupContext";
-import { Loading } from "../../UI/Loading/Loading";
+import { getFromLocalStorage } from "../../modules/localStorageUtils";
 import { ProfileTasksTable } from "./Components/ProfileTasksTable/ProfileTasksTable";
 
-// Утилита для преобразования секунд в HH:MM:SS
 const secToHHMMSS = (sec) => {
   const h = Math.floor(sec / 3600);
   const m = Math.floor((sec % 3600) / 60);
   const s = sec % 60;
-  return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(
+    s
+  ).padStart(2, "0")}`;
 };
+
+const memeSounds = [
+  "/sounds/hornet_edino.mp3",
+  "/sounds/hollow-knight-hornet-voice-2-3.mp3",
+  "/sounds/hollow-knight-hornet-voice-11.mp3",
+  "/sounds/hornet_gitgud.mp3",
+];
+
 
 export const ProfilePage = () => {
   const [visible, setVisible] = useState(false);
@@ -30,6 +40,22 @@ export const ProfilePage = () => {
 
   const darkLogo = "/images/logo/logo_dark.png";
   const lightLogo = "/images/logo/logo.png";
+
+  const [memeSoundsEnabled, setMemeSoundsEnabled] = useState(false);
+
+  useEffect(() => {
+    const settings = getFromLocalStorage("secret_settings", {});
+    setMemeSoundsEnabled(settings.meme_sounds);
+  }, []);
+
+  const handleAvatarClick = () => {
+  if (!memeSoundsEnabled) return; // если выключено — не играем звук
+
+  const randomSound = memeSounds[Math.floor(Math.random() * memeSounds.length)];
+  const audio = new Audio(randomSound);
+  audio.volume = 0.4;
+  audio.play().catch((err) => console.error("Audio play error:", err));
+};
 
   useEffect(() => {
     const timeout = setTimeout(() => setVisible(true), 10);
@@ -55,7 +81,7 @@ export const ProfilePage = () => {
           client: item.client,
           status: item.status,
           executor: item.executor,
-          timeSpent: secToHHMMSS(item.timeSpent), // форматируем время
+          timeSpent: secToHHMMSS(item.timeSpent),
         }));
 
         setTasks(mapped);
@@ -82,6 +108,7 @@ export const ProfilePage = () => {
                 className={s.img}
                 src={`/images/avatars/${userCode}.jpg`}
                 alt={username}
+                onDoubleClick={handleAvatarClick}
               />
             </div>
             <div className={s.text_block}>

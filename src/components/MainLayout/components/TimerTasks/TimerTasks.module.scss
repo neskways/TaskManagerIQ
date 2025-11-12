@@ -78,6 +78,7 @@
   cursor: pointer;
   font-weight: 600;
   transition: var(--transition);
+  transition: background ease-in 0.2s;
 }
 
 .btn:hover:not(:disabled) {
@@ -97,7 +98,7 @@
   padding: 8px 8px;
   border-radius: var(--border-radius);
   cursor: pointer;
-  transition: var(--transition);
+  transition: background ease-in 0.2s;
 }
 
 .btnEnd:hover:not(:disabled) {
@@ -214,6 +215,10 @@
   gap: 20px;
 }
 
+.expanded .sectionHeader {
+  font-size: 18px;
+}
+
 .expanded .headerBox,
 .expanded .listBox {
   flex: 1 1 100%;
@@ -252,12 +257,17 @@
 }
 
 .expanded .taskTitleCenter {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 700;
   color: var(--text-color);
   text-align: center;
   max-width: 80%;
   white-space: normal;
+  margin-top: 0;
+}
+
+.expanded .bottomRow {
+  font-size: 100px;
 }
 
 /* Иконка разворота */
@@ -286,4 +296,41 @@
   background: rgba(0, 0, 0, 0.35);
   z-index: 1000;
   backdrop-filter: blur(2px);
+}
+
+.expanded .bottomRow {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px; /* расстояние между таймером и кнопками */
+}
+
+.expanded .timerBig {
+  font-size: 64px; /* крупнее шрифт таймера */
+  font-weight: 800;
+  color: var(--accent-color);
+}
+
+.expanded .controls {
+  flex-direction: row;
+  justify-content: center;
+  gap: 20px;
+}
+
+.expanded .btn,
+.expanded .btnEnd {
+  font-size: 18px;
+  padding: 14px 24px;
+  width: auto;
+  min-width: 160px;
+}
+
+.expanded .taskTitleCenter {
+  font-size: 26px;
+  font-weight: 700;
+  text-align: center;
+  max-width: 80%;
+  white-space: normal;
+  line-height: 1.3;
+  margin-top: -10px;
 }
