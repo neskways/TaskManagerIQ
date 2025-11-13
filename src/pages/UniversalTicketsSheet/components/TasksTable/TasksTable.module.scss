@@ -11,14 +11,25 @@
 .btn_wrapper {
   margin-bottom: 10px;
   display: flex;
-  justify-content: flex-start;
+  align-items: center;
+  column-gap: 10px;
+}
+
+.count {
+  background-color: var(--accent-color);
+  border: none;
+  padding: 8px 16px;
+  font-size: 15px;
+  font-weight: 500;
+  border-radius: var(--border-radius);
+  color: #fff;
 }
 
 .filter_btn {
   background-color: var(--accent-color);
   border: none;
   padding: 8px 16px;
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   color: #fff;
   font-weight: 500;
   cursor: pointer;

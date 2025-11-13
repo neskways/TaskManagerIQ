@@ -1,13 +1,14 @@
 import s from "./TasksTable.module.scss";
+import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
+import { MESSAGES } from "../../../../modules/messages";
 import { Loading } from "../../../../UI/Loading/Loading";
 import { usePopup } from "../../../../context/PopupContext";
 import { TaskGridCell } from "../TaskGridCell/TaskGridCell";
 import { SidebarFilter } from "../SidebarFilter/SidebarFilter";
 import { getTasksList } from "../../../../api/get/getTasksList";
 import { headersTitleTickets } from "../../../../modules/TitlesForTables";
-import { MESSAGES } from "../../../../modules/messages";
 
 const LOCAL_STORAGE_KEY_TICKETS = "tickets_table_col_widths";
 const DEFAULT_WIDTHS = [5, 30, 20, 10, 13, 12, 10];
@@ -32,6 +33,7 @@ export const TasksTable = ({ queryParams }) => {
       DEFAULT_WIDTHS
   );
   const [showFilter, setShowFilter] = useState(false);
+    const userCode = Cookies.get("userCode");
   const tableRef = useRef(null);
   const startX = useRef(0);
   const isResizing = useRef(false);
@@ -128,10 +130,7 @@ export const TasksTable = ({ queryParams }) => {
   return (
     <div className={s.wrapper}>
       <div className={s.btn_wrapper}>
-        <button
-          className={s.filter_btn}
-          onClick={() => setShowFilter(true)}
-        >
+        <button className={s.filter_btn} onClick={() => setShowFilter(true)}>
           Фильтр
         </button>
       </div>
@@ -140,7 +139,11 @@ export const TasksTable = ({ queryParams }) => {
         <div className={s.gridHeaderRow} style={{ gridTemplateColumns }}>
           {headersTitleTickets.map((header, i) => (
             <div key={i} className={s.gridHeader}>
-              <span>{header}</span>
+              <span>
+                {header}
+                {i === 1 && tasks.length > 0 && (userCode === "000000005"? `  卐  ${tasks.length}` : `〔 ${tasks.length} 〕`)}
+              </span>
+
               {i < headersTitleTickets.length - 1 && (
                 <div
                   className={s.resizer}

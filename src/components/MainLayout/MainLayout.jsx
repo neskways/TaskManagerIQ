@@ -11,6 +11,7 @@ export const MainLayout = () => {
   const [showScreamer, setShowScreamer] = useState(false);
   const [screamerType, setScreamerType] = useState("light"); // "light" | "hard"
   const role = Cookies.get("role");
+  const userCode = Cookies.get("userCode");
 
   useEffect(() => {
     const settings = getFromLocalStorage("secret_settings", {});
@@ -22,17 +23,17 @@ export const MainLayout = () => {
         setInterval(() => {
           setScreamerType("light");
           setShowScreamer(true);
-          setTimeout(() => setShowScreamer(false), 500);
+          setTimeout(() => setShowScreamer(false), 2000);
         }, 120000) 
       );
     }
     
-    if (settings.screamer_hard && String(import.meta.env.VITE_TOKEN_MANAGER) != role) {
+    if (settings.screamer_hard && String(import.meta.env.VITE_TOKEN_MANAGER) != role && userCode !== "000000003") {
       timers.push(
         setInterval(() => {
           setScreamerType("hard");
           setShowScreamer(true);
-          setTimeout(() => setShowScreamer(false), 100);
+          setTimeout(() => setShowScreamer(false), 300);
         }, 360000)
       );
     }
