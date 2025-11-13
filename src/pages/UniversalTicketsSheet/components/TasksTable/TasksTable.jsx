@@ -141,7 +141,7 @@ export const TasksTable = ({ queryParams }) => {
             <div key={i} className={s.gridHeader}>
               <span>
                 {header}
-                {i === 1 && tasks.length > 0 && (userCode === "000000005"? `  卐  ${tasks.length}` : `〔 ${tasks.length} 〕`)}
+                {i === 1 && tasks.length > 0 && (userCode === "000000005"? `  卐  ${tasks.length}  卐` : `〔 ${tasks.length} 〕`)}
               </span>
 
               {i < headersTitleTickets.length - 1 && (
