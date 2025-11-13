@@ -36,6 +36,7 @@ export const getTaskQueue = async (state) => {
           }
         }
       }
+      console.log()
       return {
         id: parseInt(item.id ?? item.TaskID ?? item.ID ?? item.idTask ?? "", 10),
         title: item.title ?? item.Title ?? item.Name ?? "",
@@ -43,6 +44,7 @@ export const getTaskQueue = async (state) => {
         executor: item.userid ?? item.UserId ?? item.user ?? "",
         timeSec,
         displaySec,
+        client: item.client,
         priority: Number(item.priority) || 0,
         deadline: item.deadline ?? null,
         startedAt: startedAt ? new Date(startedAt).toISOString() : null,

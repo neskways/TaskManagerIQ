@@ -294,11 +294,11 @@ export const TimerTasks = () => {
                   onClick={() => onSelectTask(task.id)}
                   onDoubleClick={() => navigate(`/ticket/${task.id}`)}
                 >
-                  <div className={s.taskTitle}>{task.id}</div>
+                  <div className={s.taskId}>{task.id}</div>
                   <div className={s.taskTitle}>{task.title}</div>
                   {isExpanded && (
                     <div className={s.taskClient}>
-                      {task.clientId ?? "—"}
+                      {task.client ?? "—"}
                     </div>
                   )}
                   <div className={s.taskTime}>
