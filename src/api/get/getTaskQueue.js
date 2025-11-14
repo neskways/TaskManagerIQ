@@ -8,6 +8,7 @@ export const getTaskQueue = async (state) => {
     const BASE_URL = import.meta.env.VITE_API_BASE_URL;
     const token = Cookies.get("token");
     const userCode = Cookies.get("userCode");
+    const role = Cookies.get("role");
 
     const response = await api.post(
       `${BASE_URL}/GetTaskQueue`,
@@ -36,7 +37,7 @@ export const getTaskQueue = async (state) => {
           }
         }
       }
-      console.log()
+
       return {
         id: parseInt(item.id ?? item.TaskID ?? item.ID ?? item.idTask ?? "", 10),
         title: item.title ?? item.Title ?? item.Name ?? "",
@@ -50,15 +51,18 @@ export const getTaskQueue = async (state) => {
         startedAt: startedAt ? new Date(startedAt).toISOString() : null,
       };
     });
+    if(role === import.meta.env.VITE_TOKEN_MANAGER) {
+       // сортируем по priority desc (больше = важнее), затем по displaySec (больше выше)
+      const sorted = normalized.sort((a, b) => {
+        if (b.priority !== a.priority) return b.priority - a.priority;
+        return b.displaySec - a.displaySec;
+      });
 
-    // сортируем по priority desc (больше = важнее), затем по displaySec (больше выше)
-    const sorted = normalized.sort((a, b) => {
-      if (b.priority !== a.priority) return b.priority - a.priority;
-      return b.displaySec - a.displaySec;
-    });
-
-    // берем топ-10
-    return sorted;
+      // берем топ-10
+      return sorted.slice(0, 10);
+    }
+    //Иначе возвращаем все
+    return normalized;
   } catch (err) {
     console.error("Ошибка при загрузке GetTaskQueue:", err);
     // прокидываем ошибку вверх — компонент решит, показывать popup или нет
