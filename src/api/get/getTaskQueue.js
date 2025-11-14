@@ -51,13 +51,13 @@ export const getTaskQueue = async (state) => {
         startedAt: startedAt ? new Date(startedAt).toISOString() : null,
       };
     });
-    if(role === import.meta.env.VITE_TOKEN_MANAGER) {
+    if(role != import.meta.env.VITE_TOKEN_MANAGER) {
        // сортируем по priority desc (больше = важнее), затем по displaySec (больше выше)
       const sorted = normalized.sort((a, b) => {
         if (b.priority !== a.priority) return b.priority - a.priority;
         return b.displaySec - a.displaySec;
       });
-
+      
       // берем топ-10
       return sorted.slice(0, 10);
     }
