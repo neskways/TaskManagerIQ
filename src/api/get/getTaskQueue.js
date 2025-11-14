@@ -58,7 +58,7 @@ export const getTaskQueue = async (state) => {
     });
 
     // берем топ-10
-    return sorted.slice(0, 10);
+    return sorted;
   } catch (err) {
     console.error("Ошибка при загрузке GetTaskQueue:", err);
     // прокидываем ошибку вверх — компонент решит, показывать popup или нет
