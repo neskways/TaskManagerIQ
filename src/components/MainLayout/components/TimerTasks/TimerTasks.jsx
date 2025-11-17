@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { usePopup } from "../../../../context/PopupContext";
 import { getTaskQueue } from "../../../../api/get/getTaskQueue";
@@ -39,11 +40,9 @@ export const TimerTasks = () => {
   const timerRef = useRef(null);
   const pollingRef = useRef(null);
 
-  // 🆕 Храним предыдущие задачи для сравнения
   const prevTaskIdsRef = useRef(new Set());
   const isFirstLoad = useRef(true);
 
-  // 📥 Загрузка задач
   const loadTasks = async () => {
     try {
       const state = [
@@ -64,7 +63,6 @@ export const TimerTasks = () => {
         }
       });
 
-      // 🔍 Проверка на новые задачи
       const newTaskIds = new Set(data.map((t) => t.id));
       if (!isFirstLoad.current) {
         const prevIds = prevTaskIdsRef.current;
@@ -76,7 +74,6 @@ export const TimerTasks = () => {
         isFirstLoad.current = false;
       }
 
-      // сохраняем ids для следующего сравнения
       prevTaskIdsRef.current = newTaskIds;
 
       setTasks(data);
@@ -101,14 +98,22 @@ export const TimerTasks = () => {
 
 
   const playNewTaskSound = () => {
-    try {
-      const audio = new Audio("/sounds/hollow-knight-hornet-voice-11.mp3");
-      audio.volume = 0.5; 
-      audio.play().catch(() => {}); 
-    } catch (e) {
-      console.warn("Не удалось воспроизвести звук:", e);
-    }
-  };
+  try {
+    const codeUser = Cookies.get("codeUser") || "000000002";
+    const audio = new Audio(`/sounds/${codeUser}.mp3`);
+    audio.volume = 0.5;
+
+    audio.play().catch(() => {
+      if (codeUser !== "000000002") {
+        const fallbackAudio = new Audio("/sounds/000000002.mp3");
+        fallbackAudio.volume = 0.5;
+        fallbackAudio.play().catch(() => {});
+      }
+    });
+  } catch (e) {
+    console.warn("Не удалось воспроизвести звук:", e);
+  }
+};
 
   useEffect(() => {
     loadTasks();
