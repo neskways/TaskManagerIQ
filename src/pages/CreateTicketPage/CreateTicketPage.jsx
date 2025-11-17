@@ -154,25 +154,23 @@ export const CreateTicketPage = () => {
       },
     };
 
-    console.log(payload)
+    try {
+      let result = await createTask(payload);
+      if (typeof result === "string") {
+        result = JSON.parse(result.replace(/'/g, '"'));
+      }
 
-    // try {
-    //   let result = await createTask(payload);
-    //   if (typeof result === "string") {
-    //     result = JSON.parse(result.replace(/'/g, '"'));
-    //   }
+      if (result?.Error) {
+        return showPopup(`Ошибка: ${result.Error}`, { type: "error" });
+      }
 
-    //   if (result?.Error) {
-    //     return showPopup(`Ошибка: ${result.Error}`, { type: "error" });
-    //   }
-
-    //   const cleanId = parseInt(result.taskid, 10);
-    //   showPopup(MESSAGES.createTaskSuccess, { type: "success" });
-    //   setTimeout(() => navigate(`/ticket/${cleanId}`), 100);
-    // } catch (error) {
-    //   console.error("Ошибка при создании заявки:", error);
-    //   showPopup(MESSAGES.createTaskError, { type: "error" });
-    // }
+      const cleanId = parseInt(result.taskid, 10);
+      showPopup(MESSAGES.createTaskSuccess, { type: "success" });
+      setTimeout(() => navigate(`/ticket/${cleanId}`), 100);
+    } catch (error) {
+      console.error("Ошибка при создании заявки:", error);
+      showPopup(MESSAGES.createTaskError, { type: "error" });
+    }
   };
 
   return (
