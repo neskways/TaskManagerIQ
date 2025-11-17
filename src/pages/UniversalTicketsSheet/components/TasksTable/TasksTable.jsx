@@ -12,7 +12,7 @@ import { headersTitleTask } from "./TitlesForTables";
 
 const LOCAL_STORAGE_KEY_TICKETS = "tickets_table_col_widths";
 
-const DEFAULT_WIDTHS = [5, 33, 14, 13, 14, 8, 7, 7];
+const DEFAULT_WIDTHS = [5, 33, 14, 16, 11, 8, 7, 7];
 
 const formatDate = (value) => {
   if (!value) return "";
