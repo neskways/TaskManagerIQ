@@ -12,14 +12,14 @@ export const Selector = ({
   labelKey = "name",   
   valueKey = "id",     
 }) => {
-  console.log
+  console.log(smallFont)
   const isControlled = value !== undefined && onChange;
 
   return (
     <div className={s.wrapper}>
-      {title && <h4 className={`${s.title} ${alignTitle === "center" ? s.titleCenter : ""}`}>{title}</h4>}
+      {title && <h4 className={`${s.title} ${alignTitle === "center" ? s.titleCenter : ""} ${smallFont ? s.smallFont : ""}`}>{title}</h4>}
       <select
-        className={`${s.select} ${smallFont ? s.smallFont : ""}`}
+        className={`${s.select}`}
         value={isControlled ? value : undefined}
         defaultValue={!isControlled ? defaultValue : undefined}
         onChange={(e) => onChange && onChange(e.target.value)}

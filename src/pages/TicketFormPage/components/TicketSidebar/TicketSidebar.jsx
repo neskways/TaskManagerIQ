@@ -9,6 +9,7 @@ import { taskStatuses } from "../../../../modules/TaskStatuses";
 import { updateTaskInfo } from "../../../../api/update/updateTaskInfo";
 import { useClientsAndEmployees } from "../../../CreateTicketPage/hooks/useClientsAndEmployees";
 import { Link } from "react-router-dom";
+import { Checkbox } from "../../../../UI/Checkbox/Checkbox";
 
 export const TicketSidebar = ({
   taskId,
@@ -19,9 +20,9 @@ export const TicketSidebar = ({
   returnId,
   returnName,
   timeSpent,
+  isFirstLineTask,
 }) => {
-  returnName = "dfsf"
-  returnId = 123
+
   const { employeeOptions, loading: employeesLoading } =
     useClientsAndEmployees();
   const { showPopup } = usePopup();
@@ -164,11 +165,46 @@ export const TicketSidebar = ({
       { returnId !== null &&
         <div className={s.block}>
             <h4 className={s.title}>Возвратная заявка</h4>
-            <p className={s.text} title={returnName}>
-              <Link to={`/ticket/${returnId}`}>{ returnName }</Link>
-            </p>
+            <Link to={`/ticket/${returnId}`}>
+              <p className={s.text} title={returnName}>
+                { returnName }
+              </p>
+            </Link>
         </div>
       }
+
+      {(role === import.meta.env.VITE_TOKEN_MANAGER) && (
+        
+        <div className={s.block}>
+          <h4 className={s.title}>Дополнительные данные</h4>
+          <div className={s.text}>
+          <div className={`${s.checkbox}`}>
+            <Checkbox
+              checked={isFirstLineTask}
+              onChange={(e) =>
+                role === import.meta.env.VITE_TOKEN_MANAGER
+                  ? setIsFirstLineTask(e.target.checked)
+                  : null
+              }
+              disabled={role === import.meta.env.VITE_TOKEN_DUTY}
+            />
+            <p>Задача первой линии</p>
+          </div>
+           <div className={`${s.checkbox}`}>
+            <Checkbox
+              checked={isFirstLineTask}
+              onChange={(e) =>
+                role === import.meta.env.VITE_TOKEN_MANAGER
+                  ? setIsFirstLineTask(e.target.checked)
+                  : null
+              }
+              disabled={role === import.meta.env.VITE_TOKEN_DUTY}
+            />
+            <p>Выезд к клиенту</p>
+          </div>
+          </div>
+        </div>
+      )}
 
       <div className={s.btn_wrap}>
         <Button name="Сохранить" onClick={handleSave} />
