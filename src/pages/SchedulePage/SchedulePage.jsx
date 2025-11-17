@@ -34,7 +34,7 @@ export const SchedulePage = () => {
   }, [view]);
 
   return (
-    <ContentWrapper>
+    <ContentWrapper reletive={true}>
       <PageTitle
         titleText={view === "duty" ? "График дежурств" : "График обновлений"}
         center={true}

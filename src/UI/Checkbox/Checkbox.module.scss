@@ -42,12 +42,12 @@
 
 .checkbox_icon {
   position: absolute;
-  inset: 0;
-  margin: auto;
-  width: 80%;
-  height: 80%;
+  top: 50%;
+  left: 50%;
+  width: 60%;       // уменьшено с 80% до 60%
+  height: 60%;      // уменьшено с 80% до 60%
+  transform: translate(-50%, -50%) scale(0); // центрирование
   color: white;
-  transform: scale(0);
   transition: all 0.2s ease;
 }
 
@@ -64,7 +64,7 @@
 }
 
 .ios_checkbox input:checked + .checkbox_wrapper .checkbox_icon {
-  transform: scale(1);
+  transform: translate(-50%, -50%) scale(1); // центрирование при checked
 }
 
 .ios_checkbox input:checked + .checkbox_wrapper .check_path {

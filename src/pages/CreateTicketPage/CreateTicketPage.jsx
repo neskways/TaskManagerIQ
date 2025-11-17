@@ -26,15 +26,19 @@ export const CreateTicketPage = () => {
   const navigate = useNavigate();
   const { showPopup } = usePopup();
 
+  const role = Cookies.get("role");
+  const userCode = Cookies.get("userCode");
+
   const [selectedClient, setSelectedClient] = useState(null);
-  const [selectedEmployee, setSelectedEmployee] = useState(
-    Cookies.get("userCode")
-  );
+  const [selectedEmployee, setSelectedEmployee] = useState(userCode);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [isReturnTask, setIsReturnTask] = useState(false);
   const [tasksList, setTasksList] = useState([]);
   const [selectedReturnTask, setSelectedReturnTask] = useState("");
+  const [isFirstLineTask, setIsFirstLineTask] = useState(
+    role === import.meta.env.VITE_TOKEN_DUTY
+  );
 
   const {
     clients,
@@ -72,10 +76,10 @@ export const CreateTicketPage = () => {
       try {
         const tasks = await getTasksList(
           [taskStatuses.DONE.code],
-          Cookies.get("userCode"),
+          userCode,
           null,
           null,
-          selectedClient.code 
+          selectedClient.code
         );
 
         const mapped = tasks.map((t) => ({
@@ -90,8 +94,7 @@ export const CreateTicketPage = () => {
     };
 
     loadTasks();
-  }, [isReturnTask, selectedClient, showPopup]);
-
+  }, [isReturnTask, selectedClient, showPopup, userCode]);
 
   useEffect(() => {
     if (!selectedClient) {
@@ -131,12 +134,8 @@ export const CreateTicketPage = () => {
     if (!selectedReturnTask && isReturnTask)
       return showValidationPopup("Пожалуйста, выберите возвратную задачу!");
 
-    const token = Cookies.get("token");
-    const userCode = Cookies.get("userCode");
-    const role = Cookies.get("role");
-
     const payload = {
-      token,
+      token: Cookies.get("token"),
       userId: userCode,
       task: {
         clientId: selectedClient.code,
@@ -146,31 +145,38 @@ export const CreateTicketPage = () => {
         contacts: { ...contactDetails },
         owner: selectedEmployee || userCode,
         return: isReturnTask ? selectedReturnTask : null,
-        firstline: role === import.meta.env.VITE_TOKEN_DUTY ? "true" : null,
+        firstline:
+          role === import.meta.env.VITE_TOKEN_DUTY
+            ? "true"
+            : isFirstLineTask
+            ? "true"
+            : null,
       },
     };
 
-    try {
-      let result = await createTask(payload);
-      if (typeof result === "string") {
-        result = JSON.parse(result.replace(/'/g, '"'));
-      }
+    console.log(payload)
 
-      if (result?.Error) {
-        return showPopup(`Ошибка: ${result.Error}`, { type: "error" });
-      }
+    // try {
+    //   let result = await createTask(payload);
+    //   if (typeof result === "string") {
+    //     result = JSON.parse(result.replace(/'/g, '"'));
+    //   }
 
-      const cleanId = parseInt(result.taskid, 10);
-      showPopup(MESSAGES.createTaskSuccess, { type: "success" });
-      setTimeout(() => navigate(`/ticket/${cleanId}`), 100);
-    } catch (error) {
-      console.error("Ошибка при создании заявки:", error);
-      showPopup(MESSAGES.createTaskError, { type: "error" });
-    }
+    //   if (result?.Error) {
+    //     return showPopup(`Ошибка: ${result.Error}`, { type: "error" });
+    //   }
+
+    //   const cleanId = parseInt(result.taskid, 10);
+    //   showPopup(MESSAGES.createTaskSuccess, { type: "success" });
+    //   setTimeout(() => navigate(`/ticket/${cleanId}`), 100);
+    // } catch (error) {
+    //   console.error("Ошибка при создании заявки:", error);
+    //   showPopup(MESSAGES.createTaskError, { type: "error" });
+    // }
   };
 
   return (
-    <ContentWrapper>
+    <ContentWrapper reletive={true}>
       <PageTitle titleText="Новая заявка" center />
 
       <form onSubmit={handleSubmit}>
@@ -230,7 +236,25 @@ export const CreateTicketPage = () => {
           />
         )}
 
-        <div className={s.return_task}>
+        <div className={s.additional_parameters}>
+          {/* Чекбокс "Задача первой линии" */}
+          {(role === import.meta.env.VITE_TOKEN_MANAGER) && (
+            <div className={s.checkbox}>
+              <Checkbox
+                checked={isFirstLineTask}
+                onChange={(e) =>
+                  role === import.meta.env.VITE_TOKEN_MANAGER
+                    ? setIsFirstLineTask(e.target.checked)
+                    : null
+                }
+                disabled={role === import.meta.env.VITE_TOKEN_DUTY}
+              />
+              <p>Задача первой линии</p>
+            </div>
+          )}
+
+         <div className={s.return_task}>
+           {/* Чекбокс "Возврат к задаче" */}
           <div className={s.checkbox}>
             <Checkbox
               checked={isReturnTask}
@@ -240,6 +264,7 @@ export const CreateTicketPage = () => {
             <p>Возврат к задаче</p>
           </div>
 
+          {/* Селектор возвратной задачи */}
           {isReturnTask && (
             <Selector
               items={tasksList}
@@ -250,6 +275,7 @@ export const CreateTicketPage = () => {
               disabled={tasksList.length === 0}
             />
           )}
+         </div>
         </div>
 
         <div className={s.button_wrap}>

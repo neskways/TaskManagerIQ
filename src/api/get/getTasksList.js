@@ -6,13 +6,13 @@ export const getTasksList = async (
   userCode,
   firstline,
   handleInvalidToken,
-  clientId // 🔹 добавили параметр
+  clientId 
 ) => {
   try {
     const BASE_URL = import.meta.env.VITE_API_BASE_URL;
     const token = Cookies.get("token");
 
-    // 🔹 Собираем тело запроса динамически
+
     const payload = {
       Token: token,
       State: states,
@@ -21,7 +21,7 @@ export const getTasksList = async (
     };
 
     if (clientId) {
-      payload.ClientId = clientId; // передаём, только если выбран клиент
+      payload.ClientId = clientId; 
     }
 
     const response = await api.post(`${BASE_URL}/GetTasksList`, payload, {
@@ -43,7 +43,7 @@ export const getTasksList = async (
       executor: item.user,
       priority: "",
       timeSpent: item.time,
-    }));
+    })).reverse();
   } catch (error) {
     if (error.response?.status === 401) {
       console.log("Не актуальный токен, необходима повторная авторизация!");
@@ -54,3 +54,4 @@ export const getTasksList = async (
     throw error;
   }
 };
+

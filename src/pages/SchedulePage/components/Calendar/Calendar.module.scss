@@ -23,6 +23,8 @@
   background-color: var(--bg-color-tertiary);
   font-weight: bold;
   padding: 6px 0;
+  
+  border-bottom: 1px solid var(--border-color);
 }
 
 .dayName {
@@ -38,9 +40,13 @@
   display: grid;
   grid-template-columns: repeat(7, 1fr);
 }
+.cell:last-child {
+  border-right: 1px solid var(--border-color);
+}
 
 .cell {
-  border: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  border-left: 1px solid var(--border-color);
   padding: 16px 8px;
   min-height: 80px;
   display: flex;
@@ -64,8 +70,7 @@
 .refreshBtn {
   margin-left: auto;
   position: relative;
-  top: 15px;
-  right: 5px;
+  top: -3px;
 }
 
 .active_duty {
@@ -85,8 +90,9 @@
 .controls {
   display: flex;
   gap: 12px;
+  align-items: start;
   justify-content: left;
-  margin-bottom: 20px;
+  margin-bottom: 14px;
 }
 
 .select {

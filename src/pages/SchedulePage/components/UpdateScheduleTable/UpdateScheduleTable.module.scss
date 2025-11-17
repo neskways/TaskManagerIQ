@@ -1,7 +1,6 @@
 .container {
   text-align: left;
   width: 100%;
-  padding: 16px;
 }
 
 .monthTitle {
@@ -12,9 +11,9 @@
 
 .headerRow {
   display: flex;
-  justify-content: space-between;
+  justify-content: right;
   align-items: center;
-  margin-bottom: 6px;
+  margin-bottom: 12px;
 }
 
 .errorText {

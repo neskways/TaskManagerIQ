@@ -11,7 +11,6 @@
   justify-content: center;
   z-index: 9999;
 
-  /* Анимация появления */
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s ease;
@@ -24,12 +23,12 @@
 
 .modalContent {
   background: var(--bg-color);
-  padding: 10px;
+  padding: 15px;
   border-radius: 8px;
   min-width: 500px;
   height: 400px;
   position: relative;
-
+  left: 100px;
   transform: translateY(+20px);
   opacity: 0;
   transition: all 0.2s ease;
@@ -55,8 +54,8 @@
 
 .close_btn {
   position: absolute;
-  top: 18px;
-  right: 20px;
+  top: 15px;
+  right: 15px;
 }
 
 .updateItem {

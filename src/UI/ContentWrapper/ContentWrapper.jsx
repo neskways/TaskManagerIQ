@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import styles from "./ContentWrapper.module.scss";
+import s from "./ContentWrapper.module.scss";
 
-export const ContentWrapper = ({ children }) => {
+export const ContentWrapper = ({ children, reletive }) => {
   
   const [visible, setVisible] = useState(false);
 
@@ -11,9 +11,9 @@ export const ContentWrapper = ({ children }) => {
   }, []);
 
   return (
-    <div className={styles.wrapper}>
+    <div className={`${s.wrapper}`}>
       <div
-        className={`${styles.inner} ${visible ? styles.show : ""}`}
+        className={`${s.inner} ${visible ? s.show : ""} ${reletive ? s.reletive : ""}`}
       >
         {children}
       </div>

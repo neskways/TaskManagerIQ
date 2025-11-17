@@ -30,6 +30,6 @@ export const getUpdateMap = async () => {
     });
   } catch (error) {
     console.error("Ошибка при загрузке расписания:", error);
-    return [];
+    return null;
   }
 };

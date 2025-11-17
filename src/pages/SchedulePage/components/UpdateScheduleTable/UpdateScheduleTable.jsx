@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import s from "./UpdateScheduleTable.module.scss";
 import { ModalWindow } from "./ModalWindow/ModalWindow";
 import { Loading } from "../../../../UI/Loading/Loading";
@@ -7,60 +7,40 @@ import { useUpdateSchedule } from "./hooks/useUpdateSchedule";
 import { ReloadIcon } from "../../../../UI/ReloadIcon/ReloadIcon";
 
 export const UpdateScheduleTable = ({ theme }) => {
-  const today = new Date();
-  const monthStr = today.toLocaleString("ru-RU", {
-    month: "long",
-    year: "numeric",
-  });
-  const monthTitle = monthStr.charAt(0).toUpperCase() + monthStr.slice(1);
+  const {
+    schedule,
+    daysInMonth,
+    loading,
+    loadSchedule,
+    error,
+  } = useUpdateSchedule();
 
-  const { schedule, daysInMonth, loading, loadSchedule, error } =
-    useUpdateSchedule();
+  const { showPopup } = usePopup();
+
   const [selectedClientUpdates, setSelectedClientUpdates] = useState(null);
   const [spinning, setSpinning] = useState(false);
 
-  const { showPopup } = usePopup();
-  const emptyPopupShownRef = useRef(false); // ref, чтобы не сбрасывался при ререндере
-
-  // Показываем pop-up только один раз, когда данные загрузились и пустые
-  useEffect(() => {
-    if (
-      !loading &&
-      !error &&
-      schedule.length === 0 &&
-      !emptyPopupShownRef.current
-    ) {
-      showPopup("Нет данных для отображения", { type: "info" });
-      emptyPopupShownRef.current = true;
-    }
-  }, [loading, error, schedule, showPopup]);
-
   const handleRefresh = async () => {
     if (spinning) return;
-    setSpinning(true);
-    emptyPopupShownRef.current = false; // сбрасываем, чтобы pop-up снова мог появиться
 
-    try {
-      const updatedSchedule = await loadSchedule(true); // force reload
-      if (!updatedSchedule || updatedSchedule.length === 0) {
-        showPopup("Нет данных для отображения", { type: "info", });
-        emptyPopupShownRef.current = true;
-      }
-    } catch (err) {
-      console.error("Ошибка при обновлении расписания:", err);
-      if (err.response?.status !== 401) {
-        showPopup("Ошибка при обновлении расписания", { type: "error" });
-      }
-    } finally {
-      setTimeout(() => setSpinning(false), 1000);
+    setSpinning(true);
+
+    const result = await loadSchedule(true);
+
+    if (result === null) {
+      showPopup("Ошибка обновления графика", { type: "error" });
+    } else if (Array.isArray(result) && result.length === 0) {
+      showPopup("Нет данных для отображения", { type: "info" });
     }
+
+    setTimeout(() => setSpinning(false), 700);
   };
 
   const renderHeader = () => (
     <tr>
       <th className={s.stickyColumn}>Клиент</th>
       {Array.from({ length: daysInMonth }, (_, i) => (
-        <th key={i + 1}>{i + 1}</th>
+        <th key={i}>{i + 1}</th>
       ))}
     </tr>
   );
@@ -86,7 +66,6 @@ export const UpdateScheduleTable = ({ theme }) => {
   return (
     <div className={s.container}>
       <div className={s.headerRow}>
-        <h2 className={s.monthTitle}>{monthTitle}</h2>
         <button className={s.refreshBtn} onClick={handleRefresh}>
           <ReloadIcon theme={theme} spinning={spinning} />
         </button>
@@ -96,9 +75,13 @@ export const UpdateScheduleTable = ({ theme }) => {
         <div className={s.centerWrapper}>
           <Loading className={s.loading} />
         </div>
+      ) : error && schedule.length === 0 ? (
+        <div className={s.centerWrapper}>
+          <p className={s.errorText}>Ошибка: не удалось загрузить график</p>
+        </div>
       ) : schedule.length === 0 ? (
         <div className={s.centerWrapper}>
-          <p className={s.errorText}>График обновления пуст</p>
+          <p className={s.errorText}>Нет данных для отображения</p>
         </div>
       ) : (
         <div className={s.tableWrapper}>
