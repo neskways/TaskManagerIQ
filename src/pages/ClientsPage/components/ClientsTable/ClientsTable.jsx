@@ -1,7 +1,7 @@
 import s from "./ClientsTable.module.scss";
-import { ClientGridCell } from "../ClientGridCell/ClientGridCell";
-import { headersTitle } from "../../../../modules/TitlesForTables";
 import { useState, useMemo } from "react";
+import { headersTitle } from "./titlesForTables";
+import { ClientGridCell } from "../ClientGridCell/ClientGridCell";
 
 export const ClientsTable = ({
   clients,

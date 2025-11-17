@@ -34,7 +34,7 @@ export const getTasksList = async (
     if (!Array.isArray(parsed)) {
       throw new Error("Неверный формат возвращаемых данных!");
     }
-
+    
     return parsed.map((item) => ({
       number: item.TaskID,
       title: item.Name,
@@ -43,7 +43,8 @@ export const getTasksList = async (
       executor: item.user,
       priority: "",
       timeSpent: item.time,
-    })).reverse();
+      createdDate: item.createdate,
+    }));
   } catch (error) {
     if (error.response?.status === 401) {
       console.log("Не актуальный токен, необходима повторная авторизация!");

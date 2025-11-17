@@ -1,4 +1,4 @@
-/* --- Общий контейнер --- */
+
 .wrapper {
   position: relative;
   width: 100%;
@@ -7,7 +7,6 @@
   flex-direction: column;
 }
 
-/* --- Кнопка фильтра --- */
 .btn_wrapper {
   margin-bottom: 10px;
   display: flex;
@@ -19,7 +18,7 @@
   background-color: var(--accent-color);
   border: none;
   padding: 8px 16px;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
   border-radius: var(--border-radius);
   color: #fff;
@@ -34,7 +33,7 @@
   font-weight: 500;
   cursor: pointer;
   transition: 0.2s;
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .filter_btn:hover {

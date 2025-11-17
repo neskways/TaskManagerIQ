@@ -8,10 +8,16 @@ import { usePopup } from "../../../../context/PopupContext";
 import { TaskGridCell } from "../TaskGridCell/TaskGridCell";
 import { SidebarFilter } from "../SidebarFilter/SidebarFilter";
 import { getTasksList } from "../../../../api/get/getTasksList";
-import { headersTitleTickets } from "../../../../modules/TitlesForTables";
+import { headersTitleTask } from "./TitlesForTables";
 
 const LOCAL_STORAGE_KEY_TICKETS = "tickets_table_col_widths";
-const DEFAULT_WIDTHS = [5, 30, 20, 10, 13, 12, 10];
+
+const DEFAULT_WIDTHS = [5, 33, 14, 13, 14, 8, 7, 7];
+
+const formatDate = (value) => {
+  if (!value) return "";
+  return value.split(" ")[0] || value;
+};
 
 export const TasksTable = ({ queryParams }) => {
   const secToHHMMSS = (sec) => {
@@ -27,23 +33,26 @@ export const TasksTable = ({ queryParams }) => {
   const navigate = useNavigate();
   const { showPopup } = usePopup();
 
-  const [colWidths, setColWidths] = useState(
-    () =>
-      JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_TICKETS)) ||
-      DEFAULT_WIDTHS
+  const userCode = Cookies.get("userCode");
+
+  const [colWidths, setColWidths] = useState(() =>
+    JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_TICKETS)) ||
+    DEFAULT_WIDTHS
   );
+
   const [showFilter, setShowFilter] = useState(false);
-    const userCode = Cookies.get("userCode");
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   const tableRef = useRef(null);
   const startX = useRef(0);
   const isResizing = useRef(false);
   const startWidths = useRef([0, 0]);
   const resizingColIndex = useRef(null);
 
-  const [tasks, setTasks] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  const gridTemplateColumns = colWidths.map((w) => `${w}%`).join(" ");
+  const gridTemplateColumns = colWidths
+    .map((w) => `minmax(40px, ${w}%)`)
+    .join(" ");
 
   useEffect(() => {
     localStorage.setItem(LOCAL_STORAGE_KEY_TICKETS, JSON.stringify(colWidths));
@@ -65,6 +74,7 @@ export const TasksTable = ({ queryParams }) => {
           client: item.client,
           status: item.status,
           executor: item.executor,
+          createdDate: formatDate(item.createdDate),
           priority: item.priority,
           timeSpent: secToHHMMSS(item.timeSpent),
         }));
@@ -91,19 +101,23 @@ export const TasksTable = ({ queryParams }) => {
     startWidths.current = [colWidths[index], colWidths[index + 1]];
 
     document.body.style.cursor = "col-resize";
+
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
   };
 
   const handleMouseMove = (e) => {
     if (!isResizing.current || !tableRef.current) return;
+
     const dx = e.clientX - startX.current;
     const tableWidth = tableRef.current.offsetWidth;
     const deltaPercent = (dx / tableWidth) * 100;
 
     let left = startWidths.current[0] + deltaPercent;
     let right = startWidths.current[1] - deltaPercent;
-    const MIN_WIDTH = 5;
+
+    const MIN_WIDTH = 5; // проценты, minmax защитит минимум px
+
     if (left < MIN_WIDTH || right < MIN_WIDTH) return;
 
     const newWidths = [...colWidths];
@@ -115,6 +129,7 @@ export const TasksTable = ({ queryParams }) => {
   const handleMouseUp = () => {
     isResizing.current = false;
     document.body.style.cursor = "default";
+
     document.removeEventListener("mousemove", handleMouseMove);
     document.removeEventListener("mouseup", handleMouseUp);
   };
@@ -136,15 +151,19 @@ export const TasksTable = ({ queryParams }) => {
       </div>
 
       <div className={s.gridTableWrapper}>
+        {/* Заголовки */}
         <div className={s.gridHeaderRow} style={{ gridTemplateColumns }}>
-          {headersTitleTickets.map((header, i) => (
+          {headersTitleTask.map((header, i) => (
             <div key={i} className={s.gridHeader}>
               <span>
                 {header}
-                {i === 1 && tasks.length > 0 && (userCode === "000000005"? `  卐  ${tasks.length}  卐` : `〔 ${tasks.length} 〕`)}
+                {i === 1 && tasks.length > 0 &&
+                  (userCode === "000000005"
+                    ? ` 卐 ${tasks.length} 卐`
+                    : `〔 ${tasks.length} 〕`)}
               </span>
 
-              {i < headersTitleTickets.length - 1 && (
+              {i < headersTitleTask.length - 1 && (
                 <div
                   className={s.resizer}
                   onMouseDown={(e) => handleMouseDown(e, i)}
@@ -154,6 +173,7 @@ export const TasksTable = ({ queryParams }) => {
           ))}
         </div>
 
+        {/* Тело */}
         <div className={s.gridBody} ref={tableRef}>
           {tasks.map((task, index) => (
             <div
@@ -168,11 +188,11 @@ export const TasksTable = ({ queryParams }) => {
         </div>
       </div>
 
-      {/* затемнение при открытии фильтра */}
+      {/* Оверлей */}
       <div
         className={`${s.overlay} ${showFilter ? s.show : ""}`}
         onClick={() => setShowFilter(false)}
-      ></div>
+      />
 
       <SidebarFilter showFilter={showFilter} setShowFilter={setShowFilter} />
     </div>
