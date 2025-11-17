@@ -1,14 +1,14 @@
 import s from "./TicketSidebar.module.scss";
 import Cookies from "js-cookie";
 import { useState, useEffect } from "react";
-import { Button } from "../../../../UI/Button/Button";
 import { Contacts } from "../Contacts/Contacts";
+import { Button } from "../../../../UI/Button/Button";
 import { Selector } from "../../../../UI/Selector/Selector";
-import { taskStatuses } from "../../../../modules/TaskStatuses";
-import { useClientsAndEmployees } from "../../../CreateTicketPage/hooks/useClientsAndEmployees";
 import { usePopup } from "../../../../context/PopupContext";
+import { taskStatuses } from "../../../../modules/TaskStatuses";
 import { updateTaskInfo } from "../../../../api/update/updateTaskInfo";
-import { TextAlignCenter } from "lucide-react";
+import { useClientsAndEmployees } from "../../../CreateTicketPage/hooks/useClientsAndEmployees";
+import { Link } from "react-router-dom";
 
 export const TicketSidebar = ({
   taskId,
@@ -16,7 +16,12 @@ export const TicketSidebar = ({
   currentStatus,
   currentExecutor,
   contacts,
+  returnId,
+  returnName,
+  timeSpent,
 }) => {
+  returnName = "dfsf"
+  returnId = 123
   const { employeeOptions, loading: employeesLoading } =
     useClientsAndEmployees();
   const { showPopup } = usePopup();
@@ -151,10 +156,19 @@ export const TicketSidebar = ({
 
       <div className={s.block}>
         <h4 className={s.title}>Время</h4>
-        <p className={s.text}>00:00:00</p>
+        <p className={s.text}> { timeSpent !== null ? timeSpent : "00:00:00" } </p>
       </div>
 
       <Contacts contacts={contacts} />
+
+      { returnId !== null &&
+        <div className={s.block}>
+            <h4 className={s.title}>Возвратная заявка</h4>
+            <p className={s.text} title={returnName}>
+              <Link to={`/ticket/${returnId}`}>{ returnName }</Link>
+            </p>
+        </div>
+      }
 
       <div className={s.btn_wrap}>
         <Button name="Сохранить" onClick={handleSave} />

@@ -55,6 +55,9 @@ export const TicketFormPage = () => {
           owner: data.owner,
           date: new Date(data.date),
           state: data.state,
+          timeSpent: data.timeSpent,
+          returnId: data.return || null,
+          returnName: data.returnName,
           contacts: data.contacts,
           comments: data.comments.map((c) => ({
             user: c.user,
@@ -188,6 +191,9 @@ export const TicketFormPage = () => {
           currentStatus={task.state}
           currentExecutor={task.owner}
           contacts={task.contacts}
+          returnId={task.returnId}
+          returnName={task.returnName}
+          timeSpent={task.timeSpent}
         />
       </div>
     </ContentWrapper>

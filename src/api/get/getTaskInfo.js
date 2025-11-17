@@ -34,6 +34,20 @@ export const getTaskInfo = async (taskID, handleInvalidToken) => {
       +timeParts[1],
       +timeParts[2]
     );
+
+    let timeSpent = "00:00:00"
+    if(parsed.timeSpent !== null && parsed.timeSpent !== undefined) {
+      const dateTimeSpent = parsed.timeSpent.split(" ")[0].split(".");
+      const timeTimeSpent = parsed.timeSpent.split(" ")[1].split(":");
+      timeSpent = new Date(
+        +dateTimeSpent[2],
+        +dateTimeSpent[1] - 1,
+        +dateTimeSpent[0],
+        +timeTimeSpent[0],
+        +timeTimeSpent[1],
+        +timeTimeSpent[2]
+      );
+    }
     
     return {
       taskId: parsed.taskid.toString().padStart(9, "0"),
@@ -44,6 +58,7 @@ export const getTaskInfo = async (taskID, handleInvalidToken) => {
       userId: parsed.userId,
       owner: parsed.owner,
       date,
+      timeSpent: timeSpent,
       contacts: parsed.contacts,
       state: parsed.state,
       comments: parsed.comments.map((c) => {
