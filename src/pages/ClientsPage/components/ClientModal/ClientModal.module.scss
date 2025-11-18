@@ -23,13 +23,11 @@
 }
 
 .modalContent {
-  top: 22px;
-  left: 105px;
   background: var(--bg-color);
   padding: 20px;
   border-radius: 8px;
-  min-width: 1200px;
-  height: 740px;
+  width: 80vw;
+  height: 90vh;
   position: relative;
   transform: translateY(+20px);
   opacity: 0;

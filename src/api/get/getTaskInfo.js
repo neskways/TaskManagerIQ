@@ -1,6 +1,25 @@
 import { api } from "../axios";
 import Cookies from "js-cookie";
 
+function parseAndFormatTime(timeString) {
+  // Удаляем все пробелы
+  const cleanedStr = timeString.replace(/\s+/g, '');
+  // Преобразуем в число
+  const seconds = parseInt(cleanedStr, 10);
+  
+  if (isNaN(seconds)) {
+    // Если значение не число, можно вернуть пустую строку или сообщение
+    return '00:00:00';
+  }
+  
+  // Форматируем время
+  const hrs = Math.floor(seconds / 3600);
+  const mins = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+
+  return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
+
 export const getTaskInfo = async (taskID, handleInvalidToken) => {
   try {
     const BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -34,20 +53,8 @@ export const getTaskInfo = async (taskID, handleInvalidToken) => {
       +timeParts[1],
       +timeParts[2]
     );
-
-    let timeSpent = "00:00:00"
-    if(parsed.timeSpent !== null && parsed.timeSpent !== undefined) {
-      const dateTimeSpent = parsed.timeSpent.split(" ")[0].split(".");
-      const timeTimeSpent = parsed.timeSpent.split(" ")[1].split(":");
-      timeSpent = new Date(
-        +dateTimeSpent[2],
-        +dateTimeSpent[1] - 1,
-        +dateTimeSpent[0],
-        +timeTimeSpent[0],
-        +timeTimeSpent[1],
-        +timeTimeSpent[2]
-      );
-    }
+    console.log()
+    let timeSpent = parseAndFormatTime(parsed.timeSpent);
     
     return {
       taskId: parsed.taskid.toString().padStart(9, "0"),
@@ -58,6 +65,7 @@ export const getTaskInfo = async (taskID, handleInvalidToken) => {
       userId: parsed.userId,
       owner: parsed.owner,
       date,
+      deadline: parsed.deadline,
       timeSpent: timeSpent,
       contacts: parsed.contacts,
       state: parsed.state,
