@@ -1,7 +1,19 @@
+.inner_box {
+  height: calc(90vh);
+  background-color: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  flex: 1; /* растягиваем на всю высоту */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* скролл будет внутри дочерних блоков */
+  animation: fadeIn 0.4s ease-out;
+}
+
 .wrapper {
   display: grid;
   grid-template-columns: 1fr 286px; /* левая + правая колонка */
-  height: calc(100vh - 130px); /* как было у тебя */
+  height: 100%; 
   gap: 20px;
 }
 
@@ -9,7 +21,7 @@
   display: grid;
   grid-template-rows: 1fr 100px;
   flex-direction: column;
-  max-height: 690px;
+  padding: 30px 20px;
   overflow: hidden; /* чтобы scroll работал только внутри left_content */
 }
 
@@ -35,7 +47,7 @@
 }
 
 .com_input {
-  flex: 0 0 100px; /* фиксированная высота */
+  flex: 0 0 100px; 
   display: flex;
   gap: 10px;
   align-items: center;
@@ -82,7 +94,7 @@
 .closeBtn {
   position: absolute;
   top: 5px;
-  right: 10px;
+  right: 5px;
   background: transparent;
   border: none;
   color: var(--text-color);

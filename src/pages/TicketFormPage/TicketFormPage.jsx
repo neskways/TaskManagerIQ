@@ -16,6 +16,7 @@ import { ContentWrapper } from "../../UI/ContentWrapper/ContentWrapper";
 import { TaskTextBlock } from "./components/TaskTextBlock/TaskTextBlock";
 import { TaskTitleAndText } from "./components/TaskTitleAndText/TaskTitleAndText";
 import { TicketSidebar } from "./components/TicketSidebar/TicketSidebar";
+import { CloseIcon } from "../../UI/CloseIcon/CloseIcon";
 
 export const TicketFormPage = ({ modal = false, taskId, onClose }) => {
   /** -----------------------------
@@ -136,27 +137,29 @@ export const TicketFormPage = ({ modal = false, taskId, onClose }) => {
 
   if (loading) {
     return (
-      <ContentWrapper>
+      <div className={s.inner_box}>
         <div className={s.centerWrapper}>
           <Loading />
         </div>
-      </ContentWrapper>
+      </div>
     );
   }
 
-
   if (!task) {
     return (
-      <ContentWrapper>
+      <div className={s.inner_box}>
         <p className={s.error}>Заявка не найдена</p>
-      </ContentWrapper>
+        {modal && (
+          <button className={s.closeBtn} onClick={onClose}>
+            <CloseIcon />
+          </button>
+        )}
+      </div>
     );
   }
 
   return (
-    <ContentWrapper reletive={true}>
-
-      {/* КНОПКА НАЗАД (СТРАНИЦА) */}
+    <div className={s.inner_box}>
       {!modal && (
         <Link
           to={lastSecondaryPath}
@@ -167,10 +170,9 @@ export const TicketFormPage = ({ modal = false, taskId, onClose }) => {
         </Link>
       )}
 
-      {/* КНОПКА ЗАКРЫТЬ (МОДАЛКА) */}
       {modal && (
         <button className={s.closeBtn} onClick={onClose}>
-          ✕
+          <CloseIcon />
         </button>
       )}
 
@@ -223,6 +225,6 @@ export const TicketFormPage = ({ modal = false, taskId, onClose }) => {
           timeSpent={task.timeSpent}
         />
       </div>
-    </ContentWrapper>
+    </div>
   );
 };

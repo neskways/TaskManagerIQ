@@ -369,3 +369,26 @@
   padding-left: 10px;
   border-left: 1px solid var(--border-color);
 }
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(1px);
+}
+
+.modalWindow {
+  width: 80%;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+
+@keyframes fadeIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
