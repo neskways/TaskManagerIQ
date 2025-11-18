@@ -7,6 +7,7 @@ import { curentTaskManage } from "../../../../api/curentTaskManage";
 import { taskStatuses } from "../../../../modules/TaskStatuses";
 import { PopupConfirm } from "../../../../UI/PopupConfirm/PopupConfirm";
 import { TicketFormPage } from "../../../../pages/TicketFormPage/TicketFormPage";
+import { WarningWindow } from "../WarningWindow/WarningWindow";
 import s from "./TimerTasks.module.scss";
 
 const REFRESH_INTERVAL_MS = 12000;
@@ -233,11 +234,32 @@ export const TimerTasks = () => {
   const displaySec = selectedTask ? secondsMap[selectedTaskId] || 0 : 0;
   const isRunning = activeTaskId === selectedTaskId;
 
-  // ------------------------
-  //  RENDER
-  // ------------------------
+  const [idleModal, setIdleModal] = useState(false);
+  const idleRef = useRef(null);
+
+   const handleCloseIdleModal = () => {
+    setIdleModal(false);
+    resetIdleTimer(); // перезапускаем таймер
+  };
+
+  const resetIdleTimer = () => {
+    clearTimeout(idleRef.current);
+    if (!activeTaskId) {
+      idleRef.current = setTimeout(() => {
+        setIdleModal(true);
+      }, 600000); // 10 минут
+    }
+  };
+
+   useEffect(() => {
+    resetIdleTimer();
+    return () => clearTimeout(idleRef.current);
+  }, [activeTaskId]);
+
   return (
     <>
+      {idleModal && <WarningWindow onClose={handleCloseIdleModal} />}
+
       <div className={`${s.wrapper} ${isExpanded ? s.expanded : ""}`}>
         <button
           className={s.expandIcon}
@@ -340,9 +362,7 @@ export const TimerTasks = () => {
         }}
       />
 
-      {/* -------------------------
-          MODAL WINDOW (FIXED)
-      ------------------------- */}
+ 
       {modalTaskId && (
         <div
           className={s.modalOverlay}
