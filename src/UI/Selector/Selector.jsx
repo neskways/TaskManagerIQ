@@ -17,7 +17,7 @@ export const Selector = ({
 
   return (
     <div className={s.wrapper}>
-      {title && <h4 className={`${s.title} ${alignTitle === "center" ? s.titleCenter : ""}`}>{title}</h4>}
+      {title && <h4 className={`${s.title} ${alignTitle === "center" ? s.titleCenter : ""} ${smallFont ? s.smallFont : ""}`}>{title}</h4>}
       <select
         className={`${s.select} ${smallFont ? s.smallFont : ""}`}
         value={isControlled ? value : undefined}

@@ -1,8 +1,7 @@
 .stackContainer {
   position: fixed;
   top: 20px;        
-  left: 50%;         
-  transform: translateX(calc(-50%)); 
+  right: 20px;     
   display: flex;
   flex-direction: column; 
   gap: 10px;
@@ -15,22 +14,26 @@
   left: calc(50% - 125px);
 }
 
+
 .popup {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 14px 22px;
   min-width: 280px;
-  max-width: 90vw;
+  max-width: 500px;
   border-radius: 10px;
+
   font-size: 15px;
   font-weight: 500;
   color: #fff;
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
   user-select: none;
   cursor: pointer;
+
   pointer-events: all;
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(2px);
 }
 
 .icon {

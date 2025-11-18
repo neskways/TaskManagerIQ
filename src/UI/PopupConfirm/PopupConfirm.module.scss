@@ -1,8 +1,8 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(2px);
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(1px);
   z-index: 3000;
 }
 
@@ -13,7 +13,7 @@
   transform: translate(-50%, -50%);
   background: linear-gradient(135deg, var(--bg-color), var(--bg-color-secondary));
   border-radius: 14px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.20);
   padding: 20px 26px;
   z-index: 3100;
   display: flex;

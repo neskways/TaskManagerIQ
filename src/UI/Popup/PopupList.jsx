@@ -10,17 +10,20 @@ const icons = {
 };
 
 export const PopupList = ({ popups, removePopup }) => {
+  // максимум 3 уведомления
+  const visiblePopups = popups.slice(0, 3);
+
   return (
     <div className={s.stackContainer}>
       <AnimatePresence>
-        {popups.map(({ id, text, type, center }) => (
+        {visiblePopups.map(({ id, text, type }) => (
           <motion.div
             key={id}
-            className={`${s.popup} ${s[type]} ${!center ? s.marginTrue : ""}`}
+            className={`${s.popup} ${s[type]}`}
             layout
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            initial={{ opacity: 0, x: 50, scale: 0.95 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: 50, scale: 0.95 }}
             transition={{ duration: 0.35, ease: "easeOut" }}
             onClick={() => removePopup(id)}
           >

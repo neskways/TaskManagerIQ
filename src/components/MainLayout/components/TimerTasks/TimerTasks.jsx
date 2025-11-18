@@ -47,9 +47,9 @@ export const TimerTasks = () => {
   const prevTaskIdsRef = useRef(new Set());
   const isFirstLoad = useRef(true);
 
-  // -------------------------------
-  // ЗАГРУЗКА СПИСКА ЗАДАЧ
-  // -------------------------------
+  // ----------------------------
+  //   LOAD TASKS
+  // ----------------------------
   const loadTasks = async () => {
     try {
       const state = [
@@ -64,14 +64,16 @@ export const TimerTasks = () => {
 
       data.forEach((t) => {
         if (t.state === taskStatuses.IN_PROGRESS.title && t.lastUpdate) {
-          const elapsed = Math.floor((now - new Date(t.lastUpdate)) / 1000);
+          const elapsed = Math.floor(
+            (now - new Date(t.lastUpdate)) / 1000
+          );
           secs[t.id] = (t.displaySec || 0) + elapsed;
         } else {
           secs[t.id] = t.displaySec || 0;
         }
       });
 
-      // проверка на новые задачи → звук
+      // sound on new task
       const newTaskIds = new Set(data.map((t) => t.id));
       if (!isFirstLoad.current) {
         const prevIds = prevTaskIdsRef.current;
@@ -86,7 +88,6 @@ export const TimerTasks = () => {
       setTasks(data);
       setSecondsMap(secs);
 
-      // определить активную задачу
       const running = data.find(
         (t) => t.state === taskStatuses.IN_PROGRESS.title
       );
@@ -101,7 +102,7 @@ export const TimerTasks = () => {
         setActiveTaskId(null);
       }
     } catch (err) {
-      showPopup("Не удалось загрузить задачи.", { type: "error" });
+      showPopup("Не удалось загрузить задачи", { type: "error" });
     } finally {
       setLoading(false);
     }
@@ -121,18 +122,12 @@ export const TimerTasks = () => {
     } catch (_) {}
   };
 
-  // -------------------------------
-  // ПЕРВИЧНАЯ ЗАГРУЗКА + ПОЛЛИНГ
-  // -------------------------------
   useEffect(() => {
     loadTasks();
     pollingRef.current = setInterval(loadTasks, REFRESH_INTERVAL_MS);
     return () => clearInterval(pollingRef.current);
   }, []);
 
-  // -------------------------------
-  // ТАЙМЕР ДЛЯ АКТИВНОЙ ЗАДАЧИ
-  // -------------------------------
   useEffect(() => {
     if (!activeTaskId) return;
 
@@ -146,9 +141,9 @@ export const TimerTasks = () => {
     return () => clearInterval(timerRef.current);
   }, [activeTaskId]);
 
-  // -------------------------------
-  // УПРАВЛЕНИЕ СТАТУСАМИ
-  // -------------------------------
+  // ------------------------
+  //  STATE CONTROL
+  // ------------------------
   const manageTaskState = async (taskId, newState) => {
     const task = tasks.find((t) => t.id === taskId);
     if (!task) return;
@@ -161,23 +156,17 @@ export const TimerTasks = () => {
       if (newState === taskStatuses.IN_PROGRESS.code)
         showPopup(`Задача "${task.title}" запущена`, { type: "info" });
       if (newState === taskStatuses.PAUSED.code)
-        showPopup(`Задача "${task.title}" поставлена на паузу`, {
-          type: "info",
-        });
+        showPopup(`Пауза: "${task.title}"`, { type: "info" });
       if (newState === taskStatuses.READY.code)
-        showPopup(`Задача "${task.title}" завершена`, { type: "info" });
+        showPopup(`Завершено: "${task.title}"`, { type: "info" });
     } catch (_) {
-      showPopup("Не удалось обновить задачу.", { type: "error" });
+      showPopup("Ошибка изменения статуса", { type: "error" });
       throw _;
     }
   };
 
-  // старт / пауза
   const startPauseTask = async () => {
-    if (!selectedTaskId) {
-      showPopup("Выберите задачу.", { type: "info" });
-      return;
-    }
+    if (!selectedTaskId) return showPopup("Выберите задачу");
 
     if (activeTaskId === selectedTaskId) {
       await manageTaskState(selectedTaskId, taskStatuses.PAUSED.code);
@@ -199,7 +188,7 @@ export const TimerTasks = () => {
     if (!task) return;
 
     if (task.state !== taskStatuses.IN_PROGRESS.title) {
-      showPopup("Завершить можно только задачу 'Выполняется'.", {
+      showPopup("Завершить можно только выполняющуюся задачу", {
         type: "info",
       });
       return;
@@ -215,9 +204,6 @@ export const TimerTasks = () => {
     } catch {}
   };
 
-  // -------------------------------
-  // ВЫБОР ЗАДАЧИ (с подтверждением переключения)
-  // -------------------------------
   const onSelectTask = (taskId) => {
     if (taskId === selectedTaskId) return;
 
@@ -236,7 +222,7 @@ export const TimerTasks = () => {
       setActiveTaskId(null);
       setSelectedTaskId(pendingTaskId);
     } catch {
-      showPopup("Не удалось переключить.", { type: "error" });
+      showPopup("Ошибка переключения", { type: "error" });
     } finally {
       setConfirmSwitch(false);
       setPendingTaskId(null);
@@ -247,9 +233,9 @@ export const TimerTasks = () => {
   const displaySec = selectedTask ? secondsMap[selectedTaskId] || 0 : 0;
   const isRunning = activeTaskId === selectedTaskId;
 
-  // -------------------------------
-  // RENDER
-  // -------------------------------
+  // ------------------------
+  //  RENDER
+  // ------------------------
   return (
     <>
       <div className={`${s.wrapper} ${isExpanded ? s.expanded : ""}`}>
@@ -283,8 +269,7 @@ export const TimerTasks = () => {
           </div>
         </div>
 
-        {/* ------- СПИСОК -------- */}
-
+        {/* LIST */}
         <div className={s.listBox}>
           <div className={s.listInner}>
             {loading && tasks.length === 0 && (
@@ -324,9 +309,7 @@ export const TimerTasks = () => {
         </div>
       </div>
 
-      {/* -------------------------
-          Подтверждение завершения
-      ------------------------- */}
+      {/* FINISH CONFIRM */}
       <PopupConfirm
         isOpen={confirmFinish}
         text={
@@ -341,14 +324,12 @@ export const TimerTasks = () => {
         onCancel={() => setConfirmFinish(false)}
       />
 
-      {/* -------------------------
-          Подтверждение переключения
-      ------------------------- */}
+      {/* SWITCH CONFIRM */}
       <PopupConfirm
         isOpen={confirmSwitch}
         text={
           activeTaskId
-            ? `Задача "${tasks.find((t) => t.id === activeTaskId)?.title}" сейчас выполняется.
+            ? `Задача "${tasks.find((t) => t.id === activeTaskId)?.title}" выполняется.
 Поставить её на паузу и переключиться?`
             : "Переключиться?"
         }
@@ -360,11 +341,17 @@ export const TimerTasks = () => {
       />
 
       {/* -------------------------
-          МОДАЛЬНОЕ ОКНО ЗАЯВКИ
+          MODAL WINDOW (FIXED)
       ------------------------- */}
       {modalTaskId && (
-        <div className={s.modalOverlay}>
-          <div className={s.modalWindow}>
+        <div
+          className={s.modalOverlay}
+          onClick={() => setModalTaskId(null)}
+        >
+          <div
+            className={s.modalWindow}
+            onClick={(e) => e.stopPropagation()}
+          >
             <TicketFormPage
               modal={true}
               taskId={modalTaskId}
@@ -374,9 +361,12 @@ export const TimerTasks = () => {
         </div>
       )}
 
-      {/* Оверлей при expand */}
-      {isExpanded && (
-        <div className={s.overlay} onClick={() => setIsExpanded(false)} />
+      {/* EXPAND OVERLAY — отключается, когда открыта модалка */}
+      {isExpanded && !modalTaskId && (
+        <div
+          className={s.overlay}
+          onClick={() => setIsExpanded(false)}
+        />
       )}
     </>
   );

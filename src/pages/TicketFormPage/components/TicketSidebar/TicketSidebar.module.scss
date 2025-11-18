@@ -2,6 +2,7 @@
     background-color: var(--bg-color-secondary);
     height: 100%;
     padding: 18px;
+    padding-top: 30px;
     display: flex;
     flex-direction: column;
     row-gap: 12px;
@@ -15,11 +16,11 @@
 .dirtyIndicator {
   position: absolute;
   top: 8px;
-  right: 8px;
+  left: 8px;
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background-color: #ffcc80;
+  background-color: #ffe2b6;
   box-shadow: 0 0 4px rgba(0,0,0,0.2);
   display: flex;
   justify-content: center;
@@ -28,7 +29,7 @@
 
 .z {
     cursor: default;
-    color: black;
+    color: rgba(0, 0, 0, 0.685);
     height: 13px;
 }
 
