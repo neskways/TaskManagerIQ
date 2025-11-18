@@ -34,6 +34,7 @@ export const ProfilePage = () => {
   const { showPopup } = usePopup();
   const username = Cookies.get("username");
   const userCode = Cookies.get("userCode");
+  const token = Cookies.get("token");
   const role = Cookies.get("role");
   const { theme } = useTheme();
 
@@ -145,6 +146,7 @@ export const ProfilePage = () => {
           </div>
 
           <h4 className={s.second_title}>Текущие задачи</h4>
+          <h4 className={s.second_title}>{token}</h4>
 
           <div className={s.tasks_table_wrapper}>
             {loading ? (

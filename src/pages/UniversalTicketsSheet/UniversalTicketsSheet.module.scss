@@ -2,3 +2,25 @@
     margin: 25px 38px 35px 20px;
     height: calc(90vh - 128px);
 }
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(1px);
+}
+
+.modalContent {
+  width: 90%;
+  max-width: 1440px;
+  max-height: 90vh;
+  border-radius: 12px;
+  overflow: hidden;
+  padding: 15px 40px 0px 15px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+  position: relative;
+}

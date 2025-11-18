@@ -1,6 +1,5 @@
 import s from "./TasksTable.module.scss";
 import Cookies from "js-cookie";
-import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { MESSAGES } from "../../../../modules/messages";
 import { Loading } from "../../../../UI/Loading/Loading";
@@ -19,25 +18,20 @@ const formatDate = (value) => {
   return value.split(" ")[0] || value;
 };
 
-export const TasksTable = ({ queryParams }) => {
+export const TasksTable = ({ queryParams, onOpenTask }) => {
   const secToHHMMSS = (sec) => {
     const h = Math.floor(sec / 3600);
     const m = Math.floor((sec % 3600) / 60);
     const s = sec % 60;
-    return `${String(h).padStart(2, "0")}:${String(m).padStart(
-      2,
-      "0"
-    )}:${String(s).padStart(2, "0")}`;
+    return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
   };
 
-  const navigate = useNavigate();
   const { showPopup } = usePopup();
 
   const userCode = Cookies.get("userCode");
 
   const [colWidths, setColWidths] = useState(() =>
-    JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_TICKETS)) ||
-    DEFAULT_WIDTHS
+    JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_TICKETS)) || DEFAULT_WIDTHS
   );
 
   const [showFilter, setShowFilter] = useState(false);
@@ -116,7 +110,7 @@ export const TasksTable = ({ queryParams }) => {
     let left = startWidths.current[0] + deltaPercent;
     let right = startWidths.current[1] - deltaPercent;
 
-    const MIN_WIDTH = 5; // проценты, minmax защитит минимум px
+    const MIN_WIDTH = 5;
 
     if (left < MIN_WIDTH || right < MIN_WIDTH) return;
 
@@ -157,7 +151,8 @@ export const TasksTable = ({ queryParams }) => {
             <div key={i} className={s.gridHeader}>
               <span>
                 {header}
-                {i === 1 && tasks.length > 0 &&
+                {i === 1 &&
+                  tasks.length > 0 &&
                   (userCode === "000000005"
                     ? ` 卐 ${tasks.length} 卐`
                     : `〔 ${tasks.length} 〕`)}
@@ -173,14 +168,14 @@ export const TasksTable = ({ queryParams }) => {
           ))}
         </div>
 
-        {/* Тело */}
+        {/* Тело таблицы */}
         <div className={s.gridBody} ref={tableRef}>
           {tasks.map((task, index) => (
             <div
               key={index}
               className={s.gridRow}
               style={{ gridTemplateColumns }}
-              onClick={() => navigate(`/ticket/${task.number}`)}
+              onClick={() => onOpenTask(task.number)}  // ← теперь модалка
             >
               <TaskGridCell taskData={task} />
             </div>

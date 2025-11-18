@@ -1,6 +1,6 @@
 import s from "./TicketFormPage.module.scss";
 import Cookies from "js-cookie";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Loading } from "../../UI/Loading/Loading";
 import { useTheme } from "../../context/ThemeContext";
 import { usePopup } from "../../context/PopupContext";
@@ -8,7 +8,7 @@ import { BackIcon } from "../../UI/BackIcon/BackIcon";
 import { getTaskInfo } from "../../api/get/getTaskInfo";
 import { createComment } from "../../api/create/createComment";
 import { SendButton } from "./components/SendButton/SendButton";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { PageTitle } from "../../components/PageTitle/PageTitle";
 import { MultipleInput } from "../../UI/MultipleInput/MultipleInput";
 import { getFromLocalStorage } from "../../modules/localStorageUtils";
@@ -17,15 +17,23 @@ import { TaskTextBlock } from "./components/TaskTextBlock/TaskTextBlock";
 import { TaskTitleAndText } from "./components/TaskTitleAndText/TaskTitleAndText";
 import { TicketSidebar } from "./components/TicketSidebar/TicketSidebar";
 
-export const TicketFormPage = () => {
-  const { id } = useParams();
+export const TicketFormPage = ({ modal = false, taskId, onClose }) => {
+  /** -----------------------------
+   *  1. Определяем ID заявки
+   * ----------------------------- */
+  const routeId = useParams().id;
+  const realId = modal ? taskId : routeId;
+
   const lastSecondaryPath = getFromLocalStorage("last_link_path");
   const { theme } = useTheme();
   const { showPopup } = usePopup();
 
   const [task, setTask] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [commentText, setCommentText] = useState(""); // состояние для textarea
+  const [commentText, setCommentText] = useState("");
+
+  /** Защита от двойного вызова эффекта в React StrictMode */
+  const didFetch = useRef(false);
 
   const formatDate = (date) => {
     if (!date) return "";
@@ -38,50 +46,57 @@ export const TicketFormPage = () => {
     return `${d}.${m}.${y} ${h}:${min}:${s}`;
   };
 
+  /** -----------------------------
+   *  2. Загрузка заявки
+   * ----------------------------- */
   const fetchTask = async () => {
     setLoading(true);
+
     try {
-      const taskId = String(id).padStart(9, "0");
-      const data = await getTaskInfo(taskId);
-      console.log(data);
-      if (data) {
-        setTask({
-          taskId: parseInt(data.taskId, 10),
-          client: data.client,
-          title: data.title,
-          description: data.description,
-          conf: data.conf,
-          userId: data.userId,
-          owner: data.owner,
-          date: new Date(data.date),
-          state: data.state,
-          timeSpent: data.timeSpent,
-          returnId: data.return || null,
-          returnName: data.returnName,
-          contacts: data.contacts,
-          comments: data.comments.map((c) => ({
-            user: c.user,
-            userId: c.userid,
-            comment: c.comment,
-            date: new Date(c.date),
-          })),
-        });
-      } else {
-        setTask(null);
+      const formattedId = String(realId).padStart(9, "0");
+      const data = await getTaskInfo(formattedId);
+
+      if (!data) {
+        // НЕ сбрасываем task = null → иначе будет моргание
+        return;
       }
+
+      setTask({
+        taskId: parseInt(data.taskId, 10),
+        client: data.client,
+        title: data.title,
+        description: data.description,
+        conf: data.conf,
+        userId: data.userId,
+        owner: data.owner,
+        date: new Date(data.date),
+        state: data.state,
+        timeSpent: data.timeSpent,
+        returnId: data.return || null,
+        returnName: data.returnName,
+        contacts: data.contacts,
+        comments: data.comments.map((c) => ({
+          user: c.user,
+          userId: c.userid,
+          comment: c.comment,
+          date: new Date(c.date),
+        })),
+      });
     } catch (err) {
       if (err?.response?.status !== 401) {
         showPopup("Не удалось загрузить заявку.", { type: "error" });
       }
-      setTask(null);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
+    if (didFetch.current) return;
+    didFetch.current = true;
+
     fetchTask();
-  }, [id]);
+  }, [realId]);
 
   const handleSendComment = async () => {
     if (!commentText.trim()) {
@@ -129,6 +144,7 @@ export const TicketFormPage = () => {
     );
   }
 
+
   if (!task) {
     return (
       <ContentWrapper>
@@ -139,16 +155,27 @@ export const TicketFormPage = () => {
 
   return (
     <ContentWrapper reletive={true}>
-      <Link
-        to={lastSecondaryPath}
-        className={s.btn_back}
-        title="Вернуться назад"
-      >
-        <BackIcon theme={theme} />
-      </Link>
+
+      {/* КНОПКА НАЗАД (СТРАНИЦА) */}
+      {!modal && (
+        <Link
+          to={lastSecondaryPath}
+          className={s.btn_back}
+          title="Вернуться назад"
+        >
+          <BackIcon theme={theme} />
+        </Link>
+      )}
+
+      {/* КНОПКА ЗАКРЫТЬ (МОДАЛКА) */}
+      {modal && (
+        <button className={s.closeBtn} onClick={onClose}>
+          ✕
+        </button>
+      )}
 
       <div className={s.wrapper}>
-        {/* Левая колонка */}
+        {/* ЛЕВАЯ КОЛОНКА */}
         <div className={s.left_side}>
           <div className={s.left_content}>
             <div className={s.task_wrapper}>
@@ -183,7 +210,8 @@ export const TicketFormPage = () => {
             <SendButton onClick={handleSendComment} />
           </div>
         </div>
-        
+
+        {/* ПРАВАЯ КОЛОНКА */}
         <TicketSidebar
           taskId={task.taskId}
           currentClient={task.client}

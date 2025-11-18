@@ -12,7 +12,7 @@ export const Selector = ({
   labelKey = "name",   
   valueKey = "id",     
 }) => {
-  console.log(smallFont)
+  
   const isControlled = value !== undefined && onChange;
 
   return (
