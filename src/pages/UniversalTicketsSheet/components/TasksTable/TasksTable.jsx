@@ -10,7 +10,6 @@ import { getTasksList } from "../../../../api/get/getTasksList";
 import { headersTitleTask } from "./TitlesForTables";
 
 const LOCAL_STORAGE_KEY_TICKETS = "tickets_table_col_widths";
-
 const DEFAULT_WIDTHS = [5, 33, 14, 16, 11, 8, 7, 7];
 
 const formatDate = (value) => {
@@ -23,17 +22,20 @@ export const TasksTable = ({ queryParams, onOpenTask }) => {
     const h = Math.floor(sec / 3600);
     const m = Math.floor((sec % 3600) / 60);
     const s = sec % 60;
-    return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+    return `${String(h).padStart(2, "0")}:${String(m).padStart(
+      2,
+      "0"
+    )}:${String(s).padStart(2, "0")}`;
   };
 
   const { showPopup } = usePopup();
-
   const userCode = Cookies.get("userCode");
 
-  const [colWidths, setColWidths] = useState(() =>
-    JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_TICKETS)) || DEFAULT_WIDTHS
+  const [colWidths, setColWidths] = useState(
+    () =>
+      JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_TICKETS)) ||
+      DEFAULT_WIDTHS
   );
-
   const [showFilter, setShowFilter] = useState(false);
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -86,7 +88,6 @@ export const TasksTable = ({ queryParams, onOpenTask }) => {
 
     fetchTasks();
   }, []);
-
   const handleMouseDown = (e, index) => {
     e.preventDefault();
     isResizing.current = true;
@@ -95,7 +96,6 @@ export const TasksTable = ({ queryParams, onOpenTask }) => {
     startWidths.current = [colWidths[index], colWidths[index + 1]];
 
     document.body.style.cursor = "col-resize";
-
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
   };
@@ -111,7 +111,6 @@ export const TasksTable = ({ queryParams, onOpenTask }) => {
     let right = startWidths.current[1] - deltaPercent;
 
     const MIN_WIDTH = 5;
-
     if (left < MIN_WIDTH || right < MIN_WIDTH) return;
 
     const newWidths = [...colWidths];
@@ -145,7 +144,6 @@ export const TasksTable = ({ queryParams, onOpenTask }) => {
       </div>
 
       <div className={s.gridTableWrapper}>
-        {/* Заголовки */}
         <div className={s.gridHeaderRow} style={{ gridTemplateColumns }}>
           {headersTitleTask.map((header, i) => (
             <div key={i} className={s.gridHeader}>
@@ -168,14 +166,13 @@ export const TasksTable = ({ queryParams, onOpenTask }) => {
           ))}
         </div>
 
-        {/* Тело таблицы */}
         <div className={s.gridBody} ref={tableRef}>
           {tasks.map((task, index) => (
             <div
               key={index}
               className={s.gridRow}
               style={{ gridTemplateColumns }}
-              onClick={() => onOpenTask(task.number)}  // ← теперь модалка
+              onClick={() => onOpenTask(task.number)}
             >
               <TaskGridCell taskData={task} />
             </div>
@@ -183,7 +180,6 @@ export const TasksTable = ({ queryParams, onOpenTask }) => {
         </div>
       </div>
 
-      {/* Оверлей */}
       <div
         className={`${s.overlay} ${showFilter ? s.show : ""}`}
         onClick={() => setShowFilter(false)}

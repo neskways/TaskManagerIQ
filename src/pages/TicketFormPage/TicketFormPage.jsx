@@ -19,9 +19,7 @@ import { TicketSidebar } from "./components/TicketSidebar/TicketSidebar";
 import { CloseIcon } from "../../UI/CloseIcon/CloseIcon";
 
 export const TicketFormPage = ({ modal = false, taskId, onClose }) => {
-  /** -----------------------------
-   *  1. Определяем ID заявки
-   * ----------------------------- */
+
   const routeId = useParams().id;
   const realId = modal ? taskId : routeId;
 
@@ -33,7 +31,6 @@ export const TicketFormPage = ({ modal = false, taskId, onClose }) => {
   const [loading, setLoading] = useState(true);
   const [commentText, setCommentText] = useState("");
 
-  /** Защита от двойного вызова эффекта в React StrictMode */
   const didFetch = useRef(false);
 
   const formatDate = (date) => {
@@ -47,9 +44,6 @@ export const TicketFormPage = ({ modal = false, taskId, onClose }) => {
     return `${d}.${m}.${y} ${h}:${min}:${s}`;
   };
 
-  /** -----------------------------
-   *  2. Загрузка заявки
-   * ----------------------------- */
   const fetchTask = async () => {
     setLoading(true);
 
@@ -58,7 +52,6 @@ export const TicketFormPage = ({ modal = false, taskId, onClose }) => {
       const data = await getTaskInfo(formattedId);
 
       if (!data) {
-        // НЕ сбрасываем task = null → иначе будет моргание
         return;
       }
 
@@ -177,7 +170,6 @@ export const TicketFormPage = ({ modal = false, taskId, onClose }) => {
       )}
 
       <div className={s.wrapper}>
-        {/* ЛЕВАЯ КОЛОНКА */}
         <div className={s.left_side}>
           <div className={s.left_content}>
             <div className={s.task_wrapper}>
