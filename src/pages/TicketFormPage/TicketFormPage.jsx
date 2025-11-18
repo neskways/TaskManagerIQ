@@ -183,8 +183,7 @@ export const TicketFormPage = () => {
             <SendButton onClick={handleSendComment} />
           </div>
         </div>
-
-        {/* Правая колонка */}
+        
         <TicketSidebar
           taskId={task.taskId}
           currentClient={task.client}

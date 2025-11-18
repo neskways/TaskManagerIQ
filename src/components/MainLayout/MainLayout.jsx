@@ -9,7 +9,7 @@ import { getFromLocalStorage } from "../../modules/localStorageUtils";
 
 export const MainLayout = () => {
   const [showScreamer, setShowScreamer] = useState(false);
-  const [screamerType, setScreamerType] = useState("light"); // "light" | "hard"
+  const [screamerType, setScreamerType] = useState("light");
   const role = Cookies.get("role");
   const userCode = Cookies.get("userCode");
 
