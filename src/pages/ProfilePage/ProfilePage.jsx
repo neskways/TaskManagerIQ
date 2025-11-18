@@ -146,7 +146,6 @@ export const ProfilePage = () => {
           </div>
 
           <h4 className={s.second_title}>Текущие задачи</h4>
-          <h4 className={s.second_title}>{token}</h4>
 
           <div className={s.tasks_table_wrapper}>
             {loading ? (
