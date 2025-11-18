@@ -1,6 +1,6 @@
 import s from "./StatisticsPage.module.scss";
 import { PageTitle } from "../../components/PageTitle/PageTitle";
-import { ContentWrapper } from "../../UI/ContentWrapper/ContentWrapper";
+import { ContentWrapper } from "../../components/ContentWrapper/ContentWrapper";
 
 export const StatisticsPage = () => {
   return (

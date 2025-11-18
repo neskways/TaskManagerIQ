@@ -12,6 +12,7 @@ export const Sidebar = () => {
   const location = useLocation();
   const currentPath = location.pathname;
   const role = Cookies.get("role");
+  const userCode = Cookies.get("userCode");
   const [isActiveBox, setIsActiveBox] = useState(false);
   const { theme } = useTheme();
 
@@ -44,7 +45,7 @@ export const Sidebar = () => {
           </ul>
         </nav>
 
-        {String(import.meta.env.VITE_TOKEN_MANAGER) !== role && (
+        {(String(import.meta.env.VITE_TOKEN_MANAGER) !== role && userCode !== "000000002") && (
           <img className={s.img_gif} src="/images/gif.gif" />
         )}
 

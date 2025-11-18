@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { PageTitle } from "../../components/PageTitle/PageTitle";
 import { ClientsTable } from "./components/ClientsTable/ClientsTable";
 import { ClientModal } from "./components/ClientModal/ClientModal";
-import { ContentWrapper } from "../../UI/ContentWrapper/ContentWrapper";
+import { ContentWrapper } from "../../components/ContentWrapper/ContentWrapper";
 import {
   getFromLocalStorage,
   saveToLocalStorage,

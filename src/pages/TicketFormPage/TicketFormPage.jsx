@@ -1,22 +1,22 @@
 import s from "./TicketFormPage.module.scss";
 import Cookies from "js-cookie";
+import { Link, useParams } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import { Loading } from "../../UI/Loading/Loading";
 import { useTheme } from "../../context/ThemeContext";
 import { usePopup } from "../../context/PopupContext";
 import { BackIcon } from "../../UI/BackIcon/BackIcon";
 import { getTaskInfo } from "../../api/get/getTaskInfo";
+import { CloseIcon } from "../../UI/CloseIcon/CloseIcon";
 import { createComment } from "../../api/create/createComment";
 import { SendButton } from "./components/SendButton/SendButton";
-import { Link, useParams } from "react-router-dom";
 import { PageTitle } from "../../components/PageTitle/PageTitle";
 import { MultipleInput } from "../../UI/MultipleInput/MultipleInput";
 import { getFromLocalStorage } from "../../modules/localStorageUtils";
-import { ContentWrapper } from "../../UI/ContentWrapper/ContentWrapper";
 import { TaskTextBlock } from "./components/TaskTextBlock/TaskTextBlock";
-import { TaskTitleAndText } from "./components/TaskTitleAndText/TaskTitleAndText";
 import { TicketSidebar } from "./components/TicketSidebar/TicketSidebar";
-import { CloseIcon } from "../../UI/CloseIcon/CloseIcon";
+import { ContentWrapper } from "../../components/ContentWrapper/ContentWrapper";
+import { TaskTitleAndText } from "./components/TaskTitleAndText/TaskTitleAndText";
 
 export const TicketFormPage = ({ modal = false, taskId, onClose }) => {
 

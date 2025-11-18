@@ -1,6 +1,6 @@
 import s from "./MainPage.module.scss";
 import { PageTitle } from "../../components/PageTitle/PageTitle";
-import { ContentWrapper } from "../../UI/ContentWrapper/ContentWrapper";
+import { ContentWrapper } from "../../components/ContentWrapper/ContentWrapper";
 
 export const MainPage = () => {
   return (

@@ -3,7 +3,7 @@ import Cookies from "js-cookie";
 import { ThemeToggle } from "../../UI/ThemeToggle/ThemeToggle";
 import { PageTitle } from "../../components/PageTitle/PageTitle";
 import { DeleteButton } from "../../UI/DeleteButton/DeleteButton";
-import { ContentWrapper } from "../../UI/ContentWrapper/ContentWrapper";
+import { ContentWrapper } from "../../components/ContentWrapper/ContentWrapper";
 import { SecretSettingsBlock } from "./components/SecretSettingsBlock/SecretSettingsBlock";
 
 export const ParametersPage = () => {

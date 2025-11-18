@@ -1,9 +1,9 @@
 import s from "./KnowledgeBase.module.scss";
-import { PageTitle } from "../../components/PageTitle/PageTitle";
-import { ContentWrapper } from "../../UI/ContentWrapper/ContentWrapper";
 import { Input } from "../../UI/Input/Input";
-import { SearchIcon } from "./components/SearchIcon/SearchIcon";
 import { useTheme } from "../../context/ThemeContext";
+import { SearchIcon } from "./components/SearchIcon/SearchIcon";
+import { PageTitle } from "../../components/PageTitle/PageTitle";
+import { ContentWrapper } from "../../components/ContentWrapper/ContentWrapper";
 
 export const KnowledgeBase = () => {
 

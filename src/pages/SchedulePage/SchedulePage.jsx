@@ -4,7 +4,7 @@ import { useTheme } from "../../context/ThemeContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { Calendar } from "./components/Calendar/Calendar";
 import { PageTitle } from "../../components/PageTitle/PageTitle";
-import { ContentWrapper } from "../../UI/ContentWrapper/ContentWrapper";
+import { ContentWrapper } from "../../components/ContentWrapper/ContentWrapper";
 import { UpdateScheduleTable } from "./components/UpdateScheduleTable/UpdateScheduleTable";
 import { getFromLocalStorage, saveToLocalStorage } from "../../modules/localStorageUtils";
 

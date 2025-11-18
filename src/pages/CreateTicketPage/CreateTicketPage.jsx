@@ -18,8 +18,8 @@ import { MultipleInput } from "../../UI/MultipleInput/MultipleInput";
 import { ClientSearch } from "./components/ClientSearch/ClientSearch";
 import { getFromLocalStorage } from "../../modules/localStorageUtils";
 import { useClientsAndEmployees } from "./hooks/useClientsAndEmployees";
-import { ContentWrapper } from "../../UI/ContentWrapper/ContentWrapper";
 import { NewContactForm } from "./components/NewContactForm/NewContactForm";
+import { ContentWrapper } from "../../components/ContentWrapper/ContentWrapper";
 
 export const CreateTicketPage = () => {
   const lastSecondaryPath = getFromLocalStorage("last_link_path");
