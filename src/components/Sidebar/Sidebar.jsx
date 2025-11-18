@@ -1,4 +1,5 @@
 import s from "./Sidebar.module.scss";
+import Cookies from "js-cookie";
 import { useState } from "react";
 import { sidebarItems } from "./sidebarLinks";
 import { useTheme } from "../../context/ThemeContext";
@@ -10,12 +11,12 @@ import { FooterSidebar } from "./components/FooterSidebar/FooterSidebar";
 export const Sidebar = () => {
   const location = useLocation();
   const currentPath = location.pathname;
-  
+  const role = Cookies.get("role");
   const [isActiveBox, setIsActiveBox] = useState(false);
   const { theme } = useTheme();
 
   const handleLinkClick = (path) => {
-    saveToLocalStorage("last_link_path", path);    
+    saveToLocalStorage("last_link_path", path);
     setIsActiveBox(false);
   };
 
@@ -42,6 +43,11 @@ export const Sidebar = () => {
             ))}
           </ul>
         </nav>
+
+        {String(import.meta.env.VITE_TOKEN_MANAGER) !== role && (
+          <img className={s.img_gif} src="/images/gif.gif" />
+        )}
+
         <FooterSidebar
           isActiveBox={isActiveBox}
           setIsActiveBox={setIsActiveBox}
