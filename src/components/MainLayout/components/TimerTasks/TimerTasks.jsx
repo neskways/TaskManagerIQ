@@ -1,28 +1,21 @@
 import { useEffect, useState, useRef } from "react";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
+import { TaskList } from "./components/TaskList/TaskList";
 import { usePopup } from "../../../../context/PopupContext";
 import { getTaskQueue } from "../../../../api/get/getTaskQueue";
-import { curentTaskManage } from "../../../../api/curentTaskManage";
 import { taskStatuses } from "../../../../modules/TaskStatuses";
+import { IdleWarning } from "./components/IdleWarning/IdleWarning";
+import { TimerHeader } from "./components/TimerHeader/TimerHeader";
+import { curentTaskManage } from "../../../../api/curentTaskManage";
+import { ExpandButton } from "./components/ExpandButton/ExpandButton";
 import { PopupConfirm } from "../../../../UI/PopupConfirm/PopupConfirm";
+import { ModelWindow } from "../../../../components/ModelWindow/ModelWindow";
 import { TicketFormPage } from "../../../../pages/TicketFormPage/TicketFormPage";
-import { WarningWindow } from "../WarningWindow/WarningWindow";
+
 import s from "./TimerTasks.module.scss";
 
 const REFRESH_INTERVAL_MS = 12000;
-
-const secToHHMMSS = (sec) => {
-  const h = Math.floor(sec / 3600);
-  const m = Math.floor((sec % 3600) / 60);
-  const s = sec % 60;
-  return `${String(h).padStart(2, "0")}:${String(m).padStart(
-    2,
-    "0"
-  )}:${String(s).padStart(2, "0")}`;
-};
-
-const formatTaskId = (id) => String(id).padStart(9, "0");
 
 export const TimerTasks = () => {
   const { showPopup } = usePopup();
@@ -44,59 +37,59 @@ export const TimerTasks = () => {
 
   const timerRef = useRef(null);
   const pollingRef = useRef(null);
-
   const prevTaskIdsRef = useRef(new Set());
   const isFirstLoad = useRef(true);
 
+  const [idleModal, setIdleModal] = useState(false);
+  const idleRef = useRef(null);
+
   // ----------------------------
-  //   LOAD TASKS
+  // LOAD TASKS
   // ----------------------------
   const loadTasks = async () => {
     try {
-      const state = [
+      const states = [
         taskStatuses.PAUSED.code,
         taskStatuses.IN_PROGRESS.code,
         taskStatuses.TRANSFERRED.code,
       ];
 
-      const data = await getTaskQueue(state);
+      const data = await getTaskQueue(states);
+
       const now = Date.now();
-      const secs = {};
+      const sec = {};
 
       data.forEach((t) => {
         if (t.state === taskStatuses.IN_PROGRESS.title && t.lastUpdate) {
-          const elapsed = Math.floor(
-            (now - new Date(t.lastUpdate)) / 1000
-          );
-          secs[t.id] = (t.displaySec || 0) + elapsed;
+          const elapsed = Math.floor((now - new Date(t.lastUpdate)) / 1000);
+          sec[t.id] = (t.displaySec || 0) + elapsed;
         } else {
-          secs[t.id] = t.displaySec || 0;
+          sec[t.id] = t.displaySec || 0;
         }
       });
 
-      // sound on new task
-      const newTaskIds = new Set(data.map((t) => t.id));
+      // detect new tasks
+      const newIds = new Set(data.map((t) => t.id));
+
       if (!isFirstLoad.current) {
-        const prevIds = prevTaskIdsRef.current;
-        const hasNew = [...newTaskIds].some((id) => !prevIds.has(id));
+        const prev = prevTaskIdsRef.current;
+        const hasNew = [...newIds].some((id) => !prev.has(id));
         if (hasNew) playNewTaskSound();
       } else {
         isFirstLoad.current = false;
       }
 
-      prevTaskIdsRef.current = newTaskIds;
+      prevTaskIdsRef.current = newIds;
 
       setTasks(data);
-      setSecondsMap(secs);
+      setSecondsMap(sec);
 
       const running = data.find(
         (t) => t.state === taskStatuses.IN_PROGRESS.title
       );
 
       if (running) {
-        setActiveTaskId((prev) =>
-          prev !== running.id ? running.id : prev
-        );
+        setActiveTaskId(running.id);
         setSelectedTaskId((prev) => prev || running.id);
       } else if (data.length > 0) {
         setSelectedTaskId((prev) => prev || data[0].id);
@@ -110,17 +103,15 @@ export const TimerTasks = () => {
   };
 
   const playNewTaskSound = () => {
-    try {
-      const codeUser = Cookies.get("codeUser") || "000000002";
-      const audio = new Audio(`/sounds/${codeUser}.mp3`);
-      audio.volume = 0.5;
+    const codeUser = Cookies.get("codeUser") || "000000002";
+    const audio = new Audio(`/sounds/${codeUser}.mp3`);
+    audio.volume = 0.5;
 
-      audio.play().catch(() => {
-        const fallback = new Audio("/sounds/000000002.mp3");
-        fallback.volume = 0.5;
-        fallback.play().catch(() => {});
-      });
-    } catch (_) {}
+    audio.play().catch(() => {
+      const fallback = new Audio("/sounds/000000002.mp3");
+      fallback.volume = 0.5;
+      fallback.play();
+    });
   };
 
   useEffect(() => {
@@ -131,7 +122,6 @@ export const TimerTasks = () => {
 
   useEffect(() => {
     if (!activeTaskId) return;
-
     timerRef.current = setInterval(() => {
       setSecondsMap((prev) => ({
         ...prev,
@@ -143,48 +133,48 @@ export const TimerTasks = () => {
   }, [activeTaskId]);
 
   // ------------------------
-  //  STATE CONTROL
+  // STATE CONTROL
   // ------------------------
-  const manageTaskState = async (taskId, newState) => {
-    const task = tasks.find((t) => t.id === taskId);
-    if (!task) return;
+  const manageTaskState = async (id, newState) => {
+    const t = tasks.find((e) => e.id === id);
+    if (!t) return;
 
     try {
-      const formattedId = formatTaskId(taskId);
-      await curentTaskManage(formattedId, newState);
+      await curentTaskManage(String(id).padStart(9, "0"), newState);
       await loadTasks();
 
-      if (newState === taskStatuses.IN_PROGRESS.code)
-        showPopup(`Задача "${task.title}" запущена`, { type: "info" });
-      if (newState === taskStatuses.PAUSED.code)
-        showPopup(`Пауза: "${task.title}"`, { type: "info" });
-      if (newState === taskStatuses.READY.code)
-        showPopup(`Завершено: "${task.title}"`, { type: "info" });
-    } catch (_) {
+      const msg =
+        newState === taskStatuses.IN_PROGRESS.code
+          ? `Задача "${t.title}" запущена`
+          : newState === taskStatuses.PAUSED.code
+          ? `Пауза: "${t.title}"`
+          : newState === taskStatuses.READY.code
+          ? `Завершено: "${t.title}"`
+          : "";
+
+      if (msg) showPopup(msg, { type: "info" });
+    } catch {
       showPopup("Ошибка изменения статуса", { type: "error" });
-      throw _;
     }
   };
 
   const startPauseTask = async () => {
-    if (!selectedTaskId) return showPopup("Выберите задачу");
-
+    if (!selectedTaskId) return;
     if (activeTaskId === selectedTaskId) {
       await manageTaskState(selectedTaskId, taskStatuses.PAUSED.code);
       setActiveTaskId(null);
       return;
     }
 
-    try {
-      if (activeTaskId) {
-        await manageTaskState(activeTaskId, taskStatuses.PAUSED.code);
-      }
-      await manageTaskState(selectedTaskId, taskStatuses.IN_PROGRESS.code);
-      setActiveTaskId(selectedTaskId);
-    } catch {}
+    if (activeTaskId) {
+      await manageTaskState(activeTaskId, taskStatuses.PAUSED.code);
+    }
+
+    await manageTaskState(selectedTaskId, taskStatuses.IN_PROGRESS.code);
+    setActiveTaskId(selectedTaskId);
   };
 
-  const handleFinishClick = () => {
+  const handleFinish = () => {
     const task = tasks.find((t) => t.id === selectedTaskId);
     if (!task) return;
 
@@ -199,146 +189,74 @@ export const TimerTasks = () => {
   };
 
   const finishTask = async () => {
-    try {
-      await manageTaskState(selectedTaskId, taskStatuses.READY.code);
-      if (activeTaskId === selectedTaskId) setActiveTaskId(null);
-    } catch {}
+    await manageTaskState(selectedTaskId, taskStatuses.READY.code);
+    if (activeTaskId === selectedTaskId) setActiveTaskId(null);
   };
 
   const onSelectTask = (taskId) => {
-    if (taskId === selectedTaskId) return;
-
     if (activeTaskId && activeTaskId !== taskId) {
       setPendingTaskId(taskId);
       setConfirmSwitch(true);
       return;
     }
-
     setSelectedTaskId(taskId);
   };
 
   const confirmSwitchTask = async () => {
-    try {
-      await manageTaskState(activeTaskId, taskStatuses.PAUSED.code);
-      setActiveTaskId(null);
-      setSelectedTaskId(pendingTaskId);
-    } catch {
-      showPopup("Ошибка переключения", { type: "error" });
-    } finally {
-      setConfirmSwitch(false);
-      setPendingTaskId(null);
-    }
+    await manageTaskState(activeTaskId, taskStatuses.PAUSED.code);
+    setActiveTaskId(null);
+    setSelectedTaskId(pendingTaskId);
+
+    setPendingTaskId(null);
+    setConfirmSwitch(false);
   };
 
-  const selectedTask = tasks.find((t) => t.id === selectedTaskId) ?? null;
-  const displaySec = selectedTask ? secondsMap[selectedTaskId] || 0 : 0;
-  const isRunning = activeTaskId === selectedTaskId;
-
-  const [idleModal, setIdleModal] = useState(false);
-  const idleRef = useRef(null);
-
-   const handleCloseIdleModal = () => {
-    setIdleModal(false);
-    resetIdleTimer(); // перезапускаем таймер
-  };
-
-  const resetIdleTimer = () => {
+  // ------------------------
+  // IDLE WARNING
+  // ------------------------
+  const resetIdle = () => {
     clearTimeout(idleRef.current);
     if (!activeTaskId) {
-      idleRef.current = setTimeout(() => {
-        setIdleModal(true);
-      }, 600000); // 10 минут
+      idleRef.current = setTimeout(() => setIdleModal(true), 600000);
     }
   };
 
-   useEffect(() => {
-    resetIdleTimer();
+  useEffect(() => {
+    resetIdle();
     return () => clearTimeout(idleRef.current);
   }, [activeTaskId]);
 
+  const selectedTask = tasks.find((t) => t.id === selectedTaskId) ?? null;
+
   return (
     <>
-      {idleModal && <WarningWindow onClose={handleCloseIdleModal} />}
+      {idleModal && <IdleWarning onClose={() => setIdleModal(false)} />}
 
       <div className={`${s.wrapper} ${isExpanded ? s.expanded : ""}`}>
-        <button
-          className={s.expandIcon}
-          onClick={() => setIsExpanded((v) => !v)}
-        >
-          {isExpanded ? "🗗" : "🗖"}
-        </button>
+        <ExpandButton expanded={isExpanded} onToggle={() => setIsExpanded(!isExpanded)} />
 
-        <div className={s.headerBox}>
-          <div className={s.headerInner}>
-            <div className={s.sectionHeader}>Текущая задача</div>
+        <TimerHeader
+          selectedTask={selectedTask}
+          isRunning={activeTaskId === selectedTaskId}
+          displaySec={selectedTask ? secondsMap[selectedTaskId] : 0}
+          onStartPause={startPauseTask}
+          onFinish={handleFinish}
+        />
 
-            <div className={s.taskTitleCenter}>
-              {selectedTask ? selectedTask.title : "Нет задачи"}
-            </div>
-
-            <div className={s.bottomRow}>
-              <div className={s.controls}>
-                <button className={s.btn} onClick={startPauseTask}>
-                  {isRunning ? "⏸ Пауза" : "▶ Старт"}
-                </button>
-                <button className={s.btnEnd} onClick={handleFinishClick}>
-                  ⏹ Завершить
-                </button>
-              </div>
-
-              <div className={s.timerBig}>{secToHHMMSS(displaySec)}</div>
-            </div>
-          </div>
-        </div>
-
-        {/* LIST */}
-        <div className={s.listBox}>
-          <div className={s.listInner}>
-            {loading && tasks.length === 0 && (
-              <div className={s.empty}>Загрузка...</div>
-            )}
-
-            {!loading && tasks.length === 0 && (
-              <div className={s.empty}>Задач нет</div>
-            )}
-
-            <div className={s.items}>
-              {tasks.map((task) => (
-                <div
-                  key={task.id}
-                  className={`${s.taskItem} ${
-                    task.id === selectedTaskId ? s.selected : ""
-                  }`}
-                  onClick={() => onSelectTask(task.id)}
-                  onDoubleClick={() => setModalTaskId(task.id)}
-                >
-                  <div className={s.taskId}>{task.id}</div>
-                  <div className={s.taskTitle}>{task.title}</div>
-
-                  {isExpanded && (
-                    <div className={s.taskClient}>
-                      {task.client ?? "—"}
-                    </div>
-                  )}
-
-                  <div className={s.taskTime}>
-                    {secToHHMMSS(secondsMap[task.id] || 0)}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+        <TaskList
+          tasks={tasks}
+          secondsMap={secondsMap}
+          selectedTaskId={selectedTaskId}
+          loading={loading}
+          isExpanded={isExpanded}
+          onSelectTask={onSelectTask}
+          onOpenModal={setModalTaskId}
+        />
       </div>
 
-      {/* FINISH CONFIRM */}
       <PopupConfirm
         isOpen={confirmFinish}
-        text={
-          selectedTask
-            ? `Завершить "${selectedTask.title}"?`
-            : "Завершить задачу?"
-        }
+        text={selectedTask ? `Завершить "${selectedTask.title}"?` : "Завершить задачу?"}
         onConfirm={() => {
           setConfirmFinish(false);
           finishTask();
@@ -346,48 +264,16 @@ export const TimerTasks = () => {
         onCancel={() => setConfirmFinish(false)}
       />
 
-      {/* SWITCH CONFIRM */}
       <PopupConfirm
         isOpen={confirmSwitch}
-        text={
-          activeTaskId
-            ? `Задача "${tasks.find((t) => t.id === activeTaskId)?.title}" выполняется.
-Поставить её на паузу и переключиться?`
-            : "Переключиться?"
-        }
+        text={`Поставить текущую задачу на паузу и переключиться?`}
         onConfirm={confirmSwitchTask}
-        onCancel={() => {
-          setConfirmSwitch(false);
-          setPendingTaskId(null);
-        }}
+        onCancel={() => setConfirmSwitch(false)}
       />
 
- 
-      {modalTaskId && (
-        <div
-          className={s.modalOverlay}
-          onClick={() => setModalTaskId(null)}
-        >
-          <div
-            className={s.modalWindow}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <TicketFormPage
-              modal={true}
-              taskId={modalTaskId}
-              onClose={() => setModalTaskId(null)}
-            />
-          </div>
-        </div>
-      )}
-
-      {/* EXPAND OVERLAY — отключается, когда открыта модалка */}
-      {isExpanded && !modalTaskId && (
-        <div
-          className={s.overlay}
-          onClick={() => setIsExpanded(false)}
-        />
-      )}
+      <ModelWindow isOpen={!!modalTaskId} onClose={() => setModalTaskId(null)} isPadding={false}>
+        <TicketFormPage modal taskId={modalTaskId} onClose={() => setModalTaskId(null)} />
+      </ModelWindow>
     </>
   );
 };

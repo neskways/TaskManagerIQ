@@ -17,17 +17,17 @@ const formatDate = (value) => {
   return value.split(" ")[0] || value;
 };
 
-export const TasksTable = ({ queryParams, onOpenTask }) => {
-  const secToHHMMSS = (sec) => {
-    const h = Math.floor(sec / 3600);
-    const m = Math.floor((sec % 3600) / 60);
-    const s = sec % 60;
-    return `${String(h).padStart(2, "0")}:${String(m).padStart(
-      2,
-      "0"
-    )}:${String(s).padStart(2, "0")}`;
-  };
+const secToHHMMSS = (sec) => {
+  const h = Math.floor(sec / 3600);
+  const m = Math.floor((sec % 3600) / 60);
+  const s = sec % 60;
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(
+    2,
+    "0"
+  )}:${String(s).padStart(2, "0")}`;
+};
 
+export const TasksTable = ({ queryParams, onOpenTask, refetchKey, isTaskOpen }) => {
   const { showPopup } = usePopup();
   const userCode = Cookies.get("userCode");
 
@@ -36,9 +36,11 @@ export const TasksTable = ({ queryParams, onOpenTask }) => {
       JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_TICKETS)) ||
       DEFAULT_WIDTHS
   );
+
   const [showFilter, setShowFilter] = useState(false);
   const [tasks, setTasks] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);        // первая загрузка
+  const [silentLoading, setSilentLoading] = useState(false); // тихое обновление
 
   const tableRef = useRef(null);
   const startX = useRef(0);
@@ -54,40 +56,60 @@ export const TasksTable = ({ queryParams, onOpenTask }) => {
     localStorage.setItem(LOCAL_STORAGE_KEY_TICKETS, JSON.stringify(colWidths));
   }, [colWidths]);
 
-  useEffect(() => {
-    const fetchTasks = async () => {
-      setLoading(true);
-      try {
-        const data = await getTasksList(
-          queryParams.states,
-          queryParams.userCode,
-          queryParams.firstline
-        );
+  const loadTasks = async (silent = false) => {
+    if (!silent) setLoading(true);
+    else setSilentLoading(true);
 
-        const mapped = data.map((item) => ({
-          number: parseInt(item.number, 10),
-          title: item.title,
-          client: item.client,
-          status: item.status,
-          executor: item.executor,
-          createdDate: formatDate(item.createdDate),
-          priority: item.priority,
-          timeSpent: secToHHMMSS(item.timeSpent),
-        }));
+    try {
+      const data = await getTasksList(
+        queryParams.states,
+        queryParams.userCode,
+        queryParams.firstline
+      );
 
-        setTasks(mapped);
-      } catch (err) {
-        console.error("Ошибка при загрузке задач:", err);
-        if (err.response?.status !== 401) {
-          showPopup(MESSAGES.loadTaskError, { type: "error" });
-        }
-      } finally {
-        setLoading(false);
+      const mapped = data.map((item) => ({
+        number: parseInt(item.number, 10),
+        title: item.title,
+        client: item.client,
+        status: item.status,
+        executor: item.executor,
+        createdDate: formatDate(item.createdDate),
+        priority: item.priority,
+        timeSpent: secToHHMMSS(item.timeSpent),
+      }));
+
+      setTasks(mapped);
+    } catch (err) {
+      console.error("Ошибка при загрузке задач:", err);
+      if (err.response?.status !== 401) {
+        showPopup(MESSAGES.loadTaskError, { type: "error" });
       }
-    };
+    } finally {
+      setLoading(false);
+      setSilentLoading(false);
+    }
+  };
 
-    fetchTasks();
+  useEffect(() => {
+    loadTasks(false);
   }, []);
+
+  useEffect(() => {
+    if (refetchKey === null || refetchKey === undefined) return;
+    loadTasks(true); // тихое обновление
+  }, [refetchKey]);
+
+  useEffect(() => {
+    // Если модалка открыта — обновление выключено
+    if (isTaskOpen) return;
+
+    const interval = setInterval(() => {
+      loadTasks(true); // тихое обновление
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [isTaskOpen, queryParams]);
+
   const handleMouseDown = (e, index) => {
     e.preventDefault();
     isResizing.current = true;

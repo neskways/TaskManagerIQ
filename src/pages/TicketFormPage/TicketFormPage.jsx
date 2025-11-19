@@ -163,12 +163,6 @@ export const TicketFormPage = ({ modal = false, taskId, onClose }) => {
         </Link>
       )}
 
-      {modal && (
-        <button className={s.closeBtn} onClick={onClose}>
-          <CloseIcon />
-        </button>
-      )}
-
       <div className={s.wrapper}>
         <div className={s.left_side}>
           <div className={s.left_content}>
@@ -205,7 +199,6 @@ export const TicketFormPage = ({ modal = false, taskId, onClose }) => {
           </div>
         </div>
 
-        {/* ПРАВАЯ КОЛОНКА */}
         <TicketSidebar
           taskId={task.taskId}
           currentClient={task.client}

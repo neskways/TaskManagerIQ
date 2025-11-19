@@ -8,7 +8,7 @@ const statusStylesByTitle = {
   "Выполняется": { bg: "#fff7e0", color: "#e67e22" },
   "Приостановлена": { bg: "#fff0e0", color: "#d35400" },
   "Готова к сдаче": { bg: "#e8f9e9", color: "#27ae60" },
-  "Завершена": { bg: "#e5f8f4", color: "#16a085" },
+  "Сдана клиенту": { bg: "#e5f8f4", color: "#16a085" },
   "Отменена/Не актуальна": { bg: "#fdecea", color: "#c0392b" },
 };
 

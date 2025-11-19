@@ -9,6 +9,7 @@ import {
 } from "../../modules/localStorageUtils";
 import { useLocation, useNavigate } from "react-router-dom";
 import { TasksTable } from "./components/TasksTable/TasksTable";
+import { ModelWindow } from "../../components/ModelWindow/ModelWindow";
 
 export const UniversalTicketsSheet = ({ titleText, queryParams }) => {
   const [showFilter, setShowFilter] = useState(() =>
@@ -20,46 +21,47 @@ export const UniversalTicketsSheet = ({ titleText, queryParams }) => {
 
   const [openedTaskId, setOpenedTaskId] = useState(null);
 
+  const [refetchTrigger, setRefetchTrigger] = useState(0);
+
   useEffect(() => {
     saveToLocalStorage("showFilter", showFilter);
   }, [showFilter]);
 
-  // Слушаем параметр open в URL
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const open = params.get("open");
     setOpenedTaskId(open);
   }, [location]);
 
-  // Открытие задачи → меняем URL
   const openTaskViaUrl = (id) => {
     const params = new URLSearchParams(location.search);
     params.set("open", id);
     navigate(`${location.pathname}?${params.toString()}`, { replace: false });
   };
 
-  // Закрытие модалки → убираем open
   const closeModal = () => {
     const params = new URLSearchParams(location.search);
     params.delete("open");
     navigate(`${location.pathname}?${params.toString()}`, { replace: false });
+
+    setRefetchTrigger((prev) => prev + 1);
   };
 
   return (
     <div className={s.wrapper}>
       <PageTitle titleText={titleText} />
 
-      <TasksTable queryParams={queryParams} onOpenTask={openTaskViaUrl} />
+      <TasksTable
+        queryParams={queryParams}
+        onOpenTask={openTaskViaUrl}
+        refetchKey={refetchTrigger}    // ← передаём триггер
+      />
 
       <SidebarFilter showFilter={showFilter} setShowFilter={setShowFilter} />
 
-      {openedTaskId && (
-        <div className={s.modalOverlay} onClick={closeModal}>
-          <div className={s.modalContent} onClick={(e) => e.stopPropagation()}>
-            <TicketFormPage modal taskId={openedTaskId} onClose={closeModal} />
-          </div>
-        </div>
-      )}
+      <ModelWindow isOpen={!!openedTaskId} onClose={closeModal} isPadding={false}>
+        <TicketFormPage modal taskId={openedTaskId} onClose={closeModal} />
+      </ModelWindow>
     </div>
   );
 };

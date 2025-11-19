@@ -5,6 +5,6 @@ export const taskStatuses = {
   IN_PROGRESS: { code: "000000003", title: "Выполняется" },
   PAUSED:      { code: "000000007", title: "Приостановлена" },
   READY:       { code: "000000004", title: "Готова к сдаче" },
-  DONE:        { code: "000000005", title: "Завершена" },
+  DONE:        { code: "000000005", title: "Сдана клиенту" },
   CANCELED:    { code: "000000006", title: "Отменена/Не актуальная" },
 };

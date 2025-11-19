@@ -7,6 +7,7 @@
     flex-direction: column;
     row-gap: 12px;
     position: relative;
+    border-radius: 0 var(--border-radius) var(--border-radius) 0;
 }
 
 .btn_wrap {

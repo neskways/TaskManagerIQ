@@ -1,0 +1,76 @@
+.listBox {
+  border: 1px solid var(--border-color);
+  background: var(--bg-color);
+  border-radius: var(--border-radius);
+  padding: 8px;
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+}
+
+.listInner {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.items {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.taskItem {
+  display: grid;
+  grid-template-columns: 40px 1fr 70px;
+  padding: 10px 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 14px;
+  color: var(--text-color);
+
+}
+
+.taskItem:hover {
+  background: var(--bg-color-hover);
+}
+
+.selected {
+  background: var(--accent-color-secondary) !important;
+  color: white !important;
+}
+
+.selected .taskTime,
+.selected .taskClient {
+  color: white !important;
+}
+
+.taskTitle {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.taskTime {
+  text-align: right;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.taskClient {
+  font-size: 0.9rem;
+  color: var(--text-color);
+}
+
