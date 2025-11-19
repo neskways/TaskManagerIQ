@@ -15,11 +15,11 @@ import { TicketFormPage } from "../../../../pages/TicketFormPage/TicketFormPage"
 
 import s from "./TimerTasks.module.scss";
 
-const REFRESH_INTERVAL_MS = 12000;
+const REFRESH_INTERVAL_MS = 12000; // обновление задач каждые 12 секунд
+const IDLE_TIMEOUT_MS = 600000; // 10 минут
 
 export const TimerTasks = () => {
   const { showPopup } = usePopup();
-  const navigate = useNavigate();
 
   const [tasks, setTasks] = useState([]);
   const [secondsMap, setSecondsMap] = useState({});
@@ -44,7 +44,7 @@ export const TimerTasks = () => {
   const idleRef = useRef(null);
 
   // ----------------------------
-  // LOAD TASKS
+  //  Загрузка задач
   // ----------------------------
   const loadTasks = async () => {
     try {
@@ -68,7 +68,7 @@ export const TimerTasks = () => {
         }
       });
 
-      // detect new tasks
+      // обнаруживаем новые задачи
       const newIds = new Set(data.map((t) => t.id));
 
       if (!isFirstLoad.current) {
@@ -84,9 +84,7 @@ export const TimerTasks = () => {
       setTasks(data);
       setSecondsMap(sec);
 
-      const running = data.find(
-        (t) => t.state === taskStatuses.IN_PROGRESS.title
-      );
+      const running = data.find((t) => t.state === taskStatuses.IN_PROGRESS.title);
 
       if (running) {
         setActiveTaskId(running.id);
@@ -114,12 +112,18 @@ export const TimerTasks = () => {
     });
   };
 
+  // ----------------------------
+  //  Начальная загрузка и опрос
+  // ----------------------------
   useEffect(() => {
     loadTasks();
     pollingRef.current = setInterval(loadTasks, REFRESH_INTERVAL_MS);
     return () => clearInterval(pollingRef.current);
   }, []);
 
+  // ----------------------------
+  //  Таймер текущей задачи
+  // ----------------------------
   useEffect(() => {
     if (!activeTaskId) return;
     timerRef.current = setInterval(() => {
@@ -132,9 +136,9 @@ export const TimerTasks = () => {
     return () => clearInterval(timerRef.current);
   }, [activeTaskId]);
 
-  // ------------------------
-  // STATE CONTROL
-  // ------------------------
+  // ----------------------------
+  //  Управление задачей
+  // ----------------------------
   const manageTaskState = async (id, newState) => {
     const t = tasks.find((e) => e.id === id);
     if (!t) return;
@@ -179,9 +183,7 @@ export const TimerTasks = () => {
     if (!task) return;
 
     if (task.state !== taskStatuses.IN_PROGRESS.title) {
-      showPopup("Завершить можно только выполняющуюся задачу", {
-        type: "info",
-      });
+      showPopup("Завершить можно только выполняющуюся задачу", { type: "info" });
       return;
     }
 
@@ -211,23 +213,38 @@ export const TimerTasks = () => {
     setConfirmSwitch(false);
   };
 
-  // ------------------------
-  // IDLE WARNING
-  // ------------------------
+  // ----------------------------
+  //  Таймер простоя
+  // ----------------------------
   const resetIdle = () => {
     clearTimeout(idleRef.current);
-    if (!activeTaskId) {
-      idleRef.current = setTimeout(() => setIdleModal(true), 600000);
-    }
+    if (idleModal) return;
+    if (activeTaskId) return;
+
+    idleRef.current = setTimeout(() => {
+      setIdleModal(true);
+    }, IDLE_TIMEOUT_MS);
   };
 
   useEffect(() => {
+    const events = ["mousemove", "keydown", "click", "scroll"];
+    const handleActivity = () => resetIdle();
+
+    events.forEach((e) => window.addEventListener(e, handleActivity));
+
     resetIdle();
-    return () => clearTimeout(idleRef.current);
-  }, [activeTaskId]);
+
+    return () => {
+      events.forEach((e) => window.removeEventListener(e, handleActivity));
+      clearTimeout(idleRef.current);
+    };
+  }, [activeTaskId, idleModal]);
 
   const selectedTask = tasks.find((t) => t.id === selectedTaskId) ?? null;
 
+  // ----------------------------
+  //  Рендер
+  // ----------------------------
   return (
     <>
       {idleModal && <IdleWarning onClose={() => setIdleModal(false)} />}
