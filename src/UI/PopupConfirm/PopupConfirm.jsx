@@ -10,9 +10,9 @@ export const PopupConfirm = ({ isOpen, text, onConfirm, onCancel }) => {
           <div className={s.overlay} onClick={onCancel} />
           <motion.div
             className={s.popup}
-            initial={{ opacity: 0, scale: 0.9, y: 10 }}
+            initial={{ opacity: 0, scale: 1, y: 7 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 10 }}
+            exit={{ opacity: 0, scale: 1, y: 7 }}
             transition={{ duration: 0.1 }}
           >
             <div className={s.icon}>

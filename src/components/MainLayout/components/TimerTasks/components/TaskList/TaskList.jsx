@@ -11,7 +11,7 @@ export const TaskList = ({
   onOpenModal,
 }) => {
   return (
-    <div className={s.listBox}>
+    <div className={`${s.listBox} ${isExpanded ? s.expanded : ""}`}>
       <div className={s.listInner}>
         {loading && tasks.length === 0 && (
           <div className={s.empty}>Загрузка...</div>

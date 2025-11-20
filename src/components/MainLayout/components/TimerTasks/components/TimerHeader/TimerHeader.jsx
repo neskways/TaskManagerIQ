@@ -7,9 +7,10 @@ export const TimerHeader = ({
   displaySec,
   onStartPause,
   onFinish,
+  isExpanded,
 }) => {
   return (
-    <div className={s.headerBox}>
+    <div className={`${s.headerBox} ${isExpanded ? s.expanded : ""}`}>
       <div className={s.headerInner}>
         <div className={s.sectionHeader}>Текущая задача</div>
 

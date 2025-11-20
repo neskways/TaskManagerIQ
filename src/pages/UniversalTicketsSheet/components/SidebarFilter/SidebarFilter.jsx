@@ -4,6 +4,7 @@ import s from "./SidebarFilter.module.scss";
 import { Button } from "../../../../UI/Button/Button";
 import { MultiSelector } from "../../../../UI/MultiSelector/MultiSelector";
 import { getEmployees } from "../../../../api/get/getEmployee";
+import { ClientSearch } from "../../../CreateTicketPage/components/ClientSearch/ClientSearch";
 
 export const SidebarFilter = ({
   showFilter,
@@ -12,6 +13,10 @@ export const SidebarFilter = ({
   setSelectedStatuses,
   selectedEmployees,
   setSelectedEmployees,
+  clients = [],                 
+  clientsLoading = false,       
+  selectedClient,
+  setSelectedClient,
   onReset
 }) => {
   const [employeesList, setEmployeesList] = useState([]);
@@ -36,12 +41,10 @@ export const SidebarFilter = ({
 
   return (
     <>
-      {/* Overlay */}
       <div
         className={`${s.overlay} ${showFilter ? s.show : ""}`}
         onClick={() => setShowFilter(false)}
       />
-
       <div className={`${s.sidebar} ${showFilter ? s.show_filter : ""}`}>
         <div className={s.header}>
           <h3 className={s.title}>Все фильтры</h3>
@@ -51,6 +54,15 @@ export const SidebarFilter = ({
         </div>
 
         <div className={s.block}>
+          <div className={s.selecter_wrap}>
+              <ClientSearch
+                clients={clients}
+                onSelect={setSelectedClient}
+                text="Клиент"
+                disabled={clientsLoading}
+              />
+          </div>
+
           <div className={s.selecter_wrap}>
             <MultiSelector
               title="Статус"
