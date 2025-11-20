@@ -35,41 +35,49 @@ export const SidebarFilter = ({
   ];
 
   return (
-    <div className={`${s.sidebar} ${showFilter ? s.show_filter : ""}`}>
-      <div className={s.header}>
-        <h3 className={s.title}>Все фильтры</h3>
-        <button className={s.close_btn} onClick={() => setShowFilter(false)}>
-          <CloseIcon />
-        </button>
-      </div>
+    <>
+      {/* Overlay */}
+      <div
+        className={`${s.overlay} ${showFilter ? s.show : ""}`}
+        onClick={() => setShowFilter(false)}
+      />
 
-      <div className={s.block}>
-        <div className={s.selecter_wrap}>
-          <MultiSelector
-            title="Статус"
-            items={statusesList}
-            value={selectedStatuses || []}
-            onChange={setSelectedStatuses}
-            keyField="name"
-            labelField="name"
-          />
+      <div className={`${s.sidebar} ${showFilter ? s.show_filter : ""}`}>
+        <div className={s.header}>
+          <h3 className={s.title}>Все фильтры</h3>
+          <button className={s.close_btn} onClick={() => setShowFilter(false)}>
+            <CloseIcon />
+          </button>
         </div>
 
-        <div className={s.selecter_wrap}>
-          <MultiSelector
-            title="Исполнитель"
-            items={employeesList}
-            value={selectedEmployees || []}
-            onChange={setSelectedEmployees}
-            keyField="id"
-            labelField="name"
-          />
+        <div className={s.block}>
+          <div className={s.selecter_wrap}>
+            <MultiSelector
+              title="Статус"
+              items={statusesList}
+              value={selectedStatuses || []}
+              onChange={setSelectedStatuses}
+              keyField="name"
+              labelField="name"
+            />
+          </div>
+
+          <div className={s.selecter_wrap}>
+            <MultiSelector
+              title="Исполнитель"
+              items={employeesList}
+              value={selectedEmployees || []}
+              onChange={setSelectedEmployees}
+              keyField="id"
+              labelField="name"
+            />
+          </div>
+        </div>
+
+        <div className={s.footer}>
+          <Button name="Сбросить" color="secondary" onClick={onReset} />
         </div>
       </div>
-
-      <div className={s.footer}>
-        <Button name="Сбросить" color="secondary" onClick={onReset} />
-      </div>
-    </div>
+    </>
   );
 };

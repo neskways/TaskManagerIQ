@@ -1,22 +1,39 @@
 .sidebar {
   position: fixed;
   top: 0;
-  right: -400px;
-  width: 350px;
+  right: -400px; // скрыт за экраном
+  width: 320px;
   height: 100vh;
   background-color: var(--bg-color);
   border-left: 1px solid var(--border-color-secondary);
   box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
   transition: right 0.3s ease;
-  padding: 40px 30px;
-  z-index: 200; 
+  padding: 30px 20px;
+  z-index: 1000; 
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+
+  &.show_filter {
+    right: 0; // плавно выезжает
+  }
 }
 
-.show_filter {
-  right: 0;
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0); // изначально прозрачный
+  z-index: 999;                  // ниже сайдбара
+  pointer-events: none;          // не кликабелен пока скрыт
+  transition: background 0.2s ease;
+
+  &.show {
+    background: rgba(0, 0, 0, 0.2); // затемнение при открытии
+    pointer-events: all;           // теперь кликабелен
+  }
 }
 
 .header {

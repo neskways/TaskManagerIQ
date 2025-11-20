@@ -55,7 +55,25 @@
 
 .selectedText {
   color: var(--text-color);
-  font-weight: 600;
+  overflow: hidden;       // скрываем переполнение
+  text-overflow: ellipsis; // добавляем троеточие если не помещается
+  white-space: nowrap;     // запрет переноса на новую строку
+  display: block;
+  flex: 1;                 // чтобы занять доступное пространство
+  padding-right: 0.5em;    // немного отступа от стрелки
+
+    &::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--accent-color);
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
 }
 
 .dropdown {
@@ -68,7 +86,7 @@
   border-radius: 6px;
   z-index: 10;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  max-height: 260px;
+  max-height: 374px;
   overflow-y: auto;
 }
 
