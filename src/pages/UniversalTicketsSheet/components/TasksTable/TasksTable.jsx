@@ -10,7 +10,7 @@ import { SidebarFilter } from "../SidebarFilter/SidebarFilter";
 import { getTasksList } from "../../../../api/get/getTasksList";
 
 const REFRESH_INTERVAL_MS = 20000;
-const REFRESH_INTERVAL_MS_5 = 6000;
+const REFRESH_INTERVAL_MS_5 = 10000;
 const LOCAL_STORAGE_KEY_TICKETS = "tickets_table_col_widths";
 const DEFAULT_WIDTHS = [5, 33, 14, 16, 11, 8, 7, 7];
 
