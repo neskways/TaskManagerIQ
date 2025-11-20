@@ -167,8 +167,14 @@ export const TasksTable = ({ queryParams, onOpenTask, refetchKey, isTaskOpen }) 
         <div className={s.gridHeaderRow} style={{ gridTemplateColumns }}>
           {headersTitleTask.map((header, i) => (
             <div key={i} className={s.gridHeader}>
-              <span>{header}</span>
-              {i < headersTitleTask.length - 1 && <div className={s.resizer} onMouseDown={(e) => handleMouseDown(e, i)} />}
+              <span>
+                {header}
+                {/* Показываем количество задач только в столбце "Заголовок" */}
+                {header === "Заголовок" && tasks.length > 0 ? `〔 ${tasks.length} 〕` : ""}
+              </span>
+              {i < headersTitleTask.length - 1 && (
+                <div className={s.resizer} onMouseDown={(e) => handleMouseDown(e, i)} />
+              )}
             </div>
           ))}
         </div>
