@@ -1,13 +1,14 @@
 import { useEffect, useState, useRef } from "react";
 import Cookies from "js-cookie";
 import { TaskList } from "./components/TaskList/TaskList";
+import { TimerHeader } from "./components/TimerHeader/TimerHeader";
+import { ExpandButton } from "./components/ExpandButton/ExpandButton";
+import { IdleWarning } from "./components/IdleWarning/IdleWarning";
+import { PopupConfirm } from "../../../../UI/PopupConfirm/PopupConfirm";
 import { usePopup } from "../../../../context/PopupContext";
 import { getTaskQueue } from "../../../../api/get/getTaskQueue";
-import { taskStatuses } from "../../../../modules/TaskStatuses";
-import { IdleWarning } from "./components/IdleWarning/IdleWarning";
-import { TimerHeader } from "./components/TimerHeader/TimerHeader";
 import { curentTaskManage } from "../../../../api/curentTaskManage";
-import { ExpandButton } from "./components/ExpandButton/ExpandButton";
+import { taskStatuses } from "../../../../modules/TaskStatuses";
 
 import s from "./TimerTasks.module.scss";
 
@@ -24,8 +25,12 @@ export const TimerTasks = () => {
   const [activeTaskId, setActiveTaskId] = useState(null);
 
   const [isExpanded, setIsExpanded] = useState(false);
-  const [showExpanded, setShowExpanded] = useState(false); // для анимации
+  const [showExpanded, setShowExpanded] = useState(false);
+
   const [idleModal, setIdleModal] = useState(false);
+  const [confirmFinish, setConfirmFinish] = useState(false);
+  const [confirmSwitch, setConfirmSwitch] = useState(false);
+  const [pendingTaskId, setPendingTaskId] = useState(null);
 
   const timerRef = useRef(null);
   const pollingRef = useRef(null);
@@ -35,7 +40,6 @@ export const TimerTasks = () => {
 
   const userCode = Cookies.get("userCode");
 
-  // Загрузка задач
   const loadTasks = async () => {
     try {
       const states = [
@@ -77,7 +81,8 @@ export const TimerTasks = () => {
       }
 
       setSecondsMap(sec);
-    } catch {
+    } catch (err) {
+      console.error(err);
       showPopup("Не удалось загрузить задачи", { type: "error" });
     }
   };
@@ -93,7 +98,6 @@ export const TimerTasks = () => {
     });
   };
 
-  // Первичная загрузка и опрос задач
   useEffect(() => {
     loadTasks();
     const intervalTime = userCode === "000000002" ? REFRESH_INTERVAL_MS_5 : REFRESH_INTERVAL_MS;
@@ -110,17 +114,87 @@ export const TimerTasks = () => {
     return () => clearInterval(timerRef.current);
   }, [activeTaskId]);
 
-  const handleToggleExpand = () => {
-    if (!isExpanded) {
-      setIsExpanded(true);
-      setTimeout(() => setShowExpanded(true), 10); // запускаем анимацию
-    } else {
-      setShowExpanded(false);
-      setIsExpanded(false); // закрытие мгновенное
+  const manageTaskState = async (id, newState) => {
+    const task = tasks.find((t) => t.id === id);
+    if (!task) return;
+
+    try {
+      await curentTaskManage(String(id).padStart(9, "0"), newState);
+      await loadTasks();
+
+      const msg =
+        newState === taskStatuses.IN_PROGRESS.code
+          ? `Задача "${task.title}" запущена`
+          : newState === taskStatuses.PAUSED.code
+          ? `Пауза: "${task.title}"`
+          : newState === taskStatuses.READY.code
+          ? `Завершено: "${task.title}"`
+          : "";
+
+      if (msg) showPopup(msg, { type: "info" });
+    } catch {
+      showPopup("Ошибка изменения статуса", { type: "error" });
     }
   };
 
-  // Логика бездействия
+  const startPauseTask = async () => {
+    if (!selectedTaskId) return;
+
+    if (activeTaskId === selectedTaskId) {
+      await manageTaskState(selectedTaskId, taskStatuses.PAUSED.code);
+      setActiveTaskId(null);
+      return;
+    }
+
+    if (activeTaskId) {
+      setPendingTaskId(selectedTaskId);
+      setConfirmSwitch(true);
+      return;
+    }
+
+    await manageTaskState(selectedTaskId, taskStatuses.IN_PROGRESS.code);
+    setActiveTaskId(selectedTaskId);
+  };
+
+  const handleSwitchTask = async () => {
+    if (!pendingTaskId || !activeTaskId) return;
+    await manageTaskState(activeTaskId, taskStatuses.PAUSED.code);
+    setActiveTaskId(pendingTaskId);
+    await manageTaskState(pendingTaskId, taskStatuses.IN_PROGRESS.code);
+    setPendingTaskId(null);
+    setConfirmSwitch(false);
+  };
+
+  const handleFinish = () => {
+    const task = tasks.find((t) => t.id === selectedTaskId);
+    if (!task) return;
+
+    if (task.state !== taskStatuses.IN_PROGRESS.name) {
+      showPopup("Завершить можно только выполняющуюся задачу", { type: "info" });
+      return;
+    }
+    setConfirmFinish(true);
+  };
+
+  const finishTask = async () => {
+    await manageTaskState(selectedTaskId, taskStatuses.READY.code);
+    if (activeTaskId === selectedTaskId) setActiveTaskId(null);
+  };
+
+  const onSelectTask = (taskId) => {
+    setSelectedTaskId(taskId);
+  };
+
+  const handleToggleExpand = () => {
+    if (!isExpanded) {
+      setIsExpanded(true);
+      setTimeout(() => setShowExpanded(true), 10);
+    } else {
+      setShowExpanded(false);
+      setIsExpanded(false);
+    }
+  };
+
   const resetIdle = () => {
     clearTimeout(idleRef.current);
     if (idleModal || activeTaskId) return;
@@ -132,7 +206,6 @@ export const TimerTasks = () => {
     const handleActivity = () => resetIdle();
     events.forEach((e) => window.addEventListener(e, handleActivity));
     resetIdle();
-
     return () => {
       events.forEach((e) => window.removeEventListener(e, handleActivity));
       clearTimeout(idleRef.current);
@@ -140,6 +213,7 @@ export const TimerTasks = () => {
   }, [activeTaskId, idleModal]);
 
   const selectedTask = tasks.find((t) => t.id === selectedTaskId) ?? null;
+  const activeTask = tasks.find((t) => t.id === activeTaskId) ?? null;
 
   return (
     <div className={s.full_block}>
@@ -156,20 +230,41 @@ export const TimerTasks = () => {
           selectedTask={selectedTask}
           isRunning={activeTaskId === selectedTaskId}
           displaySec={selectedTask ? secondsMap[selectedTaskId] : 0}
-          onStartPause={() => {}}
-          onFinish={() => {}}
+          onStartPause={startPauseTask}
+          onFinish={handleFinish}
         />
 
         <TaskList
           tasks={tasks}
           secondsMap={secondsMap}
           selectedTaskId={selectedTaskId}
-          loading={false} // всегда показываем
+          loading={false}
           isExpanded={isExpanded}
-          onSelectTask={() => {}}
+          onSelectTask={onSelectTask}
           onOpenModal={() => {}}
         />
       </div>
+
+      {/* Confirm завершения задачи */}
+      <PopupConfirm
+        isOpen={confirmFinish}
+        text={selectedTask ? `Завершить задачу "${selectedTask.title}"?` : "Завершить задачу?"}
+        onConfirm={() => {
+          setConfirmFinish(false);
+          finishTask();
+        }}
+        onCancel={() => setConfirmFinish(false)}
+      />
+
+      {/* Confirm переключения задачи */}
+      <PopupConfirm
+        isOpen={confirmSwitch}
+        text={activeTask && pendingTaskId
+          ? `Поставить на паузу задачу "${activeTask.title}" и переключиться на новую?`
+          : "Переключить задачу?"}
+        onConfirm={handleSwitchTask}
+        onCancel={() => setConfirmSwitch(false)}
+      />
     </div>
   );
 };
