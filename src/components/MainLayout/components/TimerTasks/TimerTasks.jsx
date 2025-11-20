@@ -15,8 +15,9 @@ import { TicketFormPage } from "../../../../pages/TicketFormPage/TicketFormPage"
 
 import s from "./TimerTasks.module.scss";
 
-const REFRESH_INTERVAL_MS = 12000; // обновление задач каждые 12 секунд
-const IDLE_TIMEOUT_MS = 600000; // 10 минут
+const REFRESH_INTERVAL_MS = 15000;  // обновление задач каждые 15 секунд
+const REFRESH_INTERVAL_MS_5 = 5000; // обновление задач каждые 5 секунд 
+const IDLE_TIMEOUT_MS = 600000;     // 10 минут
 
 export const TimerTasks = () => {
   const { showPopup } = usePopup();
@@ -43,9 +44,8 @@ export const TimerTasks = () => {
   const [idleModal, setIdleModal] = useState(false);
   const idleRef = useRef(null);
 
-  // ----------------------------
-  //  Загрузка задач
-  // ----------------------------
+  const userCode = Cookies.get("userCode")
+
   const loadTasks = async () => {
     try {
       const states = [
@@ -68,7 +68,6 @@ export const TimerTasks = () => {
         }
       });
 
-      // обнаруживаем новые задачи
       const newIds = new Set(data.map((t) => t.id));
 
       if (!isFirstLoad.current) {
@@ -112,18 +111,12 @@ export const TimerTasks = () => {
     });
   };
 
-  // ----------------------------
-  //  Начальная загрузка и опрос
-  // ----------------------------
   useEffect(() => {
     loadTasks();
-    pollingRef.current = setInterval(loadTasks, REFRESH_INTERVAL_MS);
+    pollingRef.current = setInterval(loadTasks, userCode === "000000002" ? REFRESH_INTERVAL_MS_5 : REFRESH_INTERVAL_MS);
     return () => clearInterval(pollingRef.current);
   }, []);
 
-  // ----------------------------
-  //  Таймер текущей задачи
-  // ----------------------------
   useEffect(() => {
     if (!activeTaskId) return;
     timerRef.current = setInterval(() => {
@@ -136,9 +129,6 @@ export const TimerTasks = () => {
     return () => clearInterval(timerRef.current);
   }, [activeTaskId]);
 
-  // ----------------------------
-  //  Управление задачей
-  // ----------------------------
   const manageTaskState = async (id, newState) => {
     const t = tasks.find((e) => e.id === id);
     if (!t) return;
@@ -213,9 +203,6 @@ export const TimerTasks = () => {
     setConfirmSwitch(false);
   };
 
-  // ----------------------------
-  //  Таймер простоя
-  // ----------------------------
   const resetIdle = () => {
     clearTimeout(idleRef.current);
     if (idleModal) return;
@@ -242,9 +229,6 @@ export const TimerTasks = () => {
 
   const selectedTask = tasks.find((t) => t.id === selectedTaskId) ?? null;
 
-  // ----------------------------
-  //  Рендер
-  // ----------------------------
   return (
     <>
       {idleModal && <IdleWarning onClose={() => setIdleModal(false)} />}

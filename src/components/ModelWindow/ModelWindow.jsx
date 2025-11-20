@@ -4,7 +4,7 @@ import { CloseIcon } from "../../UI/CloseIcon/CloseIcon";
 
 export const ModelWindow = ({ isOpen, onClose, children, isPadding = true }) => {
   const [show, setShow] = useState(false);
-    console.log(isPadding)
+
   useEffect(() => {
     if (isOpen) {
       const timer = setTimeout(() => setShow(true), 10);

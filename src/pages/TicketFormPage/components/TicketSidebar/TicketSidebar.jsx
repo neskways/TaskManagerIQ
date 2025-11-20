@@ -22,36 +22,35 @@ export const TicketSidebar = ({
   timeSpent,
   isFirstLineTask,
 }) => {
-
-  const { employeeOptions, loading: employeesLoading } =
-    useClientsAndEmployees();
+  const { employeeOptions, loading: employeesLoading } = useClientsAndEmployees();
   const { showPopup } = usePopup();
 
   const role = Cookies.get("role");
 
-  const [selectedStatus, setSelectedStatus] = useState(currentStatus || "");
-  const [selectedExecutor, setSelectedExecutor] = useState(
-    currentExecutor || ""
-  );
+  const [selectedStatus, setSelectedStatus] = useState(currentStatus ?? "");
+  const [selectedExecutor, setSelectedExecutor] = useState(currentExecutor ?? "");
   const [hasChanges, setHasChanges] = useState(false);
+  const [isFirstLineTaskState, setIsFirstLineTask] = useState(isFirstLineTask ?? false);
 
-  // фильтруем сотрудников без "пустых" или "-" значений
-  const validEmployeeOptions = employeeOptions.filter(
-    (e) => e.id && e.id !== "-" && e.name && e.name.trim() !== "-"
+  // фильтруем сотрудников безопасно
+  const validEmployeeOptions = (employeeOptions || []).filter(
+    (e) =>
+      e?.id &&
+      e.id !== "-" &&
+      typeof e.name === "string" &&
+      e.name.trim() !== "-"
   );
 
-  // формируем список статусов без "пустых"
-  const statusItems = Object.entries(taskStatuses)
-    .map(([_, { code, title }]) => ({
-      id: code,
-      name: title,
-    }))
-    .filter((item) => item.id && item.id !== "-" && item.name.trim() !== "-");
+  // формируем список статусов безопасно
+  const statusItems = Object.values(taskStatuses)
+    .map(({ code, name }) => ({ id: code, name: name }))
+    .filter((item) => item?.id && item.id !== "-" && item.name?.trim() !== "-");
 
   // отслеживаем изменения
   useEffect(() => {
     setHasChanges(
-      selectedStatus !== currentStatus || selectedExecutor !== currentExecutor
+      selectedStatus !== (currentStatus ?? "") ||
+        selectedExecutor !== (currentExecutor ?? "")
     );
   }, [selectedStatus, selectedExecutor, currentStatus, currentExecutor]);
 
@@ -59,15 +58,12 @@ export const TicketSidebar = ({
   const handleExecutorChange = (value) => setSelectedExecutor(value);
 
   const handleSave = async () => {
-    const statusChanged = selectedStatus !== currentStatus;
-    const executorChanged = selectedExecutor !== currentExecutor;
-
     if (!selectedStatus || !selectedExecutor) {
       showPopup("Выберите статус и исполнителя", { type: "warning" });
       return;
     }
 
-    if (!statusChanged && !executorChanged) {
+    if (selectedStatus === (currentStatus ?? "") && selectedExecutor === (currentExecutor ?? "")) {
       showPopup("Данные не были изменены", { type: "info" });
       return;
     }
@@ -75,13 +71,13 @@ export const TicketSidebar = ({
     try {
       const formattedTaskId = String(taskId).padStart(9, "0");
 
-      const stateToSend = statusChanged ? selectedStatus : currentStatus;
-      const ownerToSend = executorChanged ? selectedExecutor : currentExecutor;
+      await updateTaskInfo(
+        formattedTaskId,
+        selectedStatus,
+        selectedExecutor
+      );
 
-      const response = await updateTaskInfo(formattedTaskId, stateToSend, ownerToSend);
-      
       showPopup("Изменения успешно сохранены", { type: "success" });
-
       setHasChanges(false);
     } catch (err) {
       console.error(err);
@@ -90,12 +86,12 @@ export const TicketSidebar = ({
   };
 
   const selectedExecutorName =
-    validEmployeeOptions.find((e) => e.id === selectedExecutor)?.name ||
-    selectedExecutor;
+    validEmployeeOptions.find((e) => e.id === selectedExecutor)?.name ??
+    selectedExecutor ??
+    "";
 
-  // Получаем название статуса для отображения вместо кода
   const selectedStatusName =
-    statusItems.find((e) => e.id === selectedStatus)?.name || selectedStatus;
+    statusItems.find((e) => e.id === selectedStatus)?.name ?? selectedStatus ?? "";
 
   const isEmployee = role === import.meta.env.VITE_TOKEN_EMPLOYEE;
   const isManagerOrDuty =
@@ -112,7 +108,7 @@ export const TicketSidebar = ({
 
       <div className={s.block}>
         <h4 className={s.title}>Клиент</h4>
-        <p className={s.text}>{currentClient}</p>
+        <p className={s.text}>{currentClient ?? ""}</p>
       </div>
 
       {isEmployee && (
@@ -151,57 +147,45 @@ export const TicketSidebar = ({
             value={selectedStatus}
             onChange={handleStatusChange}
           />
-
         </>
       )}
 
       <div className={s.block}>
         <h4 className={s.title}>Время</h4>
-        <p className={s.text}> { timeSpent !== null ? timeSpent : "00:00:00" } </p>
+        <p className={s.text}>{timeSpent ?? "00:00:00"}</p>
       </div>
 
       <Contacts contacts={contacts} />
 
-      { returnId !== null &&
+      {returnId != null && (
         <div className={s.block}>
-            <h4 className={s.title}>Возвратная заявка</h4>
-            <Link to={`/ticket/${returnId}`}>
-              <p className={s.text} title={returnName}>
-                { returnName }
-              </p>
-            </Link>
+          <h4 className={s.title}>Возвратная заявка</h4>
+          <Link to={`/ticket/${returnId}`}>
+            <p className={s.text} title={returnName ?? ""}>
+              {returnName ?? ""}
+            </p>
+          </Link>
         </div>
-      }
+      )}
 
-      {(role === import.meta.env.VITE_TOKEN_MANAGER) && (
-        
+      {role === import.meta.env.VITE_TOKEN_MANAGER && (
         <div className={s.block}>
           <h4 className={s.title}>Дополнительные данные</h4>
           <div className={s.text}>
-          <div className={`${s.checkbox}`}>
-            <Checkbox
-              checked={isFirstLineTask}
-              onChange={(e) =>
-                role === import.meta.env.VITE_TOKEN_MANAGER
-                  ? setIsFirstLineTask(e.target.checked)
-                  : null
-              }
-              disabled={role === import.meta.env.VITE_TOKEN_DUTY}
-            />
-            <p>Задача первой линии</p>
-          </div>
-           <div className={`${s.checkbox}`}>
-            <Checkbox
-              checked={isFirstLineTask}
-              onChange={(e) =>
-                role === import.meta.env.VITE_TOKEN_MANAGER
-                  ? setIsFirstLineTask(e.target.checked)
-                  : null
-              }
-              disabled={role === import.meta.env.VITE_TOKEN_DUTY}
-            />
-            <p>Выезд к клиенту</p>
-          </div>
+            <div className={s.checkbox}>
+              <Checkbox
+                checked={isFirstLineTaskState}
+                onChange={(e) => setIsFirstLineTask(e.target.checked)}
+              />
+              <p>Задача первой линии</p>
+            </div>
+            <div className={s.checkbox}>
+              <Checkbox
+                checked={isFirstLineTaskState}
+                onChange={(e) => setIsFirstLineTask(e.target.checked)}
+              />
+              <p>Выезд к клиенту</p>
+            </div>
           </div>
         </div>
       )}
