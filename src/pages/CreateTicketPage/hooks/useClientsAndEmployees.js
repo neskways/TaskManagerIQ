@@ -14,7 +14,7 @@ export const useClientsAndEmployees = () => {
           getClientsForSearch(),
           getEmployees(),
         ]);
-
+          console.log(employeesData)
         setClients(clientsData);
         setEmployees(employeesData);
       } catch (err) {

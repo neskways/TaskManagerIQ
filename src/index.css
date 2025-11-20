@@ -51,13 +51,14 @@ a {
 
 @media (max-width: 1470px) {
   body::after {
-    content: "Сайт не поддерживает размер экрана меньше 1450 пикселей";
+    content: "Леха ИДИ НАХУЙ";
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.95);
+    background: linear-gradient(270deg, #ff5f6d, #ffc371, #24c6dc, #514a9d);
+    background-size: 800% 800%;
     color: white;
     font-size: 28px;
     font-weight: 600;
@@ -68,5 +69,13 @@ a {
     z-index: 999999;
     padding: 20px;
     box-sizing: border-box;
+    animation: gradientAnimation 15s ease infinite;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  }
+
+  @keyframes gradientAnimation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
   }
 }
