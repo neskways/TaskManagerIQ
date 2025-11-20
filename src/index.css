@@ -51,7 +51,7 @@ a {
 
 @media (max-width: 1470px) {
   body::after {
-    content: "Леха ИДИ НАХУЙ";
+    content: "Слишком маленький экран, сори";
     position: fixed;
     top: 0;
     left: 0;
