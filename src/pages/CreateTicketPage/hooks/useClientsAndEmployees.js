@@ -14,9 +14,16 @@ export const useClientsAndEmployees = () => {
           getClientsForSearch(),
           getEmployees(),
         ]);
-          console.log(employeesData)
-        setClients(clientsData);
-        setEmployees(employeesData);
+        
+        const sortedClients = [...clientsData].sort((a, b) =>
+          a.name.localeCompare(b.name, "ru")
+        );
+        const sorteDemployeesData = [...employeesData].sort((a, b) =>
+          a.Name.localeCompare(b.Name, "ru")
+        );
+
+        setClients(sortedClients);
+        setEmployees(sorteDemployeesData);
       } catch (err) {
         console.error("Ошибка при загрузке клиентов и сотрудников:", err);
         setClients([]);

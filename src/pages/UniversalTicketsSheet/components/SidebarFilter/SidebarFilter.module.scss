@@ -25,14 +25,14 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0); // изначально прозрачный
-  z-index: 999;                  // ниже сайдбара
-  pointer-events: none;          // не кликабелен пока скрыт
+  background: rgba(0, 0, 0, 0); 
+  z-index: 999;                  
+  pointer-events: none;      
   transition: background 0.2s ease;
 
   &.show {
-    background: rgba(0, 0, 0, 0.2); // затемнение при открытии
-    pointer-events: all;           // теперь кликабелен
+    background: rgba(0, 0, 0, 0.2); 
+    pointer-events: all;       
   }
 }
 

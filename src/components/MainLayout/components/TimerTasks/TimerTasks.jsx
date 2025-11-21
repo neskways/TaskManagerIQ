@@ -282,7 +282,7 @@ export const TimerTasks = () => {
         }}
       />
 
-      <ModelWindow isOpen={!!modalTaskId} onClose={() => setModalTaskId(null)}>
+      <ModelWindow isPadding={false} isOpen={!!modalTaskId} onClose={() => setModalTaskId(null)}>
         <TicketFormPage
           modal
           taskId={modalTaskId}

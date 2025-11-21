@@ -1,8 +1,8 @@
 .wrapper {
     position: absolute;
-    bottom: 85px;
-    width: 220px;
-    left: calc(50% - 110px);
+    bottom: 80px;
+    width: 174px;
+    left: calc(50% - 87px);
     border-radius: var(--border-radius);
     background-color: var(--bg-color);
 }
@@ -17,7 +17,7 @@
 }
 
 .menu_link {
-    padding: 12px 18px;
+    padding: 10px 18px;
     display: inline-block;
     width: 100%;
     transition: var(--transition);
