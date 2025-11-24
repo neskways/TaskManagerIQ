@@ -114,6 +114,8 @@ export const CreateTicketPage = () => {
       return showValidationPopup("Пожалуйста, выберите клиента!");
     if (!selectedEmployee)
       return showValidationPopup("Пожалуйста, выберите исполнителя!");
+    if (!selectedConfig)
+      return showValidationPopup("Пожалуйста, выберите конфигурацию!");
     if (!description.trim())
       return showValidationPopup("Пожалуйста, заполните описание задачи!");
 

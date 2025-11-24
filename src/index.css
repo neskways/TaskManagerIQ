@@ -49,7 +49,7 @@ a {
   transform: scale(0.95);
 }
 
-@media (max-width: 1470px) {
+@media (max-width: 1200px) {
   body::after {
     content: "Слишком маленький экран, сори";
     position: fixed;
