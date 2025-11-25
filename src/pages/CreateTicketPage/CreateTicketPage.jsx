@@ -39,6 +39,7 @@ export const CreateTicketPage = () => {
   const [isFirstLineTask, setIsFirstLineTask] = useState(
     role === import.meta.env.VITE_TOKEN_DUTY
   );
+  const [isDeparture, setIsDeparture] = useState(false);
 
   const {
     clients,
@@ -124,14 +125,23 @@ export const CreateTicketPage = () => {
         return showValidationPopup(
           "Пожалуйста, заполните ФИО нового контакта!"
         );
+
       if (!contactDetails.phone.trim())
         return showValidationPopup(
           "Пожалуйста, заполните номер телефона нового контакта!"
         );
+
+      const phoneRegex = /^\+7\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/;
+      if (!phoneRegex.test(contactDetails.phone.trim())) {
+        return showValidationPopup(
+          "Введите номер телефона в формате +7(XXX) XXX-XX-XX"
+        );
+      }
     } else {
       if (!contactDetails.name.trim())
         return showValidationPopup("Пожалуйста, выберите контакт!");
     }
+
 
     if (!selectedReturnTask && isReturnTask)
       return showValidationPopup("Пожалуйста, выберите возвратную задачу!");
@@ -168,7 +178,7 @@ export const CreateTicketPage = () => {
 
       const cleanId = parseInt(result.taskid, 10);
       showPopup(MESSAGES.createTaskSuccess, { type: "success" });
-      setTimeout(() => navigate(`/tasks/all_tickets?open=${cleanId}`), 100);
+      setTimeout(() => navigate(`/tasks/all_tickets?open=${cleanId}`), 50);
     } catch (error) {
       console.error("Ошибка при создании заявки:", error);
       showPopup(MESSAGES.createTaskError, { type: "error" });
@@ -201,7 +211,7 @@ export const CreateTicketPage = () => {
         </div>
 
         <MultipleInput
-          text="ТЕКСТ"
+          text="Текст"
           rows={6}
           value={description}
           setUserData={setDescription}
@@ -239,27 +249,42 @@ export const CreateTicketPage = () => {
         <div className={s.additional_parameters}>
           {/* Чекбокс "Задача первой линии" */}
           {(role === import.meta.env.VITE_TOKEN_MANAGER) && (
+            <>
             <div className={s.checkbox}>
-              <Checkbox
-                checked={isFirstLineTask}
-                onChange={(e) =>
-                  role === import.meta.env.VITE_TOKEN_MANAGER
-                    ? setIsFirstLineTask(e.target.checked)
-                    : null
-                }
-                disabled={role === import.meta.env.VITE_TOKEN_DUTY}
-              />
-              <p>Задача первой линии</p>
-            </div>
+                <Checkbox
+                  checked={isFirstLineTask}
+                  onChange={(e) =>
+                    role === import.meta.env.VITE_TOKEN_MANAGER
+                      ? setIsFirstLineTask(e.target.checked)
+                      : null
+                  }
+                  disabled={role === import.meta.env.VITE_TOKEN_DUTY}
+                />
+                <p>Задача первой линии</p>
+              </div>
+              <div className={s.checkbox}>
+                <Checkbox
+                  checked={isDeparture}
+                  onChange={(e) =>
+                    role === import.meta.env.VITE_TOKEN_MANAGER
+                      ? setIsDeparture(e.target.checked)
+                      : null
+                  }
+                  disabled={role === import.meta.env.VITE_TOKEN_DUTY}
+                />
+                <p>Выезд к клиенту</p>
+              </div>
+            </>
           )}
 
          <div className={s.return_task}>
            {/* Чекбокс "Возврат к задаче" */}
-          <div className={s.checkbox}>
+          <div className={`${s.checkbox}`}>
             <Checkbox
               checked={isReturnTask}
               onChange={(e) => setIsReturnTask(e.target.checked)}
               disabled={!selectedClient}
+              disabledTitle={"Сначала выберите клиента!"}
             />
             <p>Возврат к задаче</p>
           </div>

@@ -59,21 +59,31 @@
   background-color: var(--bg-color-secondary);
   padding: 14px;
   border-radius: var(--border-radius);
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 1fr 5fr;
   gap: 4px;
 }
 
 .return_task {
   display: flex;
   align-items: center;
-  height: 46px;
+  height: 40px;
 }
 
 .checkbox {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 16px;
-    width: 220px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  width: 220px;
+  height: 40px;
+}
+
+.disabled {
+  cursor: no-drop;
+  z-index: 9999;
+}
+
+.checkbox_wrapper {
+  display: flex;
 }

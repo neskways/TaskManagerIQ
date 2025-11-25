@@ -41,9 +41,9 @@ export const useContacts = (client) => {
   const contactOptions = [
     ...contactsList.map((c) => {
       const parts = [];
+      if (c.phone) parts.push(c.phone);
       if (c.name) parts.push(c.name);
       if (c.post) parts.push(c.post);
-      if (c.phone) parts.push(c.phone);
       if (c.mail) parts.push(c.mail);
 
       return {

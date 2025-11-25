@@ -16,8 +16,14 @@ export const NewContactForm = ({ contactDetails, setContactDetails }) => {
       />
       <Input
         text="Телефон"
+        type={"tel"}
+        pattern="^\+7\(\d{3}\)\s\d{3}-\d{2}-\d{2}$"
+        placeholder="+7(900) 000-00-00"
+        maxLen={17}
         value={contactDetails.phone}
-        setUserData={(v) => setContactDetails({ ...contactDetails, phone: v })}
+        setUserData={(v) => {
+          setContactDetails({ ...contactDetails, phone: v })
+        }}
       />
       <Input
         text="Email"

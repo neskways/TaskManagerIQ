@@ -14,11 +14,11 @@ export const useClientsAndEmployees = () => {
           getClientsForSearch(),
           getEmployees(),
         ]);
-        
+        console.log(clientsData)
         const sortedClients = [...clientsData].sort((a, b) =>
           a.name.localeCompare(b.name, "ru")
         );
-        console.log(sortedClients)
+        
         const sorteDemployeesData = [...employeesData].sort((a, b) =>
           a.Name.localeCompare(b.Name, "ru")
         );

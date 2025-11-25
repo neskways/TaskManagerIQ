@@ -20,6 +20,9 @@ export const getClientsForSearch = async () => {
           name: c.Name,
           code: c.Code,
           priority: c.Priority,
+          department: c.department, //Подразделение
+          card: c.card, //Карта розницы
+          cardbalance: c.cardbalance, //Остаток карты
           activities: c.Activities || [],
         }))
       : [];

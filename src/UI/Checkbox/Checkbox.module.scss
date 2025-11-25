@@ -106,3 +106,25 @@
 .ios_checkbox input:checked + .checkbox_wrapper {
   animation: bounce 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.disabled .ios_checkbox {
+  cursor: not-allowed;
+}
+
+.disabled .checkbox_wrapper {
+  pointer-events: none;
+}
+
+.disabled .checkbox_bg {
+  background: #e5e7eb;          // светло-серый фон
+  border-color: #cbd5e1;        // серый бордер
+}
+
+.disabled .checkbox_icon {
+  color: #9ca3af;               // серый чек
+}
