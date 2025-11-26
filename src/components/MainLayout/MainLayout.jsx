@@ -28,7 +28,7 @@ export const MainLayout = () => {
       );
     }
     
-    if (settings.screamer_hard && String(import.meta.env.VITE_TOKEN_MANAGER) != role && userCode !== "000000003") {
+    if (settings.screamer_hard && String(import.meta.env.VITE_TOKEN_MANAGER) != role) {
       timers.push(
         setInterval(() => {
           setScreamerType("hard");

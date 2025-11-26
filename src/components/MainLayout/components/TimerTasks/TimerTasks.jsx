@@ -16,7 +16,7 @@ import s from "./TimerTasks.module.scss";
 
 const REFRESH_INTERVAL_MS = 15000;
 const REFRESH_INTERVAL_MS_5 = 10000;
-const IDLE_TIMEOUT_MS = 600000;
+const IDLE_TIMEOUT_MS = 30000;
 
 export const TimerTasks = () => {
   const { showPopup } = usePopup();
