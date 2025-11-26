@@ -29,6 +29,7 @@ export const TasksTable = ({
   const [colWidths, setColWidths] = useState(
     JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_TICKETS)) || DEFAULT_WIDTHS
   );
+
   const [rawTasks, setRawTasks] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -40,15 +41,29 @@ export const TasksTable = ({
   const resizingColIndex = useRef(null);
   const pollingRef = useRef(null);
 
+  // ref чтобы открыть только один раз из URL
+  const openedFromUrlRef = useRef(false);
+
   const gridTemplateColumns = colWidths.map((w) => `minmax(40px, ${w}%)`).join(" ");
 
+  /* ----------------------------
+      Сохранение ширин столбцов
+  ----------------------------- */
   useEffect(() => {
     localStorage.setItem(LOCAL_STORAGE_KEY_TICKETS, JSON.stringify(colWidths));
   }, [colWidths]);
 
+  /* ----------------------------
+      Загрузка задач
+  ----------------------------- */
   const loadTasks = async () => {
     try {
-      const data = await getTasksList(queryParams.states, queryParams.userCode, queryParams.firstline);
+      const data = await getTasksList(
+        queryParams.states,
+        queryParams.userCode,
+        queryParams.firstline
+      );
+
       const mapped = data.map((item) => ({
         number: parseInt(item.number, 10),
         title: item.title,
@@ -57,44 +72,130 @@ export const TasksTable = ({
         executor: item.executor,
         createdDate: item.createdDate?.split(" ")[0] || "",
         priority: item.priority,
-        timeSpent: `${String(Math.floor(item.timeSpent / 3600)).padStart(2, "0")}:${String(Math.floor((item.timeSpent % 3600)/60)).padStart(2,"0")}:${String(item.timeSpent % 60).padStart(2,"0")}`
+        timeSpent: `${String(Math.floor(item.timeSpent / 3600)).padStart(2, "0")}:${String(
+          Math.floor((item.timeSpent % 3600) / 60)
+        ).padStart(2, "0")}:${String(item.timeSpent % 60).padStart(2, "0")}`,
       }));
+
       setRawTasks(mapped);
     } catch (err) {
       console.error(err);
-      if (err.response?.status !== 401) showPopup(MESSAGES.loadTaskError, { type: "error" });
+      if (err.response?.status !== 401) {
+        showPopup(MESSAGES.loadTaskError, { type: "error" });
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => { loadTasks(); }, []);
-  useEffect(() => { if (refetchKey != null) loadTasks(); }, [refetchKey]);
+  /* ----------------------------
+      Первичная загрузка
+  ----------------------------- */
+  useEffect(() => {
+    loadTasks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  // Автообновление
+  /* ----------------------------
+      Принудительный refetch
+  ----------------------------- */
+  useEffect(() => {
+    if (refetchKey != null) loadTasks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refetchKey]);
+
+  /* ----------------------------
+      Автообновление
+  ----------------------------- */
   useEffect(() => {
     if (isTaskOpen) return;
+
     if (pollingRef.current) clearInterval(pollingRef.current);
-    const intervalTime = userCode === "000000002" ? REFRESH_INTERVAL_MS_5 : REFRESH_INTERVAL_MS;
+
+    const intervalTime =
+      userCode === "000000002" ? REFRESH_INTERVAL_MS_5 : REFRESH_INTERVAL_MS;
+
     pollingRef.current = setInterval(loadTasks, intervalTime);
-    return () => { if (pollingRef.current) clearInterval(pollingRef.current); };
+
+    return () => {
+      if (pollingRef.current) clearInterval(pollingRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isTaskOpen, userCode, queryParams]);
 
-  // Фильтрация задач по статусу, исполнителю и клиенту
+  /* ----------------------------
+      Фильтрация задач
+  ----------------------------- */
   useEffect(() => {
     const filtered = rawTasks.filter((t) => {
-      const statusOk = selectedStatuses.length ? selectedStatuses.includes(t.status) : true;
-      const employeeOk = selectedEmployees.length ? selectedEmployees.includes(t.executor) : true;
+      const statusOk =
+        selectedStatuses.length ? selectedStatuses.includes(t.status) : true;
+      const employeeOk =
+        selectedEmployees.length ? selectedEmployees.includes(t.executor) : true;
 
-      // Обрабатываем selectedClient корректно: строка или объект { name }
-      const clientName = typeof selectedClient === "string" ? selectedClient : selectedClient?.name;
-      const clientOk = clientName ? t.client.toLowerCase().includes(clientName.toLowerCase()) : true;
+      const clientName =
+        typeof selectedClient === "string"
+          ? selectedClient
+          : selectedClient?.name;
+
+      const clientOk = clientName
+        ? t.client.toLowerCase().includes(clientName.toLowerCase())
+        : true;
 
       return statusOk && employeeOk && clientOk;
     });
+
     setTasks(filtered);
   }, [selectedStatuses, selectedEmployees, selectedClient, rawTasks]);
 
+  /* ----------------------------
+      ВОССТАНОВЛЕНИЕ ЛОГИКИ ?open=... (и на любом пути)
+      - проверяем rawTasks (даже если фильтры скрывают)
+      - также проверяем уже отфильтрованные tasks
+      - открываем один раз (openedFromUrlRef)
+      - удаляем параметр из URL после открытия
+  ----------------------------- */
+  useEffect(() => {
+    // если уже открыли из URL — ничего не делаем
+    if (openedFromUrlRef.current) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const openParam = params.get("open");
+    if (!openParam) return;
+
+    const num = parseInt(openParam, 10);
+    if (Number.isNaN(num)) return;
+
+    // ищем в rawTasks (приоритет — потому что rawTasks — полный список)
+    const inRaw = rawTasks.some((t) => t.number === num);
+    const inTasks = tasks.some((t) => t.number === num);
+
+    if (inRaw || inTasks) {
+      openedFromUrlRef.current = true;
+      try {
+        onOpenTask(num);
+      } catch (e) {
+        console.error("onOpenTask error:", e);
+      }
+
+      // Удаляем параметр open из URL, чтобы не сработало повторно
+      try {
+        const url = new URL(window.location.href);
+        url.searchParams.delete("open");
+        // сохраняем без параметра
+        window.history.replaceState(null, "", url.toString());
+      } catch (e) {
+        // fallback — если URL API не поддерживается, используем простую replace
+        const rawUrl = window.location.href.replace(/[?&]open=[^&]*/i, "");
+        window.history.replaceState(null, "", rawUrl);
+      }
+    }
+    // проверяем, когда rawTasks или tasks изменятся
+  }, [rawTasks, tasks, onOpenTask]);
+
+  /* ----------------------------
+      Ресайз столбцов
+  ----------------------------- */
   const handleMouseDown = (e, index) => {
     e.preventDefault();
     isResizing.current = true;
@@ -108,14 +209,19 @@ export const TasksTable = ({
 
   const handleMouseMove = (e) => {
     if (!isResizing.current || !tableRef.current) return;
+
     const dx = e.clientX - startX.current;
     const deltaPercent = (dx / tableRef.current.offsetWidth) * 100;
+
     let left = startWidths.current[0] + deltaPercent;
     let right = startWidths.current[1] - deltaPercent;
+
     if (left < 5 || right < 5) return;
+
     const newWidths = [...colWidths];
     newWidths[resizingColIndex.current] = left;
     newWidths[resizingColIndex.current + 1] = right;
+
     setColWidths(newWidths);
   };
 
@@ -126,27 +232,51 @@ export const TasksTable = ({
     document.removeEventListener("mouseup", handleMouseUp);
   };
 
-  if (loading && !rawTasks.length) return <div className={s.centerWrapper}><Loading /></div>;
+  /* ----------------------------
+      UI
+  ----------------------------- */
+  if (loading && !rawTasks.length)
+    return (
+      <div className={s.centerWrapper}>
+        <Loading />
+      </div>
+    );
 
   return (
     <div className={s.wrapper}>
-      {/* Кнопка открытия боковой панели фильтров */}
+      {/* Кнопка фильтров */}
       <div className={s.btn_wrapper}>
-        <button className={s.filter_btn} onClick={onShowFilter}>Фильтр</button>
+        <button className={s.filter_btn} onClick={onShowFilter}>
+          Фильтр
+        </button>
       </div>
 
       <div className={s.gridTableWrapper}>
-        <div className={s.gridHeaderRow} style={{ gridTemplateColumns }}>
+        {/* Заголовки */}
+        <div
+          className={s.gridHeaderRow}
+          style={{ gridTemplateColumns }}
+        >
           {headersTitleTask.map((header, i) => (
             <div key={i} className={s.gridHeader}>
-              <span>{header}{header === "Заголовок" && tasks.length ? `〔 ${tasks.length} 〕` : ""}</span>
+              <span>
+                {header}
+                {header === "Заголовок" && tasks.length
+                  ? `〔 ${tasks.length} 〕`
+                  : ""}
+              </span>
+
               {i < headersTitleTask.length - 1 && (
-                <div className={s.resizer} onMouseDown={(e) => handleMouseDown(e, i)} />
+                <div
+                  className={s.resizer}
+                  onMouseDown={(e) => handleMouseDown(e, i)}
+                />
               )}
             </div>
           ))}
         </div>
 
+        {/* Тело таблицы */}
         <div className={s.gridBody} ref={tableRef}>
           {tasks.map((task) => (
             <div

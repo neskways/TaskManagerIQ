@@ -18,8 +18,8 @@
 
 .expandedWrapper {
   position: fixed;
-  top: calc(50% - 45vh);
-  left: calc(50% - 80vh);
+  top: calc(50% - 45vh + 20px);
+  left: calc(50% - 80vh - 13px);
   transform: translateY(20px); // стартовая позиция для анимации
   width: 80vw;
   height: 90vh;
@@ -40,8 +40,6 @@
   position: fixed;
   display: flex;
   flex-direction: column;
-  top: calc(50% - 45vh + 20px);
-  left: calc(50% - 80vh);
   width: 80vw;
   height: 90vh;
   gap: 20px;

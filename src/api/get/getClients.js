@@ -15,9 +15,9 @@ export const getClients = async () => {
     const fixed = (response.data || "").replace(/'/g, '"');
     const parsed = JSON.parse(fixed);
 
-    return parsed || [];
+    return Array.isArray(parsed) ? parsed : [];
   } catch (error) {
     console.error("Ошибка при загрузке клиентов:", error);
-    throw error; 
+    throw error;
   }
 };

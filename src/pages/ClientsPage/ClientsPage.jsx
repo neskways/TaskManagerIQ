@@ -1,5 +1,5 @@
 import s from "./ClientsPage.module.scss";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { PageTitle } from "../../components/PageTitle/PageTitle";
 import { ClientsTable } from "./components/ClientsTable/ClientsTable";
 import { ClientModal } from "./components/ClientModal/ClientModal";
@@ -23,41 +23,55 @@ export const ClientsPage = () => {
   const { showPopup } = usePopup();
   const { colWidths, tableRef, handleMouseDown } = useResizableTable();
 
-  const cachedClients = getFromLocalStorage(CACHE_KEY, null);
+  const cachedClients = useMemo(() => getFromLocalStorage(CACHE_KEY, null), []);
   const [clients, setClients] = useState(cachedClients || []);
   const [selectedClient, setSelectedClient] = useState(null);
   const [initialLoading, setInitialLoading] = useState(!cachedClients);
   const [spinning, setSpinning] = useState(false);
 
-  const loadClients = async (force = false) => {
-    if (!force && cachedClients) return;
+  const sortClients = (arr) =>
+    [...arr].sort((a, b) => (a.Name || "").localeCompare(b.Name || ""));
 
-    setInitialLoading(true);
-    try {
-      const data = await getClients();
-      setClients(data);
-      saveToLocalStorage(CACHE_KEY, data);
-      showPopup(MESSAGES.dataUpdate, { type: "info" });
-    } catch (err) {
+  const loadClients = useCallback(
+    async (force = false) => {
+      if (!force && cachedClients) return;
+
+      setInitialLoading(true);
+
+      try {
+        const data = await getClients();
+
+        const sorted = sortClients(data);
+
+        setClients(sorted);
+        saveToLocalStorage(CACHE_KEY, sorted);
+
+        if (force) {
+          showPopup(MESSAGES.dataUpdate, { type: "info" });
+        }
+      } catch (err) {
         console.error("Ошибка при загрузке клиентов:", err);
-      if (err.response?.status !== 401) {
-        showPopup("Ошибка при загрузке клиентов!", { type: "error" });
+        if (err.response?.status !== 401) {
+          showPopup("Ошибка при загрузке клиентов!", { type: "error" });
+        }
+      } finally {
+        setInitialLoading(false);
+        setSpinning(false);
       }
-    } finally {
-      setInitialLoading(false);
-      setSpinning(false);
-    }
-  };
+    },
+    [cachedClients, showPopup]
+  );
 
   useEffect(() => {
     if (!cachedClients) loadClients();
-  }, []);
+  }, [cachedClients, loadClients]);
 
-  const handleRefresh = async () => {
-    if (spinning) return;
-    setSpinning(true);
-    await loadClients(true);
-  };
+  const handleRefresh = useCallback(async () => {
+    if (!spinning) {
+      setSpinning(true);
+      await loadClients(true);
+    }
+  }, [spinning, loadClients]);
 
   return (
     <ContentWrapper>

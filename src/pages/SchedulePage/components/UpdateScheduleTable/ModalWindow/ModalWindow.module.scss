@@ -7,7 +7,6 @@
   background-color: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(1px);
   display: flex;
-  align-items: center;
   justify-content: center;
   z-index: 9999;
 
@@ -22,13 +21,13 @@
 }
 
 .modalContent {
+  margin-top: 146px;
   background: var(--bg-color);
   padding: 15px;
   border-radius: 8px;
-  min-width: 500px;
-  height: 400px;
+  min-width: 600px;
+  height: 500px;
   position: relative;
-  left: 100px;
   transform: translateY(+20px);
   opacity: 0;
   transition: all 0.2s ease;

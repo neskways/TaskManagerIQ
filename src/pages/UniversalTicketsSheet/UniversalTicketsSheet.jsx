@@ -1,26 +1,49 @@
 import s from "./UniversalTicketsSheet.module.scss";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PageTitle } from "../../components/PageTitle/PageTitle";
 import { SidebarFilter } from "./components/SidebarFilter/SidebarFilter";
 import { TasksTable } from "./components/TasksTable/TasksTable";
 import { ModelWindow } from "../../components/ModelWindow/ModelWindow";
 import { TicketFormPage } from "../TicketFormPage/TicketFormPage";
 import { useClientsAndEmployees } from "../CreateTicketPage/hooks/useClientsAndEmployees";
+import { useSearchParams } from "react-router-dom";
 
 export const UniversalTicketsSheet = ({ titleText, queryParams }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const [showFilter, setShowFilter] = useState(false);
 
   const [selectedStatuses, setSelectedStatuses] = useState([]);
   const [selectedEmployees, setSelectedEmployees] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
 
-  const [openedTaskId, setOpenedTaskId] = useState(null);
+  const openedTaskId = searchParams.get("open")
+    ? parseInt(searchParams.get("open"), 10)
+    : null;
+
   const [refetchTrigger, setRefetchTrigger] = useState(0);
 
   const { clients, loading: clientsLoading } = useClientsAndEmployees();
 
-  const openTask = (id) => setOpenedTaskId(id);
-  const closeTask = () => setOpenedTaskId(null);
+  // -------------------------
+  // Открытие задачи → пишем в URL
+  // -------------------------
+  const openTask = (id) => {
+    setSearchParams((prev) => {
+      prev.set("open", id);
+      return prev;
+    });
+  };
+
+  // -------------------------
+  // Закрытие задачи → убираем из URL, но НЕ трогаем другие параметры
+  // -------------------------
+  const closeTask = () => {
+    setSearchParams((prev) => {
+      prev.delete("open");
+      return prev;
+    });
+  };
 
   return (
     <div className={s.wrapper}>
@@ -34,7 +57,7 @@ export const UniversalTicketsSheet = ({ titleText, queryParams }) => {
         onOpenTask={openTask}
         refetchKey={refetchTrigger}
         isTaskOpen={!!openedTaskId}
-        onShowFilter={() => setShowFilter(true)} // <-- передаем функцию
+        onShowFilter={() => setShowFilter(true)}
       />
 
       <SidebarFilter
@@ -44,8 +67,8 @@ export const UniversalTicketsSheet = ({ titleText, queryParams }) => {
         setSelectedStatuses={setSelectedStatuses}
         selectedEmployees={selectedEmployees}
         setSelectedEmployees={setSelectedEmployees}
-        clients={clients}               // передаём список клиентов
-        clientsLoading={clientsLoading} // передаём статус загрузки
+        clients={clients}
+        clientsLoading={clientsLoading}
         selectedClient={selectedClient}
         setSelectedClient={setSelectedClient}
         onReset={() => {
@@ -55,9 +78,11 @@ export const UniversalTicketsSheet = ({ titleText, queryParams }) => {
         }}
       />
 
-
+      {/* Модальное окно задачи */}
       <ModelWindow isOpen={!!openedTaskId} onClose={closeTask} isPadding={false}>
-        <TicketFormPage modal taskId={openedTaskId} onClose={closeTask} />
+        {openedTaskId && (
+          <TicketFormPage modal taskId={openedTaskId} onClose={closeTask} />
+        )}
       </ModelWindow>
     </div>
   );
