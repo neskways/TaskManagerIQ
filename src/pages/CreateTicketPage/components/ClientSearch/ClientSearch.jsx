@@ -127,7 +127,6 @@ export const ClientSearch = ({ clients = [], onSelect, text }) => {
     return () => document.removeEventListener("mousedown", onDocClick);
   }, []);
 
-  // Скроллим подсвеченный элемент в видимую область (если нужно)
   useEffect(() => {
     if (!showList) return;
     const el = wrapperRef.current?.querySelectorAll(`.${s.item}`)[highlightIndex];
@@ -157,7 +156,7 @@ export const ClientSearch = ({ clients = [], onSelect, text }) => {
           {filtered.map((client, i) => {
             const code = getCode(client);
             const isHighlighted = i === highlightIndex;
-            const isActive = code === activeCode && !showList === false; // activeCode применяется when selected or navigated
+            const isActive = code === activeCode && !showList === false; 
             return (
               <div
                 key={code || i}
@@ -168,7 +167,6 @@ export const ClientSearch = ({ clients = [], onSelect, text }) => {
                 ].join(" ").trim()}
                 onMouseEnter={() => setHighlightIndex(i)}
                 onMouseDown={(ev) => {
-                  // onMouseDown чтобы предотвратить blur перед click
                   ev.preventDefault();
                 }}
                 onClick={() => selectClient(client)}

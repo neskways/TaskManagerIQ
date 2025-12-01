@@ -1,7 +1,7 @@
 import { UniversalTicketsSheet } from "../UniversalTicketsSheet/UniversalTicketsSheet";
 
 export const AllTickets = ({ titleText }) => {
-  const queryParams = {}; // без фильтров
+  const queryParams = {};
 
   return (
     <UniversalTicketsSheet

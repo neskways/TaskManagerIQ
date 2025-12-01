@@ -1,10 +1,11 @@
+import s from "./SidebarFilter.module.scss";
 import { useEffect, useState } from "react";
 import { CloseIcon } from "../../../../UI/CloseIcon/CloseIcon";
-import s from "./SidebarFilter.module.scss";
 import { Button } from "../../../../UI/Button/Button";
 import { MultiSelector } from "../../../../UI/MultiSelector/MultiSelector";
 import { getEmployees } from "../../../../api/get/getEmployee";
 import { ClientSearch } from "../../../CreateTicketPage/components/ClientSearch/ClientSearch";
+import { taskStatuses } from "../../../../modules/taskStatuses";
 
 export const SidebarFilter = ({
   showFilter,
@@ -66,7 +67,7 @@ export const SidebarFilter = ({
           <div className={s.selecter_wrap}>
             <MultiSelector
               title="Статус"
-              items={statusesList}
+              items={taskStatuses}
               value={selectedStatuses || []}
               onChange={setSelectedStatuses}
               keyField="name"

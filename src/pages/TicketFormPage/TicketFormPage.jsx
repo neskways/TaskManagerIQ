@@ -15,7 +15,6 @@ import { MultipleInput } from "../../UI/MultipleInput/MultipleInput";
 import { getFromLocalStorage } from "../../modules/localStorageUtils";
 import { TaskTextBlock } from "./components/TaskTextBlock/TaskTextBlock";
 import { TicketSidebar } from "./components/TicketSidebar/TicketSidebar";
-import { ContentWrapper } from "../../components/ContentWrapper/ContentWrapper";
 import { TaskTitleAndText } from "./components/TaskTitleAndText/TaskTitleAndText";
 
 export const TicketFormPage = ({ modal = false, taskId, onClose }) => {

@@ -7,6 +7,7 @@ import { ContentWrapper } from "../../components/ContentWrapper/ContentWrapper";
 import { SecretSettingsBlock } from "./components/SecretSettingsBlock/SecretSettingsBlock";
 
 export const ParametersPage = () => {
+  
   const role = Cookies.get("role");
 
   return (

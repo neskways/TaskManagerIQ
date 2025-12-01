@@ -1,3 +1,4 @@
+import s from "./TimerTasks.module.scss";
 import { useEffect, useState, useRef } from "react";
 import Cookies from "js-cookie";
 import { TaskList } from "./components/TaskList/TaskList";
@@ -12,7 +13,6 @@ import { taskStatuses } from "../../../../modules/TaskStatuses";
 import { ModelWindow } from "../../../../components/ModelWindow/ModelWindow";
 import { TicketFormPage } from "../../../../pages/TicketFormPage/TicketFormPage";
 
-import s from "./TimerTasks.module.scss";
 
 const REFRESH_INTERVAL_MS = 15000;
 const REFRESH_INTERVAL_MS_5 = 10000;
@@ -39,7 +39,6 @@ export const TimerTasks = () => {
   const pollingRef = useRef(null);
   const prevTaskIdsRef = useRef(new Set());
   const idleRef = useRef(null);
-  const isFirstLoad = useRef(true);
 
   const userCode = Cookies.get("userCode");
 

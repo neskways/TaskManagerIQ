@@ -1,14 +1,15 @@
 import s from "./UniversalTicketsSheet.module.scss";
-import { useState, useEffect } from "react";
-import { PageTitle } from "../../components/PageTitle/PageTitle";
-import { SidebarFilter } from "./components/SidebarFilter/SidebarFilter";
-import { TasksTable } from "./components/TasksTable/TasksTable";
-import { ModelWindow } from "../../components/ModelWindow/ModelWindow";
-import { TicketFormPage } from "../TicketFormPage/TicketFormPage";
-import { useClientsAndEmployees } from "../CreateTicketPage/hooks/useClientsAndEmployees";
+import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { TasksTable } from "./components/TasksTable/TasksTable";
+import { PageTitle } from "../../components/PageTitle/PageTitle";
+import { TicketFormPage } from "../TicketFormPage/TicketFormPage";
+import { ModelWindow } from "../../components/ModelWindow/ModelWindow";
+import { SidebarFilter } from "./components/SidebarFilter/SidebarFilter";
+import { useClientsAndEmployees } from "../CreateTicketPage/hooks/useClientsAndEmployees";
 
 export const UniversalTicketsSheet = ({ titleText, queryParams }) => {
+
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [showFilter, setShowFilter] = useState(false);
@@ -25,9 +26,6 @@ export const UniversalTicketsSheet = ({ titleText, queryParams }) => {
 
   const { clients, loading: clientsLoading } = useClientsAndEmployees();
 
-  // -------------------------
-  // Открытие задачи → пишем в URL
-  // -------------------------
   const openTask = (id) => {
     setSearchParams((prev) => {
       prev.set("open", id);
@@ -35,9 +33,6 @@ export const UniversalTicketsSheet = ({ titleText, queryParams }) => {
     });
   };
 
-  // -------------------------
-  // Закрытие задачи → убираем из URL, но НЕ трогаем другие параметры
-  // -------------------------
   const closeTask = () => {
     setSearchParams((prev) => {
       prev.delete("open");
@@ -78,7 +73,6 @@ export const UniversalTicketsSheet = ({ titleText, queryParams }) => {
         }}
       />
 
-      {/* Модальное окно задачи */}
       <ModelWindow isOpen={!!openedTaskId} onClose={closeTask} isPadding={false}>
         {openedTaskId && (
           <TicketFormPage modal taskId={openedTaskId} onClose={closeTask} />

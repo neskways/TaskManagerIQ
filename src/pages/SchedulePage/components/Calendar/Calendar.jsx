@@ -36,7 +36,6 @@ export const Calendar = ({ theme }) => {
   const loadSchedule = async (month, year, force = false) => {
     const key = `${CACHE_PREFIX}${year}-${month}`;
 
-    // 1️⃣ Загружаем из кэша если не force
     if (!force) {
       const cached = getFromLocalStorage(key, null);
       if (cached) {
@@ -47,7 +46,6 @@ export const Calendar = ({ theme }) => {
       }
     }
 
-    // 2️⃣ Загружаем с сервера
     try {
       const data = await getSchedule(month, year);
       const normalized = data.map((item) => ({
@@ -79,9 +77,8 @@ export const Calendar = ({ theme }) => {
     const data = await loadSchedule(month, year, force);
 
     if (Array.isArray(data)) {
-      setSchedule(data); // успешная загрузка
+      setSchedule(data); 
     } else {
-      // ошибка: не очищаем старые данные
       console.warn("Использую старые данные — сервер недоступен");
     }
 
@@ -93,12 +90,10 @@ export const Calendar = ({ theme }) => {
     fetchData();
   }, []);
 
-  // Переключение месяца — всегда пробуем загрузить (с кэшем)
   useEffect(() => {
     if (!initialLoading) fetchData(false);
   }, [currentMonth]);
 
-  // Обновление вручную
   const handleRefresh = async () => {
     if (spinning) return;
 
@@ -112,7 +107,6 @@ export const Calendar = ({ theme }) => {
   const currentYear = new Date().getFullYear();
   const years = [currentYear - 1, currentYear, currentYear + 1];
 
-  // Рендер дней недели
   const renderDays = () => {
     const days = [];
     const dateFormat = "EEEEEE";
@@ -131,7 +125,6 @@ export const Calendar = ({ theme }) => {
     return <div className={s.daysRow}>{days}</div>;
   };
 
-  // Рендер ячеек календаря
   const renderCells = () => {
     const monthStart = startOfMonth(displayMonth);
     const monthEnd = endOfMonth(displayMonth);

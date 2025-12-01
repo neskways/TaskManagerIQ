@@ -1,15 +1,15 @@
 import s from "./TicketSidebar.module.scss";
 import Cookies from "js-cookie";
+import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Contacts } from "../Contacts/Contacts";
 import { Button } from "../../../../UI/Button/Button";
 import { Selector } from "../../../../UI/Selector/Selector";
 import { usePopup } from "../../../../context/PopupContext";
-import { taskStatuses } from "../../../../modules/TaskStatuses";
+import { taskStatuses } from "../../../../modules/taskStatuses";
 import { updateTaskInfo } from "../../../../api/update/updateTaskInfo";
-import { useClientsAndEmployees } from "../../../CreateTicketPage/hooks/useClientsAndEmployees";
-import { Link } from "react-router-dom";
 import { Checkbox } from "../../../../UI/Checkbox/Checkbox";
+import { useClientsAndEmployees } from "../../../CreateTicketPage/hooks/useClientsAndEmployees";
 
 export const TicketSidebar = ({
   taskId,
