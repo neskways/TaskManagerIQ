@@ -1,16 +1,6 @@
 import s from "./TaskGridCell.module.scss";
 import { useState } from "react";
-
-const statusStylesByTitle = {
-  "Новая": { bg: "#e8f3ff", color: "#007bff" },
-  "На оценке": { bg: "#f3e9ff", color: "#8e44ad" },
-  "Передана на выполнение": { bg: "#e9f2ff", color: "#2980b9" },
-  "Выполняется": { bg: "#fff7e0", color: "#e67e22" },
-  "Приостановлена": { bg: "#fff0e0", color: "#d35400" },
-  "Готова к сдаче": { bg: "#e8f9e9", color: "#27ae60" },
-  "Сдана клиенту": { bg: "#e5f8f4", color: "#16a085" },
-  "Отменена/Не актуальна": { bg: "#fdecea", color: "#c0392b" },
-};
+import { statusStylesByTitle } from "../../../../modules/taskStatuses";
 
 export const TaskGridCell = ({ taskData }) => {
   const [hovered, setHovered] = useState(false);

@@ -46,16 +46,10 @@ export const TasksTable = ({
 
   const gridTemplateColumns = colWidths.map((w) => `minmax(40px, ${w}%)`).join(" ");
 
-  /* ----------------------------
-      Сохранение ширин столбцов
-  ----------------------------- */
   useEffect(() => {
     localStorage.setItem(LOCAL_STORAGE_KEY_TICKETS, JSON.stringify(colWidths));
   }, [colWidths]);
 
-  /* ----------------------------
-      Загрузка задач
-  ----------------------------- */
   const loadTasks = async () => {
     try {
       const data = await getTasksList(
@@ -88,25 +82,15 @@ export const TasksTable = ({
     }
   };
 
-  /* ----------------------------
-      Первичная загрузка
-  ----------------------------- */
   useEffect(() => {
     loadTasks();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  /* ----------------------------
-      Принудительный refetch
-  ----------------------------- */
   useEffect(() => {
     if (refetchKey != null) loadTasks();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refetchKey]);
 
-  /* ----------------------------
-      Автообновление
-  ----------------------------- */
   useEffect(() => {
     if (isTaskOpen) return;
 
@@ -120,12 +104,8 @@ export const TasksTable = ({
     return () => {
       if (pollingRef.current) clearInterval(pollingRef.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isTaskOpen, userCode, queryParams]);
 
-  /* ----------------------------
-      Фильтрация задач
-  ----------------------------- */
   useEffect(() => {
     const filtered = rawTasks.filter((t) => {
       const statusOk =
@@ -148,15 +128,7 @@ export const TasksTable = ({
     setTasks(filtered);
   }, [selectedStatuses, selectedEmployees, selectedClient, rawTasks]);
 
-  /* ----------------------------
-      ВОССТАНОВЛЕНИЕ ЛОГИКИ ?open=... (и на любом пути)
-      - проверяем rawTasks (даже если фильтры скрывают)
-      - также проверяем уже отфильтрованные tasks
-      - открываем один раз (openedFromUrlRef)
-      - удаляем параметр из URL после открытия
-  ----------------------------- */
   useEffect(() => {
-    // если уже открыли из URL — ничего не делаем
     if (openedFromUrlRef.current) return;
 
     const params = new URLSearchParams(window.location.search);
@@ -185,7 +157,6 @@ export const TasksTable = ({
         // сохраняем без параметра
         window.history.replaceState(null, "", url.toString());
       } catch (e) {
-        // fallback — если URL API не поддерживается, используем простую replace
         const rawUrl = window.location.href.replace(/[?&]open=[^&]*/i, "");
         window.history.replaceState(null, "", rawUrl);
       }
@@ -193,9 +164,6 @@ export const TasksTable = ({
     // проверяем, когда rawTasks или tasks изменятся
   }, [rawTasks, tasks, onOpenTask]);
 
-  /* ----------------------------
-      Ресайз столбцов
-  ----------------------------- */
   const handleMouseDown = (e, index) => {
     e.preventDefault();
     isResizing.current = true;
@@ -232,9 +200,7 @@ export const TasksTable = ({
     document.removeEventListener("mouseup", handleMouseUp);
   };
 
-  /* ----------------------------
-      UI
-  ----------------------------- */
+
   if (loading && !rawTasks.length)
     return (
       <div className={s.centerWrapper}>
@@ -244,7 +210,6 @@ export const TasksTable = ({
 
   return (
     <div className={s.wrapper}>
-      {/* Кнопка фильтров */}
       <div className={s.btn_wrapper}>
         <button className={s.filter_btn} onClick={onShowFilter}>
           Фильтр
@@ -252,7 +217,6 @@ export const TasksTable = ({
       </div>
 
       <div className={s.gridTableWrapper}>
-        {/* Заголовки */}
         <div
           className={s.gridHeaderRow}
           style={{ gridTemplateColumns }}
@@ -276,7 +240,6 @@ export const TasksTable = ({
           ))}
         </div>
 
-        {/* Тело таблицы */}
         <div className={s.gridBody} ref={tableRef}>
           {tasks.map((task) => (
             <div
