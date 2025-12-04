@@ -4,11 +4,9 @@ import Cookies from "js-cookie";
 function parseAndFormatTime(timeString) {
   // Удаляем все пробелы
   const cleanedStr = timeString.replace(/\s+/g, '');
-  // Преобразуем в число
   const seconds = parseInt(cleanedStr, 10);
   
   if (isNaN(seconds)) {
-    // Если значение не число, можно вернуть пустую строку или сообщение
     return '00:00:00';
   }
   

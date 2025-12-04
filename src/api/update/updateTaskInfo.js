@@ -2,8 +2,8 @@ import { api } from "../axios";
 import Cookies from "js-cookie";
 
 export const updateTaskInfo = async (taskId, state, ownerId) => {
+  
   try {
-    
     const token = Cookies.get("token");
     const userId = Cookies.get("userCode");
     

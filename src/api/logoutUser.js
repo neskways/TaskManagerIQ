@@ -8,7 +8,6 @@ export const logoutUser = async (token) => {
   const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   try {
-    // отправляем токен на сервер для выхода
     await api.post(
       `${BASE_URL}/Logout`,
       { Token: token },

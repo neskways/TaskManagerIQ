@@ -1,4 +1,3 @@
-// api/get/getContacts.js
 import { api } from "../axios";
 import Cookies from "js-cookie";
 
@@ -13,11 +12,9 @@ export const getContacts = async (clientId) => {
       { responseType: "text" }
     );
 
-    // иногда сервер возвращает данные с одинарными кавычками → фиксируем
     const fixed = (response.data || "").replace(/'/g, '"');
     const parsed = JSON.parse(fixed);
 
-    // приводим поля к нормальной структуре
     return parsed.map((item) => ({
       id: item.n,
       name: item.Name,

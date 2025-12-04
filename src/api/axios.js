@@ -28,7 +28,8 @@ api.interceptors.response.use(
     if (status === 401 && token !== undefined) {
       console.warn();
 
-      if (popupHandler) popupHandler("Сессия истекла. Авторизуйтесь снова.", { type: "error" });
+      if (popupHandler)
+        popupHandler("Сессия истекла. Авторизуйтесь снова.", { type: "error" });
       if (logoutHandler) logoutHandler();
       if (navigateHandler) navigateHandler("/login");
 

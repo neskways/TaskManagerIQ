@@ -2,6 +2,7 @@ import s from "./ThemeToggle.module.scss";
 import { useTheme } from '../../context/ThemeContext'; 
 
 export const ThemeToggle = () => {
+  
   const { theme, toggleTheme } = useTheme();
 
   return (

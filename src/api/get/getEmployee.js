@@ -1,4 +1,3 @@
-// api/getEmployee.js
 import { api } from "../axios";
 import Cookies from "js-cookie";
 
@@ -20,6 +19,6 @@ export const getEmployees = async () => {
     return Array.isArray(parsed) ? parsed : [];
   } catch (error) {
     console.error("Ошибка при загрузке сотрудников:", error);
-    return []; // В случае ошибки возвращаем пустой массив
+    return [];
   }
 };

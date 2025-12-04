@@ -1,9 +1,9 @@
-// src/api/get/getTaskQueue.js
 import { api } from "../axios";
 import Cookies from "js-cookie";
 
 
 export const getTaskQueue = async (state) => {
+
   try {
     const BASE_URL = import.meta.env.VITE_API_BASE_URL;
     const token = Cookies.get("token");
@@ -52,7 +52,6 @@ export const getTaskQueue = async (state) => {
       };
     });
     if(role != import.meta.env.VITE_TOKEN_MANAGER) {
-       // сортируем по priority desc (больше = важнее), затем по displaySec (больше выше)
       const sorted = normalized.sort((a, b) => {
         if (b.priority !== a.priority) return b.priority - a.priority;
         return b.displaySec - a.displaySec;
@@ -65,7 +64,6 @@ export const getTaskQueue = async (state) => {
     return normalized;
   } catch (err) {
     console.error("Ошибка при загрузке GetTaskQueue:", err);
-    // прокидываем ошибку вверх — компонент решит, показывать popup или нет
     throw err;
   }
 };

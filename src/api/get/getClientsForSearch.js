@@ -2,6 +2,7 @@ import { api } from "../axios";
 import Cookies from "js-cookie";
 
 export const getClientsForSearch = async () => {
+
   const BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const token = Cookies.get("token");
 
@@ -20,9 +21,9 @@ export const getClientsForSearch = async () => {
           name: c.Name,
           code: c.Code,
           priority: c.Priority,
-          department: c.department, //Подразделение
-          card: c.card, //Карта розницы
-          cardbalance: c.cardbalance, //Остаток карты
+          department: c.department, 
+          card: c.card, 
+          cardbalance: c.cardbalance, 
           activities: c.Activities || [],
         }))
       : [];

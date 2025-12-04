@@ -10,7 +10,7 @@ const icons = {
 };
 
 export const PopupList = ({ popups, removePopup }) => {
-  // максимум 3 уведомления
+
   const visiblePopups = popups.slice(0, 3);
 
   return (

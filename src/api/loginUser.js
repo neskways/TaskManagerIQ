@@ -2,6 +2,7 @@ import { api } from "./axios";
 import Cookies from "js-cookie";
 
 export const loginUser = async (login, password) => {
+  
   const BASE_URL = import.meta.env.VITE_API_BASE_URL;
   const TOKEN_LIFETIME = Number(import.meta.env.VITE_TOKEN_LIFETIME) || 0.6;
 

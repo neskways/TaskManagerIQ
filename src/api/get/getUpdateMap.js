@@ -1,4 +1,3 @@
-// api.js
 import { api } from "../axios";
 import Cookies from "js-cookie";
 
