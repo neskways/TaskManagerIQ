@@ -58,7 +58,7 @@ export const getTaskQueue = async (state) => {
       });
       
       // берем топ-10
-      return sorted.slice(0, 10);
+      return sorted.slice(0, 17);
     }
     //Иначе возвращаем все
     return normalized;
