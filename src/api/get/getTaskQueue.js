@@ -51,15 +51,15 @@ export const getTaskQueue = async (state) => {
         startedAt: startedAt ? new Date(startedAt).toISOString() : null,
       };
     });
-    // if(role != import.meta.env.VITE_TOKEN_MANAGER) {
-    //   const sorted = normalized.sort((a, b) => {
-    //     if (b.priority !== a.priority) return b.priority - a.priority;
-    //     return b.displaySec - a.displaySec;
-    //   });
-      
-    //   // берем топ-10
-    //   return sorted.slice(0, 10);
-    // }
+    if(role != import.meta.env.VITE_TOKEN_MANAGER) {
+      const sorted = normalized.sort((a, b) => {
+        if (b.priority !== a.priority) return b.priority - a.priority;
+        return b.displaySec - a.displaySec;
+      });
+  
+      // берем топ-10
+      return sorted;
+    }
     //Иначе возвращаем все
     return normalized;
   } catch (err) {
