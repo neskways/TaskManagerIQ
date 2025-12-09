@@ -12,7 +12,6 @@ export const getTasksList = async (
     const BASE_URL = import.meta.env.VITE_API_BASE_URL;
     const token = Cookies.get("token");
 
-
     const payload = {
       Token: token,
       State: states,
