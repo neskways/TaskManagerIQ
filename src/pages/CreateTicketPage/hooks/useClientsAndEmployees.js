@@ -14,7 +14,6 @@ export const useClientsAndEmployees = () => {
           getClientsForSearch(),
           getEmployees(),
         ]);
-        console.log(clientsData)
         const sortedClients = [...clientsData].sort((a, b) =>
           a.name.localeCompare(b.name, "ru")
         );

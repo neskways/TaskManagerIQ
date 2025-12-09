@@ -1,5 +1,6 @@
 import s from "./NewContactForm.module.scss";
 import { Input } from "../../../../UI/Input/Input";
+import PhoneInput from "./components/PhoneInput";
 
 export const NewContactForm = ({ contactDetails, setContactDetails }) => {
   return (
@@ -9,25 +10,24 @@ export const NewContactForm = ({ contactDetails, setContactDetails }) => {
         value={contactDetails.name}
         setUserData={(v) => setContactDetails({ ...contactDetails, name: v })}
       />
+
       <Input
         text="Должность"
         value={contactDetails.post}
         setUserData={(v) => setContactDetails({ ...contactDetails, post: v })}
       />
-      <Input
+
+      <PhoneInput
+        value={contactDetails.phone || ""}
+        onChange={(formatted) =>
+          setContactDetails({ ...contactDetails, phone: formatted })
+        }
         text="Телефон"
-        type={"tel"}
-        pattern="^\+7\(\d{3}\)\s\d{3}-\d{2}-\d{2}$"
-        placeholder="+7(900) 000-00-00"
-        maxLen={17}
-        value={contactDetails.phone}
-        setUserData={(v) => {
-          setContactDetails({ ...contactDetails, phone: v })
-        }}
       />
+
       <Input
         text="Email"
-        type={"email"}
+        type="email"
         value={contactDetails.mail}
         setUserData={(v) => setContactDetails({ ...contactDetails, mail: v })}
       />
