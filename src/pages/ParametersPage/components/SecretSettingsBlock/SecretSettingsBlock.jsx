@@ -15,9 +15,9 @@ export const SecretSettingsBlock = () => {
     secret_links_edges: false,
     secret_links_images: false,
     meme_sounds: false,
+    snow_effect: false, // новая настройка снега
   });
 
-  // Флаг, что настройки были изменены
   const [hasChanges, setHasChanges] = useState(false);
 
   // Загружаем сохранённые настройки при монтировании
@@ -79,8 +79,16 @@ export const SecretSettingsBlock = () => {
           />
           <p>Мемные звуки</p>
         </div>
-      </div>
 
+        {/* Новый чекбокс для снега */}
+        <div className={s.item}>
+          <Checkbox
+            checked={settings.snow_effect}
+            onChange={handleChange("snow_effect")}
+          />
+          <p>Снежный эффект на странице</p>
+        </div>
+      </div>
     </div>
   );
 };
