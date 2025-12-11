@@ -45,7 +45,10 @@ export const Sidebar = () => {
           </ul>
         </nav>
 
-        {(String(import.meta.env.VITE_TOKEN_MANAGER) !== role && userCode !== "000000002") && (
+        {(String(import.meta.env.VITE_TOKEN_MANAGER) !== role) && (
+          <img className={s.img_gif} src="/images/gif.gif" />
+        )}
+        {(userCode === "000000054") && (
           <img className={s.img_gif} src="/images/gif.gif" />
         )}
 

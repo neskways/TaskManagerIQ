@@ -5,7 +5,7 @@ import { Button } from "../../../../UI/Button/Button";
 import { MultiSelector } from "../../../../UI/MultiSelector/MultiSelector";
 import { getEmployees } from "../../../../api/get/getEmployee";
 import { ClientSearch } from "../../../CreateTicketPage/components/ClientSearch/ClientSearch";
-import { taskStatuses } from "../../../../modules/taskStatuses";
+import { statusesList } from "../../../../modules/TaskStatuses";
 
 export const SidebarFilter = ({
   showFilter,
@@ -28,17 +28,6 @@ export const SidebarFilter = ({
       setEmployeesList(list);
     });
   }, []);
-
-  const statusesList = [
-    { code: "000000001", name: "Новая" },
-    { code: "000000002", name: "На оценке" },
-    { code: "000000008", name: "Передана на выполнение" },
-    { code: "000000003", name: "Выполняется" },
-    { code: "000000007", name: "Приостановлена" },
-    { code: "000000004", name: "Готова к сдаче" },
-    { code: "000000005", name: "Сдана клиенту" },
-    { code: "000000006", name: "Отменена/Не актуальная" }
-  ];
 
   return (
     <>
@@ -67,7 +56,7 @@ export const SidebarFilter = ({
           <div className={s.selecter_wrap}>
             <MultiSelector
               title="Статус"
-              items={taskStatuses}
+              items={statusesList}
               value={selectedStatuses || []}
               onChange={setSelectedStatuses}
               keyField="name"
