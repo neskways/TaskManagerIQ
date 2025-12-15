@@ -9,7 +9,6 @@ import { TaskGridCell } from "../TaskGridCell/TaskGridCell";
 import { getTasksList } from "../../../../api/get/getTasksList";
 
 const REFRESH_INTERVAL_MS = 20000;
-const REFRESH_INTERVAL_MS_5 = 10000;
 const LOCAL_STORAGE_KEY_TICKETS = "tickets_table_col_widths";
 const DEFAULT_WIDTHS = [5, 33, 14, 16, 11, 8, 7, 7];
 
@@ -96,8 +95,7 @@ export const TasksTable = ({
 
     if (pollingRef.current) clearInterval(pollingRef.current);
 
-    const intervalTime =
-      userCode === "000000002" ? REFRESH_INTERVAL_MS_5 : REFRESH_INTERVAL_MS;
+    const intervalTime = REFRESH_INTERVAL_MS;
 
     pollingRef.current = setInterval(loadTasks, intervalTime);
 
