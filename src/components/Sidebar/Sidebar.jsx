@@ -49,7 +49,10 @@ export const Sidebar = () => {
           <img className={s.img_gif} src="/images/gif.gif" />
         )}
         {(userCode === "000000054") && (
-          <img className={s.img_gif} src="/images/gif.gif" />
+          <img className={s.img_gif} src="/images/gif2.gif" />
+        )}
+        {(userCode === "000000007") && (
+          <img className={s.img_gif} src="/images/gif2.gif" />
         )}
 
         <FooterSidebar

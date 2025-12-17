@@ -18,7 +18,6 @@ import { TicketSidebar } from "./components/TicketSidebar/TicketSidebar";
 import { TaskTitleAndText } from "./components/TaskTitleAndText/TaskTitleAndText";
 
 export const TicketFormPage = ({ modal = false, taskId, onClose }) => {
-
   const routeId = useParams().id;
   const realId = modal ? taskId : routeId;
 
@@ -28,7 +27,9 @@ export const TicketFormPage = ({ modal = false, taskId, onClose }) => {
 
   const [task, setTask] = useState(null);
   const [loading, setLoading] = useState(true);
+
   const [commentText, setCommentText] = useState("");
+  const [sending, setSending] = useState(false); 
 
   const didFetch = useRef(false);
 
@@ -92,12 +93,17 @@ export const TicketFormPage = ({ modal = false, taskId, onClose }) => {
   }, [realId]);
 
   const handleSendComment = async () => {
+    // ❗ блокируем повторные нажатия
+    if (sending) return;
+
     if (!commentText.trim()) {
       showPopup("Комментарий не может быть пустым", { type: "warning" });
       return;
     }
 
     try {
+      setSending(true);
+
       const formattedTaskId = String(task.taskId).padStart(9, "0");
 
       await createComment({
@@ -124,6 +130,8 @@ export const TicketFormPage = ({ modal = false, taskId, onClose }) => {
       showPopup("Комментарий добавлен", { type: "success" });
     } catch (err) {
       showPopup("Не удалось добавить комментарий", { type: "error" });
+    } finally {
+      setSending(false);
     }
   };
 
@@ -193,8 +201,13 @@ export const TicketFormPage = ({ modal = false, taskId, onClose }) => {
               placeholder="Введите комментарий..."
               setUserData={setCommentText}
               value={commentText}
+              disabled={sending} 
             />
-            <SendButton onClick={handleSendComment} />
+            <SendButton
+              onClick={handleSendComment}
+              disabled={sending} 
+              loading={sending} 
+            />
           </div>
         </div>
 

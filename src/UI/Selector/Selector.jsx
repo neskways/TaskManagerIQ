@@ -4,36 +4,40 @@ export const Selector = ({
   alignTitle,
   items = [],
   value,
-  defaultValue = "",
   title,
   smallFont,
   onChange,
   disabled,
-  labelKey = "name",   
-  valueKey = "id",     
+  emptyLabel = "-", // текст, когда список пуст
+  labelKey = "name",
+  valueKey = "id",
 }) => {
-
   const isControlled = value !== undefined && onChange;
 
   return (
     <div className={s.wrapper}>
-      {title && <h4 className={`${s.title} ${alignTitle === "center" ? s.titleCenter : ""} ${smallFont ? s.smallFont : ""}`}>{title}</h4>}
+      {title && (
+        <h4
+          className={`${s.title} ${
+            alignTitle === "center" ? s.titleCenter : ""
+          } ${smallFont ? s.smallFont : ""}`}
+        >
+          {title}
+        </h4>
+      )}
       <select
         className={`${s.select} ${smallFont ? s.smallFont : ""}`}
-        value={isControlled ? value : undefined}
-        defaultValue={!isControlled ? defaultValue : undefined}
+        value={isControlled ? value : ""}
         onChange={(e) => onChange && onChange(e.target.value)}
         disabled={disabled}
       >
-        <option value="">-</option>
-        {items.map((item, index) => (
-          <option
-            key={item[valueKey] || `opt-${index}`} 
-            value={item[valueKey] ?? ""}
-          >
-            {item[labelKey] ?? ""}
-          </option>
-        ))}
+        {items.length === 0 && <option value="">{emptyLabel}</option>}
+        {items.length > 0 &&
+          items.map((item, index) => (
+            <option key={item[valueKey] ?? index} value={item[valueKey]}>
+              {item[labelKey]}
+            </option>
+          ))}
       </select>
     </div>
   );

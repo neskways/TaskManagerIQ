@@ -30,7 +30,7 @@ export const CreateTicketPage = () => {
   const userCode = Cookies.get("userCode");
 
   const [selectedClient, setSelectedClient] = useState(null);
-  const [selectedEmployee, setSelectedEmployee] = useState(userCode);
+  const [selectedEmployee, setSelectedEmployee] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [isReturnTask, setIsReturnTask] = useState(false);
@@ -40,6 +40,7 @@ export const CreateTicketPage = () => {
     role === import.meta.env.VITE_TOKEN_DUTY
   );
   const [isDeparture, setIsDeparture] = useState(false);
+  const [submitting, setSubmitting] = useState(false); // блокировка
 
   const {
     clients,
@@ -63,8 +64,26 @@ export const CreateTicketPage = () => {
     loading: configsLoading,
   } = useConfigurations(selectedClient);
 
-  const dataReady =
-    !configsLoading && configOptions.length > 0 && contactOptions.length > 0;
+  // Автовыбор исполнителя
+  useEffect(() => {
+    if (employeeOptions.length > 0 && !selectedEmployee) {
+      setSelectedEmployee(employeeOptions[0].id);
+    }
+  }, [employeeOptions]);
+
+  // Автовыбор первой конфигурации
+  useEffect(() => {
+    if (!configsLoading && configOptions.length > 0 && !selectedConfig) {
+      setSelectedConfig(configOptions[0].id);
+    }
+  }, [configsLoading, configOptions]);
+
+  // Автовыбор возвратной задачи
+  useEffect(() => {
+    if (tasksList.length > 0 && !selectedReturnTask) {
+      setSelectedReturnTask(tasksList[0].id);
+    }
+  }, [tasksList]);
 
   useEffect(() => {
     const loadTasks = async () => {
@@ -73,7 +92,6 @@ export const CreateTicketPage = () => {
         setSelectedReturnTask("");
         return;
       }
-
       try {
         const tasks = await getTasksList(
           [taskStatuses.DONE.code],
@@ -82,7 +100,6 @@ export const CreateTicketPage = () => {
           null,
           selectedClient.code
         );
-
         const mapped = tasks.map((t) => ({
           id: t.number,
           name: `${t.title} (${t.client})`,
@@ -93,7 +110,6 @@ export const CreateTicketPage = () => {
         showPopup("Не удалось загрузить завершённые задачи", { type: "error" });
       }
     };
-
     loadTasks();
   }, [isReturnTask, selectedClient, showPopup, userCode]);
 
@@ -106,6 +122,7 @@ export const CreateTicketPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (submitting) return;
 
     const showValidationPopup = (text) => showPopup(text, { type: "error" });
 
@@ -120,60 +137,59 @@ export const CreateTicketPage = () => {
     if (!description.trim())
       return showValidationPopup("Пожалуйста, заполните описание задачи!");
 
+    if (!selectedContactId && !creatingNewContact)
+      return showValidationPopup("Пожалуйста, выберите контакт!");
+
     if (creatingNewContact) {
       if (!contactDetails.name.trim())
         return showValidationPopup(
           "Пожалуйста, заполните ФИО нового контакта!"
         );
-
       if (!contactDetails.phone.trim())
         return showValidationPopup(
           "Пожалуйста, заполните номер телефона нового контакта!"
         );
-
       const phoneRegex = /^\+7\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/;
-      if (!phoneRegex.test(contactDetails.phone.trim())) {
+      if (!phoneRegex.test(contactDetails.phone.trim()))
         return showValidationPopup(
           "Введите номер телефона в формате +7(XXX) XXX-XX-XX"
         );
-      }
-    } else {
-      if (!contactDetails.name.trim())
-        return showValidationPopup("Пожалуйста, выберите контакт!");
     }
 
-
-    if (!selectedReturnTask && isReturnTask)
+    if (isReturnTask && !selectedReturnTask)
       return showValidationPopup("Пожалуйста, выберите возвратную задачу!");
 
-    const payload = {
-      token: Cookies.get("token"),
-      userId: userCode,
-      task: {
-        clientId: selectedClient.code,
-        title: title.trim(),
-        description: description.trim(),
-        confId: selectedConfig || null,
-        contacts: { ...contactDetails },
-        owner: selectedEmployee || userCode,
-        return: isReturnTask ? selectedReturnTask : null,
-        firstline:
-          role === import.meta.env.VITE_TOKEN_DUTY
-            ? "true"
-            : isFirstLineTask
-            ? "true"
-            : null,
-      },
-    };
-
     try {
+      setSubmitting(true);
+
+      const payload = {
+        token: Cookies.get("token"),
+        userId: userCode,
+        task: {
+          clientId: selectedClient.code,
+          title: title.trim(),
+          description: description.trim(),
+          confId: selectedConfig,
+          contacts: { ...contactDetails },
+          owner: selectedEmployee,
+          return: isReturnTask ? selectedReturnTask : null,
+          firstline:
+            role === import.meta.env.VITE_TOKEN_DUTY
+              ? "true"
+              : isFirstLineTask
+              ? "true"
+              : null,
+          departure: isDeparture ? "true" : "false",
+        },
+      };
+
       let result = await createTask(payload);
       if (typeof result === "string") {
         result = JSON.parse(result.replace(/'/g, '"'));
       }
-
       if (result?.Error) {
-        return showPopup(`Ошибка: ${result.Error}`, { type: "error" });
+        showPopup(`Ошибка: ${result.Error}`, { type: "error" });
+        return;
       }
 
       const cleanId = parseInt(result.taskid, 10);
@@ -182,6 +198,8 @@ export const CreateTicketPage = () => {
     } catch (error) {
       console.error("Ошибка при создании заявки:", error);
       showPopup(MESSAGES.createTaskError, { type: "error" });
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -226,6 +244,7 @@ export const CreateTicketPage = () => {
             disabled={!selectedClient || configsLoading}
             labelKey="displayName"
             valueKey="id"
+            emptyLabel="Конфигурация не выбрана"
           />
 
           <Selector
@@ -247,29 +266,21 @@ export const CreateTicketPage = () => {
         )}
 
         <div className={s.additional_parameters}>
-          {/* Чекбокс "Задача первой линии" */}
-          {(role === import.meta.env.VITE_TOKEN_MANAGER) && (
+          {role === import.meta.env.VITE_TOKEN_MANAGER && (
             <>
-            <div className={s.checkbox}>
+              <div className={s.checkbox}>
                 <Checkbox
                   checked={isFirstLineTask}
-                  onChange={(e) =>
-                    role === import.meta.env.VITE_TOKEN_MANAGER
-                      ? setIsFirstLineTask(e.target.checked)
-                      : null
-                  }
+                  onChange={(e) => setIsFirstLineTask(e.target.checked)}
                   disabled={role === import.meta.env.VITE_TOKEN_DUTY}
                 />
                 <p>Задача первой линии</p>
               </div>
+
               <div className={s.checkbox}>
                 <Checkbox
                   checked={isDeparture}
-                  onChange={(e) =>
-                    role === import.meta.env.VITE_TOKEN_MANAGER
-                      ? setIsDeparture(e.target.checked)
-                      : null
-                  }
+                  onChange={(e) => setIsDeparture(e.target.checked)}
                   disabled={role === import.meta.env.VITE_TOKEN_DUTY}
                 />
                 <p>Выезд к клиенту</p>
@@ -277,34 +288,32 @@ export const CreateTicketPage = () => {
             </>
           )}
 
-         <div className={s.return_task}>
-           {/* Чекбокс "Возврат к задаче" */}
-          <div className={`${s.checkbox}`}>
-            <Checkbox
-              checked={isReturnTask}
-              onChange={(e) => setIsReturnTask(e.target.checked)}
-              disabled={!selectedClient}
-              disabledTitle={"Сначала выберите клиента!"}
-            />
-            <p>Возврат к задаче</p>
-          </div>
+          <div className={s.return_task}>
+            <div className={s.checkbox}>
+              <Checkbox
+                checked={isReturnTask}
+                onChange={(e) => setIsReturnTask(e.target.checked)}
+                disabled={!selectedClient}
+                disabledTitle="Сначала выберите клиента!"
+              />
+              <p>Возврат к задаче</p>
+            </div>
 
-          {/* Селектор возвратной задачи */}
-          {isReturnTask && (
-            <Selector
-              items={tasksList}
-              value={selectedReturnTask}
-              onChange={setSelectedReturnTask}
-              labelKey="name"
-              valueKey="id"
-              disabled={tasksList.length === 0}
-            />
-          )}
-         </div>
+            {isReturnTask && (
+              <Selector
+                items={tasksList}
+                value={selectedReturnTask}
+                onChange={setSelectedReturnTask}
+                disabled={tasksList.length === 0}
+                labelKey="name"
+                valueKey="id"
+              />
+            )}
+          </div>
         </div>
 
         <div className={s.button_wrap}>
-          <Button name="Создать" type="submit" />
+          <Button name="Создать" type="submit" disabled={submitting} />
         </div>
 
         <Link to={lastSecondaryPath} className={s.return_button}>
