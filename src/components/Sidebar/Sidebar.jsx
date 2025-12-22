@@ -48,12 +48,12 @@ export const Sidebar = () => {
         {(String(import.meta.env.VITE_TOKEN_MANAGER) !== role && userCode !== "000000002" && userCode !== "000000003") && (
           <img className={s.img_gif} src="/images/gif.gif" />
         )}
-        {(userCode === "000000054") && (
+        {/* {(userCode === "000000054") && (
           <img className={s.img_gif} src="/images/gif2.gif" />
         )}
         {(userCode === "000000007") && (
           <img className={s.img_gif} src="/images/gif2.gif" />
-        )}
+        )} */}
         {(userCode === "000000003") && (
           <img className={s.img_gif} src="/images/gif3.gif" />
         )}
