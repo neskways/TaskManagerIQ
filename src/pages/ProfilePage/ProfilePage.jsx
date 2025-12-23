@@ -4,12 +4,12 @@ import { Loading } from "../../UI/Loading/Loading";
 import { useState, useEffect } from "react";
 import { usePopup } from "../../context/PopupContext";
 import { useTheme } from "../../context/ThemeContext";
-import { taskStatuses } from "../../modules/TaskStatuses";
 import { getTasksList } from "../../api/get/getTasksList";
 import { PageTitle } from "../../components/PageTitle/PageTitle";
 import { ProfileBlock } from "./Components/ProfileBlock/ProfileBlock";
 import { getFromLocalStorage } from "../../modules/localStorageUtils";
 import { ProfileTasksTable } from "./Components/ProfileTasksTable/ProfileTasksTable";
+import { taskStatuses } from "../../modules/taskStatuses";
 
 const secToHHMMSS = (sec) => {
   const h = Math.floor(sec / 3600);

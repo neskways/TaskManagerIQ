@@ -28,8 +28,6 @@
   box-shadow: 0 0 35px rgba(0, 0, 0, 0.2);
   overflow: hidden;
   opacity: 0;
-  transition: transform 0.2s ease;
-
   &.show {
     transform: translateY(0);
     opacity: 1;
@@ -45,15 +43,12 @@
   gap: 20px;
 
   border-radius: 12px;
-  transform: translateY(0); /* стартовая позиция */
-  opacity: 0;                  /* стартовая прозрачность */
+  transform: translateY(0);
+  opacity: 0;              
 
-  transition:
-    transform 0.2s ease,
-    opacity 0.2s ease;
   z-index: 10000;
   &.show {
-    transform: translateY(-20px);
+    transform: translateY(-10px);
     opacity: 1;
   }
 }
@@ -62,11 +57,10 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0);
   backdrop-filter: blur(1px);
   z-index: 20;
   opacity: 0;
-  transition: opacity 0.2s ease;
 
   &.show {
     opacity: 1;

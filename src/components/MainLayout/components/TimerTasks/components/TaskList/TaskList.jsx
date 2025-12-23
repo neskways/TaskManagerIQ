@@ -13,10 +13,6 @@ export const TaskList = ({
   return (
     <div className={`${s.listBox} ${isExpanded ? s.expanded : ""}`}>
       <div className={s.listInner}>
-        {loading && tasks.length === 0 && (
-          <div className={s.empty}>Загрузка...</div>
-        )}
-
         {!loading && tasks.length === 0 && (
           <div className={s.empty}>Задач нет</div>
         )}
@@ -25,7 +21,9 @@ export const TaskList = ({
           {tasks.map((task) => (
             <div
               key={task.id}
-              className={`${s.taskItem} ${task.id === selectedTaskId ? s.selected : ""}`}
+              className={`${s.taskItem} ${
+                task.id === selectedTaskId ? s.selected : ""
+              }`}
               onClick={() => onSelectTask(task.id)}
               onDoubleClick={() => onOpenModal(task.id)}
             >
