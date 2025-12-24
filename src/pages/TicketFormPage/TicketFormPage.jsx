@@ -16,6 +16,7 @@ import { getFromLocalStorage } from "../../modules/localStorageUtils";
 import { TaskTextBlock } from "./components/TaskTextBlock/TaskTextBlock";
 import { TicketSidebar } from "./components/TicketSidebar/TicketSidebar";
 import { TaskTitleAndText } from "./components/TaskTitleAndText/TaskTitleAndText";
+import { Info } from "../../UI/Info/Info";
 
 export const TicketFormPage = ({ modal = false, taskId, onClose }) => {
   const routeId = useParams().id;
@@ -54,7 +55,7 @@ export const TicketFormPage = ({ modal = false, taskId, onClose }) => {
       if (!data) {
         return;
       }
-
+      console.log(data)
       setTask({
         taskId: parseInt(data.taskId, 10),
         client: data.client,
@@ -93,7 +94,6 @@ export const TicketFormPage = ({ modal = false, taskId, onClose }) => {
   }, [realId]);
 
   const handleSendComment = async () => {
-    // ❗ блокируем повторные нажатия
     if (sending) return;
 
     if (!commentText.trim()) {
@@ -150,9 +150,11 @@ export const TicketFormPage = ({ modal = false, taskId, onClose }) => {
       <div className={s.inner_box}>
         <p className={s.error}>Заявка не найдена</p>
         {modal && (
-          <button className={s.closeBtn} onClick={onClose}>
-            <CloseIcon />
-          </button>
+          <>
+            <button className={s.closeBtn} onClick={onClose}>
+              <CloseIcon />
+            </button>
+          </>
         )}
       </div>
     );
@@ -160,6 +162,7 @@ export const TicketFormPage = ({ modal = false, taskId, onClose }) => {
 
   return (
     <div className={s.inner_box}>
+
       {!modal && (
         <Link
           to={lastSecondaryPath}
@@ -220,6 +223,7 @@ export const TicketFormPage = ({ modal = false, taskId, onClose }) => {
           returnId={task.returnId}
           returnName={task.returnName}
           timeSpent={task.timeSpent}
+          theme={theme}
         />
       </div>
     </div>

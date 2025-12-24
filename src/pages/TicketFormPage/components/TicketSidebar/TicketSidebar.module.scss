@@ -72,3 +72,10 @@
     align-items: center;
     gap: 10px;
 }
+
+.info {
+  z-index: 1000;
+  position: absolute;
+  left: 4px;
+  top: 6px;
+}

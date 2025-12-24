@@ -10,6 +10,7 @@ import { taskStatuses } from "../../../../modules/taskStatuses";
 import { updateTaskInfo } from "../../../../api/update/updateTaskInfo";
 import { Checkbox } from "../../../../UI/Checkbox/Checkbox";
 import { useClientsAndEmployees } from "../../../CreateTicketPage/hooks/useClientsAndEmployees";
+import { Info } from "../../../../UI/Info/Info";
 
 export const TicketSidebar = ({
   taskId,
@@ -20,6 +21,7 @@ export const TicketSidebar = ({
   returnId,
   returnName,
   timeSpent,
+  theme,
   isFirstLineTask,
 }) => {
   const { employeeOptions, loading: employeesLoading } = useClientsAndEmployees();
@@ -100,6 +102,9 @@ export const TicketSidebar = ({
 
   return (
     <div className={s.wrapper}>
+      <div className={s.info}>
+        <Info theme={theme} />
+      </div>
       {hasChanges && (
         <div className={s.dirtyIndicator}>
           <p className={s.z}>*</p>

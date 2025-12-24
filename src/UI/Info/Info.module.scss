@@ -1,0 +1,9 @@
+.svg {
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.svg:hover, .svg:hover path {
+    color: var(--accent-color);
+    stroke: var(--accent-color);
+}

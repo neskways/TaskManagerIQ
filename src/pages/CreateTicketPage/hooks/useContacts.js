@@ -33,19 +33,16 @@ export const useContacts = (client) => {
 
         const opts = list.map((c) => ({
           id: String(c.id),
-          name: [
-            c.phone,
-            c.name,
-            c.post,
-            c.mail,
-          ]
-            .filter(Boolean)
-            .join(" | "),
+          name: [c.phone, c.name, c.post, c.mail].filter(Boolean).join(" | "),
           data: c,
         }));
 
-        setContactOptions([...opts, { id: "new", name: "Создать новый контакт" }]);
+        setContactOptions([
+          ...opts,
+          { id: "new", name: "Создать новый контакт" },
+        ]);
 
+        // ✅ КЛЮЧЕВАЯ ЛОГИКА
         if (list.length > 0) {
           const first = list[0];
           setSelectedContactId(String(first.id));
@@ -58,9 +55,10 @@ export const useContacts = (client) => {
           });
           setCreatingNewContact(false);
         } else {
-          setSelectedContactId("");
+          // 🔥 ВОТ ЭТОГО ТЕБЕ НЕ ХВАТАЛО
+          setSelectedContactId("new");
           setContactDetails({ n: "", name: "", post: "", phone: "", mail: "" });
-          setCreatingNewContact(false);
+          setCreatingNewContact(true);
         }
       } catch (err) {
         console.error("Ошибка при загрузке контактов:", err);
@@ -78,24 +76,28 @@ export const useContacts = (client) => {
   const handleSelectContact = (id) => {
     setSelectedContactId(id);
 
-    if (id === "" || id === null) {
+    if (!id) {
       setCreatingNewContact(false);
       setContactDetails({ n: "", name: "", post: "", phone: "", mail: "" });
-    } else if (id === "new") {
+      return;
+    }
+
+    if (id === "new") {
       setCreatingNewContact(true);
       setContactDetails({ n: "", name: "", post: "", phone: "", mail: "" });
-    } else {
+      return;
+    }
+
+    const c = contactsList.find((x) => String(x.id) === id);
+    if (c) {
       setCreatingNewContact(false);
-      const c = contactsList.find((x) => String(x.id) === id);
-      if (c) {
-        setContactDetails({
-          n: c.id,
-          name: c.name,
-          post: c.post,
-          phone: c.phone,
-          mail: c.mail,
-        });
-      }
+      setContactDetails({
+        n: c.id,
+        name: c.name,
+        post: c.post,
+        phone: c.phone,
+        mail: c.mail,
+      });
     }
   };
 
