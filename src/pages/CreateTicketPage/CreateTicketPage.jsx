@@ -10,7 +10,7 @@ import { usePopup } from "../../context/PopupContext";
 import { Checkbox } from "../../UI/Checkbox/Checkbox";
 import { Selector } from "../../UI/Selector/Selector";
 import { createTask } from "../../api/create/createTask";
-import { getTasksList } from "../../api/get/getTasksList"; 
+import { getTasksList } from "../../api/get/getTasksList";
 import { taskStatuses } from "../../modules/taskStatuses";
 import { useConfigurations } from "./hooks/useConfigurations";
 import { PageTitle } from "../../components/PageTitle/PageTitle";
@@ -188,8 +188,8 @@ export const CreateTicketPage = () => {
             role === import.meta.env.VITE_TOKEN_DUTY
               ? "true"
               : isFirstLineTask
-              ? "true"
-              : null,
+                ? "true"
+                : null,
           departure: isDeparture ? "true" : "false",
         },
       };
@@ -238,7 +238,7 @@ export const CreateTicketPage = () => {
             valueKey="id"
           />
         </div>
-                <MultipleInput
+        <MultipleInput
           text="Текст"
           rows={6}
           value={description}
