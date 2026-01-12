@@ -1,6 +1,6 @@
 import s from "./CreateTicketPage.module.scss";
 import Cookies from "js-cookie";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Input } from "../../UI/Input/Input";
 import { Button } from "../../UI/Button/Button";
 import { useContacts } from "./hooks/useContacts";
@@ -63,6 +63,20 @@ export const CreateTicketPage = () => {
     setSelectedConfig,
     loading: configsLoading,
   } = useConfigurations(selectedClient);
+
+
+  const titleWasCopiedRef = useRef(false);
+
+  const handleTitleBlur = () => {
+    if (
+      !titleWasCopiedRef.current &&
+      title.trim() &&
+      !description.trim()
+    ) {
+      setDescription(title);
+      titleWasCopiedRef.current = true;
+    }
+  };
 
   // Автовыбор исполнителя
   useEffect(() => {
@@ -219,7 +233,7 @@ export const CreateTicketPage = () => {
       <PageTitle titleText="Новая заявка" center />
 
       <form onSubmit={handleSubmit}>
-        <Input text="Заголовок" value={title} setUserData={setTitle} />
+        <Input text="Заголовок" value={title} setUserData={setTitle} onBlur={handleTitleBlur}/>
 
         <div className={s.filling_data_inner}>
           <ClientSearch

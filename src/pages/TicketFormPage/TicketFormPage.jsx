@@ -93,6 +93,13 @@ export const TicketFormPage = ({ modal = false, taskId, onClose }) => {
     fetchTask();
   }, [realId]);
 
+  const handleCommentKeyDown = (e) => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault(); // чтобы не добавлялся перенос строки
+    handleSendComment();
+  }
+};
+
   const handleSendComment = async () => {
     if (sending) return;
 
@@ -205,6 +212,7 @@ export const TicketFormPage = ({ modal = false, taskId, onClose }) => {
               setUserData={setCommentText}
               value={commentText}
               disabled={sending} 
+              onKeyDown={handleCommentKeyDown}
             />
             <SendButton
               onClick={handleSendComment}
