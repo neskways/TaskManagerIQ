@@ -1,4 +1,5 @@
 import s from "./ClientsPage.module.scss";
+import Cookies from "js-cookie";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { PageTitle } from "../../components/PageTitle/PageTitle";
 import { ClientsTable } from "./components/ClientsTable/ClientsTable";
@@ -21,8 +22,13 @@ const CACHE_KEY = "clientsCache";
 export const ClientsPage = () => {
   const { theme } = useTheme();
   const { showPopup } = usePopup();
+  const role     = Cookies.get("role");
+  const userCode = Cookies.get("userCode");
   const { colWidths, tableRef, handleMouseDown } = useResizableTable();
 
+  const settings = getFromLocalStorage("secret_settings", {});
+  const titleMem = (userCode === "000000007" || userCode === "000000054") || String(import.meta.env.VITE_TOKEN_MANAGER) != role ? settings.censorship ? "Список клиентов" : "Список пидарасов" : "Список клиентов";
+  
   const cachedClients = useMemo(() => getFromLocalStorage(CACHE_KEY, null), []);
   const [clients, setClients] = useState(cachedClients || []);
   const [selectedClient, setSelectedClient] = useState(null);
@@ -76,7 +82,7 @@ export const ClientsPage = () => {
   return (
     <ContentWrapper>
       <div className={s.header}>
-        <PageTitle titleText="Список клиентов" center />
+        <PageTitle titleText={titleMem} center />
         <button className={s.refreshBtn} onClick={handleRefresh}>
           <ReloadIcon theme={theme} spinning={spinning} />
         </button>

@@ -1,4 +1,5 @@
 import s from "./SchedulePage.module.scss";
+import Cookies from "js-cookie";
 import { useState, useRef, useEffect } from "react";
 import { useTheme } from "../../context/ThemeContext";
 import { motion, AnimatePresence } from "framer-motion";
@@ -10,12 +11,16 @@ import { getFromLocalStorage, saveToLocalStorage } from "../../modules/localStor
 
 export const SchedulePage = () => {
   
+  const settings = getFromLocalStorage("secret_settings", {});
+  const role     = Cookies.get("role");
+  const userCode = Cookies.get("userCode");
   const [view, setView] = useState(() =>
     getFromLocalStorage("scheduleView", "duty")
   );
   const { theme } = useTheme();
   const tabsRef = useRef(null);
-
+ 
+  const titleMem = (userCode === "000000007" || userCode === "000000054") || String(import.meta.env.VITE_TOKEN_MANAGER) != role ? settings.censorship ? "График дежурств" : "Пидарасы мученики" : "График дежурств";
   const handleTabChange = (tab) => {
     setView(tab);
     saveToLocalStorage("scheduleView", tab);
@@ -36,7 +41,7 @@ export const SchedulePage = () => {
   return (
     <ContentWrapper reletive={true}>
       <PageTitle
-        titleText={view === "duty" ? "График дежурств" : "График обновлений"}
+        titleText={view === "duty" ? titleMem : "График обновлений"}
         center={true}
       />
 
@@ -45,7 +50,7 @@ export const SchedulePage = () => {
           className={`${s.tab} ${view === "duty" ? s.active : ""}`}
           onClick={() => handleTabChange("duty")}
         >
-          График дежурств
+          { "График дежурств" }
         </button>
         <button
           className={`${s.tab} ${view === "updates" ? s.active : ""}`}

@@ -9,7 +9,7 @@
 .popup {
   position: fixed;
   top: 5%;
-  left: calc(50% - 250px);
+  left: calc(50% - 190px);
   transform: translate(-50%, -50%);
   background: linear-gradient(135deg, var(--bg-color), var(--bg-color-secondary));
   border-radius: 14px;
@@ -21,7 +21,7 @@
   align-items: center;
   gap: 12px;
   text-align: center;
-  max-width: 500px;
+  width: 440px;
 }
 
 .icon {

@@ -15,6 +15,7 @@ export const SecretSettingsBlock = () => {
     secret_links_edges: false,
     secret_links_images: false,
     meme_sounds: false,
+    censorship: false,
     snow_effect: false, // новая настройка снега
   });
 
@@ -78,6 +79,14 @@ export const SecretSettingsBlock = () => {
             onChange={handleChange("meme_sounds")}
           />
           <p>Мемные звуки</p>
+        </div>
+
+        <div className={s.item}>
+          <Checkbox
+            checked={settings.censorship}
+            onChange={handleChange("censorship")}
+          />
+          <p>Цензура слов</p>
         </div>
 
         {/* Новый чекбокс для снега */}
