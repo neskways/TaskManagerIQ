@@ -47,11 +47,6 @@
   padding: 8px 8px;
   cursor: pointer;
   font-weight: 600;
-  transition: background 0.2s ease-in;
-}
-
-.btn:hover {
-  background: var(--accent-color-secondary);
 }
 
 .btnEnd {
@@ -62,7 +57,6 @@
   padding: 8px 8px;
   border-radius: var(--border-radius);
   cursor: pointer;
-  transition: background 0.2s ease-in;
 }
 
 .btnEnd:hover {
@@ -123,7 +117,7 @@
 
 .controls .btn,
 .controls .btnEnd {
-  transition: 0.2s ease;
+  transition: background 0.2s ease-in;
 
   .expanded & {
     padding: 10px 16px;

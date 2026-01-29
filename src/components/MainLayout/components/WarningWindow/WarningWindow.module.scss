@@ -4,7 +4,7 @@
     top: 0;
     bottom: 0;
     position: fixed;
-    z-index: 9999;
+    z-index: 1010;
     display: flex;
     justify-content: center;
     background: rgba(0, 0, 0, 0.35);
@@ -14,8 +14,8 @@
 .modalWindow {
     margin-top: 200px;
     text-align: center;
-    width: 800px;
-    height: 400px;
+    width: 700px;
+    height: 350px;
     border-radius: var(--border-radius);
     background-color: var(--bg-color);
     color: red;
@@ -30,13 +30,13 @@
 }
 
 .idleWarning {
-    font-size: 24px;
-    margin-bottom: 14px;
+    font-size: 26px;
 }
 
 .idleWarningText {
     font-size: 18px;
     color: red;
+    margin-top: 10px;
 }
 
 .btn {

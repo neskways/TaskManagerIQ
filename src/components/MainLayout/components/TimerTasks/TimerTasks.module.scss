@@ -10,58 +10,56 @@
   gap: 9px;
   align-items: stretch;
   height: 132px;
-  padding: 12px 35px 0px 12px;
+  padding: 12px 35px 0 12px;
   min-width: 0;
   position: relative;
   z-index: 1;
 }
 
+.wrapper > * {
+  min-width: 0;
+}
+
 .expandedWrapper {
   position: fixed;
-  top: calc(50% - 45vh + 20px);
-  left: calc(50% - 80vh - 13px);
-  transform: translateY(20px); // стартовая позиция для анимации
-  width: 80vw;
+  top: calc(50% - 45vh);
+  left: calc(50% - 42vw);
+  width: 84vw;
   height: 90vh;
-  z-index: 25;
   padding: 30px;
+  gap: 20px;
+
+  display: flex;
+  flex-direction: column;
+  transform: translateY(-10px);
+  background: var(--bg-color);
+  border-radius: 12px;
   box-shadow: 0 0 35px rgba(0, 0, 0, 0.2);
   overflow: hidden;
   opacity: 0;
-  &.show {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-.expandedWrapper {
-  background: var(--bg-color);
-  position: fixed;
-  display: flex;
-  flex-direction: column;
-  width: 80vw;
-  height: 90vh;
-  gap: 20px;
-
-  border-radius: 12px;
-  transform: translateY(0);
-  opacity: 0;              
-
   z-index: 10000;
-  &.show {
-    transform: translateY(-10px);
-    opacity: 1;
-  }
+
+  opacity: 0;
+
+  transition: opacity 0.3s ease;
 }
 
+.expandedWrapper.show {
+  opacity: 1;
+}
+
+/* ===== OVERLAY ===== */
 
 .overlay {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.35);
   z-index: 20;
-  opacity: 0;
 
-  &.show {
-    opacity: 1;
-  }
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.overlay.show {
+  opacity: 1;
 }

@@ -45,7 +45,7 @@ export const LoginPage = () => {
   return (
     <div className={s.inner}>
       <div className={s.wrapper}>
-        <h2 className={s.title}>Вход в IQProg Support</h2>
+        <h2 className={s.title}>Вход в TaskManagerIQ</h2>
         <form className={s.form} onSubmit={handleLogin}>
           <div className={s.img_wrap}>
             <img

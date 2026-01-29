@@ -47,7 +47,7 @@ export const TimerTasks = () => {
     manageTaskState,
   } = useTasks(showPopup, play);
 
-  useIdleTimer(() => setIdleModal(true), 300000, activeTaskId, idleModal);
+  useIdleTimer(() => setIdleModal(true), 600000, activeTaskId, idleModal);
 
   const selectedTask = useMemo(
     () => tasks.find((t) => t.id === selectedTaskId) ?? null,
@@ -81,7 +81,7 @@ export const TimerTasks = () => {
       requestAnimationFrame(() => setShowExpanded(true));
     } else {
       setShowExpanded(false);
-      setTimeout(() => setIsExpanded(false), 200);
+      setTimeout(() => setIsExpanded(false), 0);
     }
   }, [isExpanded]);
 

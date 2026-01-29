@@ -58,6 +58,7 @@
   font-size: 14px;
   color: var(--text-color);
   background: var(--bg-color);
+  transition: background 0.1s ease-in;
 
   &:hover {
     background: var(--bg-color-hover);

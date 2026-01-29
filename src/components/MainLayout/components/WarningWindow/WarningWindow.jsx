@@ -1,21 +1,34 @@
+import { useEffect } from "react";
 import s from "./WarningWindow.module.scss";
-import Cookies from "js-cookie";
+import { usePopup } from "../../../../context/PopupContext";
 
 export const WarningWindow = ({ onClose }) => {
+  const { showPopup } = usePopup();
 
-  const userCode = Cookies.get("userCode");
+  useEffect(() => {
+    const audio = new Audio("/sounds/hornet_edino.mp3");
+    audio.play().catch(() => {
+    });
+  }, []);
+
+  const closeWarning = () => {
+    onClose();
+    showPopup("Молодец, сосунок.", "info");
+  };
 
   return (
-    <div className={s.modalOverlay} onClick={onClose}>
+    <div className={s.modalOverlay}>
       <div className={s.modalWindow} onClick={(e) => e.stopPropagation()}>
-        <div className={s.idleWarning}>У ТЕБЯ УЖЕ <b>5 МИНУТ</b> НЕ ВКЛЮЧЕН ТАЙМЕР ПО ВЫПОЛНЕНИЮ ЗАДАЧИ!!!</div>
-        <div className={s.idleWarning}>ВКЛЮЧИ ТАЙМЕР И РАБОТАЙ!!!</div>
-        <div className={s.idleWarningText}>ЕСЛИ НЕТ ЗАДАЧИ - ПОДОЙДИ К РУКОВОДИТЕЛЮ ИЛИ ПОПРОСИ ДЕЖУРНОГО КИНУТЬ ТЕБЕ ЧТО-НИБУДЬ</div>
-        { userCode === "000000005" &&   <div className={s.idleWarningText}> 卐 ЛЕХА ПРИВЕТ БЛЯТЬ СОСКА КАК ДЕЛА, РАБОТАЙ ЧМОШНИЦА 卐</div>}
-        { userCode === "000000016" &&   <div className={s.idleWarningText}> 卐 САНЯ ТЕЕБ ПИЗДЫ МОГУТ ДАТЬ ЗА ТАКОЕ, РАБОТАЙ РАБОТАЙ :3 卐</div>}
-        { userCode === "000000003" &&   <div className={s.idleWarningText}> А ЛЕХА ГОМИК НО ОН ЭТО СКРЫВАЕТ :3 </div>}
-        { userCode === "000000002" &&   <div className={s.idleWarningText}> ТИМУР ПРИВЕТ КАК ДЕЛА :3 </div>}
-        <button className={s.btn} onClick={onClose}>Извините пожалуйста, сейчас запущу</button>
+        <div className={s.idleWarning}>
+          Таймер выполнения задач не включен более <b>10 минут</b>!
+        </div>
+        <div className={s.idleWarning}>Включи таймер и выполняй задачи!</div>
+        <div className={s.idleWarningText}>
+          Если у тебя нет задач, которые ты можешь выполнять сейчас — подойди к руководителю или дежурному
+        </div>
+        <button className={s.btn} onClick={closeWarning}>
+          Извините пожалуйста, сейчас запущу
+        </button>
       </div>
     </div>
   );
