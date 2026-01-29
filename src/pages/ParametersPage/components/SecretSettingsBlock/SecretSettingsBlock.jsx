@@ -88,15 +88,6 @@ export const SecretSettingsBlock = () => {
           />
           <p>Цензура слов</p>
         </div>
-
-        {/* Новый чекбокс для снега */}
-        <div className={s.item}>
-          <Checkbox
-            checked={settings.snow_effect}
-            onChange={handleChange("snow_effect")}
-          />
-          <p>Снежный эффект на странице</p>
-        </div>
       </div>
     </div>
   );

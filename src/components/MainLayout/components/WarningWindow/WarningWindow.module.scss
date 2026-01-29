@@ -7,7 +7,7 @@
     z-index: 9999;
     display: flex;
     justify-content: center;
-    backdrop-filter: blur(1px);
+    background: rgba(0, 0, 0, 0.35);
     animation: warningPulse 5s infinite ease-in-out;
 }
 

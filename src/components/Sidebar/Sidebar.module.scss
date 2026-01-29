@@ -43,17 +43,11 @@
 
 .menu_link img {
     fill: green;
-    height: 25px;
+    height: 22px;
 }
 
 .menu_link:not(.active):hover {
   background: var(--bg-color-hover);
-}
-
-.img_gif {
-    margin-top: 200px;
-    padding: 10px;
-    border-radius: 20px;
 }
 
 .active {

@@ -1,5 +1,4 @@
 import s from "./Sidebar.module.scss";
-import Cookies from "js-cookie";
 import { useState } from "react";
 import { sidebarItems } from "./sidebarLinks";
 import { useTheme } from "../../context/ThemeContext";
@@ -11,8 +10,6 @@ import { FooterSidebar } from "./components/FooterSidebar/FooterSidebar";
 export const Sidebar = () => {
   const location = useLocation();
   const currentPath = location.pathname;
-  const role = Cookies.get("role");
-  const userCode = Cookies.get("userCode");
   const [isActiveBox, setIsActiveBox] = useState(false);
   const { theme } = useTheme();
 
@@ -33,9 +30,8 @@ export const Sidebar = () => {
                 <NavLink
                   to={path}
                   onClick={() => handleLinkClick(path)}
-                  className={`${s.menu_link} ${
-                    isActive(currentPath) ? s.active : ""
-                  }`}
+                  className={`${s.menu_link} ${isActive(currentPath) ? s.active : ""
+                    }`}
                 >
                   <Icon isActive={isActive(currentPath)} theme={theme} />
                   {label}
@@ -44,19 +40,6 @@ export const Sidebar = () => {
             ))}
           </ul>
         </nav>
-
-        {(String(import.meta.env.VITE_TOKEN_MANAGER) !== role && userCode !== "000000002" && userCode !== "000000003") && (
-          <img className={s.img_gif} src="/images/gif.gif" />
-        )}
-        {/* {(userCode === "000000054") && (
-          <img className={s.img_gif} src="/images/gif2.gif" />
-        )}
-        {(userCode === "000000007") && (
-          <img className={s.img_gif} src="/images/gif2.gif" />
-        )} */}
-        {(userCode === "000000003") && (
-          <img className={s.img_gif} src="/images/gif3.gif" />
-        )}
 
         <FooterSidebar
           isActiveBox={isActiveBox}

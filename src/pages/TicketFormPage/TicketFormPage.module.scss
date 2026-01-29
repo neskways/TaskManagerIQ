@@ -5,7 +5,7 @@
 
 .wrapper {
   display: grid;
-  grid-template-columns: 1fr 286px; /* левая + правая колонка */
+  grid-template-columns: 1fr 286px; 
   height: 100%; 
 }
 
@@ -14,12 +14,12 @@
   grid-template-rows: 1fr 100px;
   flex-direction: column;
   padding: 30px 20px;
-  overflow: hidden; /* чтобы scroll работал только внутри left_content */
+  overflow: hidden; 
 }
 
 .left_content {
   flex: 1 1 auto;
-  min-height: 0; /* обязательно для flex + scroll */
+  min-height: 0; 
   overflow-y: auto;
   display: flex;
   flex-direction: column;

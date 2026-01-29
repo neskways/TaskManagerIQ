@@ -11,5 +11,5 @@ export const MyAssignedTasks = () => {
     userCode,
   };
 
-  return <UniversalTicketsSheet titleText="Назначенные мне" queryParams={params} />;
+  return <UniversalTicketsSheet titleText="Назначенные мне заявки" queryParams={params} />;
 };
