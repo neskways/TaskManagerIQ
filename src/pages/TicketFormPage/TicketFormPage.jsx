@@ -16,7 +16,6 @@ import { getFromLocalStorage } from "../../modules/localStorageUtils";
 import { TaskTextBlock } from "./components/TaskTextBlock/TaskTextBlock";
 import { TicketSidebar } from "./components/TicketSidebar/TicketSidebar";
 import { TaskTitleAndText } from "./components/TaskTitleAndText/TaskTitleAndText";
-import { Info } from "../../UI/Info/Info";
 
 export const TicketFormPage = ({ modal = false, taskId, onClose }) => {
   const routeId = useParams().id;
@@ -223,6 +222,7 @@ export const TicketFormPage = ({ modal = false, taskId, onClose }) => {
         </div>
 
         <TicketSidebar
+          taskTitle={task.title}
           taskId={task.taskId}
           currentClient={task.client}
           currentStatus={task.state}

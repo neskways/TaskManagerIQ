@@ -6,14 +6,20 @@ import { Contacts } from "../Contacts/Contacts";
 import { Button } from "../../../../UI/Button/Button";
 import { Selector } from "../../../../UI/Selector/Selector";
 import { usePopup } from "../../../../context/PopupContext";
+import { TaskNotification } from "../../../../components/TaskNotification/TaskNotification";
 import { taskStatuses } from "../../../../modules/taskStatuses";
 import { updateTaskInfo } from "../../../../api/update/updateTaskInfo";
+import { curentTaskManage } from "../../../../api/curentTaskManage";
+import { useTaskNotifications } from "../../../../hooks/useTaskNotifications";
 import { Checkbox } from "../../../../UI/Checkbox/Checkbox";
 import { useClientsAndEmployees } from "../../../CreateTicketPage/hooks/useClientsAndEmployees";
 import { Info } from "../../../../UI/Info/Info";
+import { PopupConfirm } from "../../../../UI/PopupConfirm/PopupConfirm";
+import { useActiveTask } from "../../../../context/ActiveTaskContext";
 
 export const TicketSidebar = ({
   taskId,
+  taskTitle,
   currentClient,
   currentStatus,
   currentExecutor,
@@ -26,36 +32,46 @@ export const TicketSidebar = ({
 }) => {
   const { employeeOptions, loading: employeesLoading } = useClientsAndEmployees();
   const { showPopup } = usePopup();
+  const { activeTask, startTask, clearActiveTask } = useActiveTask(); 
+
+  const { notifications, addNotification, removeNotification } = useTaskNotifications();
 
   const role = Cookies.get("role");
+  const currentUserCode = Cookies.get("userCode");
 
   const [selectedStatus, setSelectedStatus] = useState(currentStatus ?? "");
   const [selectedExecutor, setSelectedExecutor] = useState(currentExecutor ?? "");
   const [hasChanges, setHasChanges] = useState(false);
   const [isFirstLineTaskState, setIsFirstLineTask] = useState(isFirstLineTask ?? false);
 
-  // фильтруем сотрудников безопасно
+  const [confirmPause, setConfirmPause] = useState(false);
+  const [pendingSave, setPendingSave] = useState(null);
+
   const validEmployeeOptions = (employeeOptions || []).filter(
-    (e) =>
-      e?.id &&
-      e.id !== "-" &&
-      typeof e.name === "string" &&
-      e.name.trim() !== "-"
+    (e) => e?.id && e.id !== "-" && typeof e.name === "string" && e.name.trim() !== "-"
   );
 
-  // формируем список статусов безопасно
   const statusItems = Object.values(taskStatuses)
-    .map(({ code, name }) => ({ id: code, name: name }))
+    .map(({ code, name }) => ({ id: code, name }))
     .filter((item) => item?.id && item.id !== "-" && item.name?.trim() !== "-");
 
-  // отслеживаем изменения
+  // Проверка изменений
   useEffect(() => {
     setHasChanges(
       selectedStatus !== (currentStatus ?? "") ||
-        selectedExecutor !== (currentExecutor ?? "")
+      selectedExecutor !== (currentExecutor ?? "")
     );
   }, [selectedStatus, selectedExecutor, currentStatus, currentExecutor]);
 
+
+// При открытии тикета синхронизируем контекст
+useEffect(() => {
+  if (taskId && taskTitle) {
+    if (!activeTask || activeTask.id !== taskId) {
+      startTask({ id: taskId, title: taskTitle });
+    }
+  }
+}, [taskId, taskTitle]);
   const handleStatusChange = (value) => setSelectedStatus(value);
   const handleExecutorChange = (value) => setSelectedExecutor(value);
 
@@ -65,20 +81,50 @@ export const TicketSidebar = ({
       return;
     }
 
-    if (selectedStatus === (currentStatus ?? "") && selectedExecutor === (currentExecutor ?? "")) {
+    if (
+      selectedStatus === (currentStatus ?? "") &&
+      selectedExecutor === (currentExecutor ?? "")
+    ) {
       showPopup("Данные не были изменены", { type: "info" });
       return;
     }
 
+    const formattedTaskId = String(taskId).padStart(9, "0");
+    const isInProgress = selectedStatus === taskStatuses.IN_PROGRESS.code;
+    const isMyTask = String(selectedExecutor) === String(currentUserCode);
+
+    if (isInProgress && isMyTask && activeTask?.id && activeTask.id !== taskId) {
+      setPendingSave({ formattedTaskId, selectedStatus, selectedExecutor });
+      setConfirmPause(true);
+      return;
+    }
+
+    await executeSave({ formattedTaskId, selectedStatus, selectedExecutor });
+  };
+
+  const executeSave = async ({ formattedTaskId, selectedStatus, selectedExecutor }) => {
     try {
-      const formattedTaskId = String(taskId).padStart(9, "0");
+      const isInProgress = selectedStatus === taskStatuses.IN_PROGRESS.code;
+      const isMyTask = String(selectedExecutor) === String(currentUserCode);
 
-      await updateTaskInfo(
-        formattedTaskId,
-        selectedStatus,
-        selectedExecutor
-      );
+      if (isInProgress && isMyTask) {
+        if (activeTask?.id && activeTask.id !== taskId) {
+          await curentTaskManage(
+            String(activeTask.id).padStart(9, "0"),
+            taskStatuses.PAUSED.code
+          );
+          clearActiveTask();
+          
+          addNotification(`Задача "${activeTask?.title}" на паузе`, "info", 3000);
+        }
 
+        await curentTaskManage(formattedTaskId, taskStatuses.IN_PROGRESS.code);
+        startTask({ id: taskId, title: taskTitle });
+        
+        addNotification(`Задача "${taskTitle}" запущена`, "success", 3000);
+      }
+
+      await updateTaskInfo(formattedTaskId, selectedStatus, selectedExecutor);
       showPopup("Изменения успешно сохранены", { type: "success" });
       setHasChanges(false);
     } catch (err) {
@@ -87,10 +133,21 @@ export const TicketSidebar = ({
     }
   };
 
+  const handleConfirmPause = async () => {
+    setConfirmPause(false);
+    if (pendingSave) {
+      await executeSave(pendingSave);
+      setPendingSave(null);
+    }
+  };
+
+  const handleCancelPause = () => {
+    setConfirmPause(false);
+    setPendingSave(null);
+  };
+
   const selectedExecutorName =
-    validEmployeeOptions.find((e) => e.id === selectedExecutor)?.name ??
-    selectedExecutor ??
-    "";
+    validEmployeeOptions.find((e) => e.id === selectedExecutor)?.name ?? selectedExecutor ?? "";
 
   const selectedStatusName =
     statusItems.find((e) => e.id === selectedStatus)?.name ?? selectedStatus ?? "";
@@ -102,9 +159,10 @@ export const TicketSidebar = ({
 
   return (
     <div className={s.wrapper}>
-      <div className={s.info}>
+      {/* <div className={s.info}>
         <Info theme={theme} />
-      </div>
+      </div> */}
+
       {hasChanges && (
         <div className={s.dirtyIndicator}>
           <p className={s.z}>*</p>
@@ -198,6 +256,17 @@ export const TicketSidebar = ({
       <div className={s.btn_wrap}>
         <Button name="Сохранить" onClick={handleSave} />
       </div>
+
+      <PopupConfirm
+        isOpen={confirmPause}
+        text={`Поставить на паузу активную задачу "${activeTask?.title}" и переключиться на "${taskTitle}"?`}
+        onConfirm={handleConfirmPause}
+        onCancel={handleCancelPause}
+      />
+
+       {notifications.map((n) => (
+        <TaskNotification key={n.id} {...n} onClose={() => removeNotification(n.id)} />
+      ))}
     </div>
   );
 };

@@ -12,7 +12,6 @@ export const useTasks = (showPopup, playAudio) => {
   const [activeTaskId, setActiveTaskId] = useState(null);
 
   const prevTaskIdsRef = useRef(new Set());
-  const timerRef = useRef(null);
   const pollingRef = useRef(null);
 
   const loadTasks = async () => {
@@ -73,19 +72,23 @@ export const useTasks = (showPopup, playAudio) => {
     return () => clearInterval(pollingRef.current);
   }, []);
 
-  // таймер для активной задачи
+  // таймер для всех IN_PROGRESS задач
   useEffect(() => {
-    if (!activeTaskId) return;
-
-    timerRef.current = setInterval(() => {
-      setSecondsMap((prev) => ({
-        ...prev,
-        [activeTaskId]: (prev[activeTaskId] || 0) + 1,
-      }));
+    const interval = setInterval(() => {
+      setSecondsMap((prev) => {
+        const now = Date.now();
+        const updated = { ...prev };
+        tasks.forEach((t) => {
+          if (t.state === taskStatuses.IN_PROGRESS.name && t.startedAt) {
+            updated[t.id] = (t.displaySec || 0) + Math.floor((now - new Date(t.startedAt)) / 1000);
+          }
+        });
+        return updated;
+      });
     }, 1000);
 
-    return () => clearInterval(timerRef.current);
-  }, [activeTaskId]);
+    return () => clearInterval(interval);
+  }, [tasks]);
 
   const manageTaskState = async (id, newState) => {
     await curentTaskManage(String(id).padStart(9, "0"), newState);
@@ -101,5 +104,6 @@ export const useTasks = (showPopup, playAudio) => {
     activeTaskId,
     setActiveTaskId,
     manageTaskState,
+    refreshTasks: loadTasks,
   };
 };
