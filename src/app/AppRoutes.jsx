@@ -161,7 +161,7 @@ export const AppRoutes = () => {
         <Route
           path="/create"
           element={
-            <RoleProtectedRoute allowDuty allowManagement>
+            <RoleProtectedRoute allowAdmin allowDuty allowManagement>
               <CreateTicketPage />
             </RoleProtectedRoute>
           }

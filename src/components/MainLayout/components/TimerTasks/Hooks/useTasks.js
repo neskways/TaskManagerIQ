@@ -3,7 +3,7 @@ import { getTaskQueue } from "../../../../../api/get/getTaskQueue";
 import { curentTaskManage } from "../../../../../api/curentTaskManage";
 import { taskStatuses } from "../../../../../modules/taskStatuses";
 
-const REFRESH_INTERVAL_MS = 15000;
+const REFRESH_INTERVAL_MS = 17000;
 
 export const useTasks = (showPopup, playAudio) => {
   const [tasks, setTasks] = useState([]);

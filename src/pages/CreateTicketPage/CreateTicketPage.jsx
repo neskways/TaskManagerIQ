@@ -157,8 +157,6 @@ export const CreateTicketPage = () => {
       return showValidationPopup("Пожалуйста, выберите клиента!");
     if (!selectedEmployee)
       return showValidationPopup("Пожалуйста, выберите исполнителя!");
-    if (!selectedConfig)
-      return showValidationPopup("Пожалуйста, выберите конфигурацию!");
     if (!description.trim())
       return showValidationPopup("Пожалуйста, заполните описание задачи!");
 
@@ -260,16 +258,18 @@ export const CreateTicketPage = () => {
         />
 
         <div className={s.filling_data_inner_2}>
-          <Selector
-            items={configOptions}
-            value={selectedConfig}
-            title="Конфигурации"
-            onChange={setSelectedConfig}
-            disabled={!selectedClient || configsLoading}
-            labelKey="displayName"
-            valueKey="id"
-            emptyLabel="Конфигурация не выбрана"
-          />
+          { role !== import.meta.env.VITE_TOKEN_ADMIN && 
+            <Selector
+              items={configOptions}
+              value={selectedConfig}
+              title="Конфигурации"
+              onChange={setSelectedConfig}
+              disabled={!selectedClient || configsLoading}
+              labelKey="displayName"
+              valueKey="id"
+              emptyLabel="Конфигурация не выбрана"
+            />
+          }
 
           <Selector
             items={contactOptions}

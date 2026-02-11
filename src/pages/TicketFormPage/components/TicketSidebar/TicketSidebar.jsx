@@ -11,9 +11,7 @@ import { taskStatuses } from "../../../../modules/taskStatuses";
 import { updateTaskInfo } from "../../../../api/update/updateTaskInfo";
 import { curentTaskManage } from "../../../../api/curentTaskManage";
 import { useTaskNotifications } from "../../../../hooks/useTaskNotifications";
-import { Checkbox } from "../../../../UI/Checkbox/Checkbox";
 import { useClientsAndEmployees } from "../../../CreateTicketPage/hooks/useClientsAndEmployees";
-import { Info } from "../../../../UI/Info/Info";
 import { PopupConfirm } from "../../../../UI/PopupConfirm/PopupConfirm";
 import { useActiveTask } from "../../../../context/ActiveTaskContext";
 
@@ -27,13 +25,11 @@ export const TicketSidebar = ({
   returnId,
   returnName,
   timeSpent,
-  theme,
   isFirstLineTask,
 }) => {
   const { employeeOptions, loading: employeesLoading } = useClientsAndEmployees();
   const { showPopup } = usePopup();
-  const { activeTask, startTask, clearActiveTask } = useActiveTask(); 
-
+  const { activeTask, startTask } = useActiveTask();
   const { notifications, addNotification, removeNotification } = useTaskNotifications();
 
   const role = Cookies.get("role");
@@ -41,39 +37,41 @@ export const TicketSidebar = ({
 
   const [selectedStatus, setSelectedStatus] = useState(currentStatus ?? "");
   const [selectedExecutor, setSelectedExecutor] = useState(currentExecutor ?? "");
+
+  // 🔥 последнее сохранённое состояние
+  const [savedStatus, setSavedStatus] = useState(currentStatus ?? "");
+  const [savedExecutor, setSavedExecutor] = useState(currentExecutor ?? "");
+
   const [hasChanges, setHasChanges] = useState(false);
   const [isFirstLineTaskState, setIsFirstLineTask] = useState(isFirstLineTask ?? false);
 
   const [confirmPause, setConfirmPause] = useState(false);
   const [pendingSave, setPendingSave] = useState(null);
 
-  const validEmployeeOptions = (employeeOptions || []).filter(
-    (e) => e?.id && e.id !== "-" && typeof e.name === "string" && e.name.trim() !== "-"
-  );
+  // синхронизация при открытии/смене задачи
+  useEffect(() => {
+    setSelectedStatus(currentStatus ?? "");
+    setSelectedExecutor(currentExecutor ?? "");
+    setSavedStatus(currentStatus ?? "");
+    setSavedExecutor(currentExecutor ?? "");
+  }, [currentStatus, currentExecutor, taskId]);
 
-  const statusItems = Object.values(taskStatuses)
-    .map(({ code, name }) => ({ id: code, name }))
-    .filter((item) => item?.id && item.id !== "-" && item.name?.trim() !== "-");
-
-  // Проверка изменений
+  // индикатор изменений
   useEffect(() => {
     setHasChanges(
-      selectedStatus !== (currentStatus ?? "") ||
-      selectedExecutor !== (currentExecutor ?? "")
+      selectedStatus !== savedStatus ||
+      selectedExecutor !== savedExecutor
     );
-  }, [selectedStatus, selectedExecutor, currentStatus, currentExecutor]);
+  }, [selectedStatus, selectedExecutor, savedStatus, savedExecutor]);
 
-
-// При открытии тикета синхронизируем контекст
-useEffect(() => {
-  if (taskId && taskTitle) {
-    if (!activeTask || activeTask.id !== taskId) {
-      startTask({ id: taskId, title: taskTitle });
+  // активная задача
+  useEffect(() => {
+    if (taskId && taskTitle) {
+      if (!activeTask || activeTask.id !== taskId) {
+        startTask({ id: taskId, title: taskTitle });
+      }
     }
-  }
-}, [taskId, taskTitle]);
-  const handleStatusChange = (value) => setSelectedStatus(value);
-  const handleExecutorChange = (value) => setSelectedExecutor(value);
+  }, [taskId, taskTitle]);
 
   const handleSave = async () => {
     if (!selectedStatus || !selectedExecutor) {
@@ -82,8 +80,8 @@ useEffect(() => {
     }
 
     if (
-      selectedStatus === (currentStatus ?? "") &&
-      selectedExecutor === (currentExecutor ?? "")
+      selectedStatus === savedStatus &&
+      selectedExecutor === savedExecutor
     ) {
       showPopup("Данные не были изменены", { type: "info" });
       return;
@@ -108,25 +106,18 @@ useEffect(() => {
       const isMyTask = String(selectedExecutor) === String(currentUserCode);
 
       if (isInProgress && isMyTask) {
-        if (activeTask?.id && activeTask.id !== taskId) {
-          await curentTaskManage(
-            String(activeTask.id).padStart(9, "0"),
-            taskStatuses.PAUSED.code
-          );
-          clearActiveTask();
-          
-          addNotification(`Задача "${activeTask?.title}" на паузе`, "info", 3000);
-        }
-
         await curentTaskManage(formattedTaskId, taskStatuses.IN_PROGRESS.code);
         startTask({ id: taskId, title: taskTitle });
-        
         addNotification(`Задача "${taskTitle}" запущена`, "success", 3000);
       }
 
       await updateTaskInfo(formattedTaskId, selectedStatus, selectedExecutor);
+
+      // 🔥 фикс: обновляем базу сравнения
+      setSavedStatus(selectedStatus);
+      setSavedExecutor(selectedExecutor);
+
       showPopup("Изменения успешно сохранены", { type: "success" });
-      setHasChanges(false);
     } catch (err) {
       console.error(err);
       showPopup("Не удалось сохранить изменения", { type: "error" });
@@ -146,6 +137,14 @@ useEffect(() => {
     setPendingSave(null);
   };
 
+  const validEmployeeOptions = (employeeOptions || []).filter(
+    (e) => e?.id && e.id !== "-" && typeof e.name === "string" && e.name.trim() !== "-"
+  );
+
+  const statusItems = Object.values(taskStatuses)
+    .map(({ code, name }) => ({ id: code, name }))
+    .filter((item) => item?.id && item.name?.trim() !== "-");
+
   const selectedExecutorName =
     validEmployeeOptions.find((e) => e.id === selectedExecutor)?.name ?? selectedExecutor ?? "";
 
@@ -159,10 +158,6 @@ useEffect(() => {
 
   return (
     <div className={s.wrapper}>
-      {/* <div className={s.info}>
-        <Info theme={theme} />
-      </div> */}
-
       {hasChanges && (
         <div className={s.dirtyIndicator}>
           <p className={s.z}>*</p>
@@ -196,8 +191,8 @@ useEffect(() => {
             labelKey="name"
             valueKey="id"
             value={selectedExecutor}
-            smallFont={true}
-            onChange={handleExecutorChange}
+            smallFont
+            onChange={setSelectedExecutor}
             disabled={employeesLoading}
           />
           <Selector
@@ -206,9 +201,9 @@ useEffect(() => {
             items={statusItems}
             labelKey="name"
             valueKey="id"
-            smallFont={true}
+            smallFont
             value={selectedStatus}
-            onChange={handleStatusChange}
+            onChange={setSelectedStatus}
           />
         </>
       )}
@@ -231,28 +226,6 @@ useEffect(() => {
         </div>
       )}
 
-      {role === import.meta.env.VITE_TOKEN_MANAGER && (
-        <div className={s.block}>
-          <h4 className={s.title}>Дополнительные данные</h4>
-          <div className={s.text}>
-            <div className={s.checkbox}>
-              <Checkbox
-                checked={isFirstLineTaskState}
-                onChange={(e) => setIsFirstLineTask(e.target.checked)}
-              />
-              <p>Задача первой линии</p>
-            </div>
-            <div className={s.checkbox}>
-              <Checkbox
-                checked={isFirstLineTaskState}
-                onChange={(e) => setIsFirstLineTask(e.target.checked)}
-              />
-              <p>Выезд к клиенту</p>
-            </div>
-          </div>
-        </div>
-      )}
-
       <div className={s.btn_wrap}>
         <Button name="Сохранить" onClick={handleSave} />
       </div>
@@ -264,7 +237,7 @@ useEffect(() => {
         onCancel={handleCancelPause}
       />
 
-       {notifications.map((n) => (
+      {notifications.map((n) => (
         <TaskNotification key={n.id} {...n} onClose={() => removeNotification(n.id)} />
       ))}
     </div>

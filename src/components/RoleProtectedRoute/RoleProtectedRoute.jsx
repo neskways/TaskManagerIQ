@@ -6,6 +6,7 @@ export const RoleProtectedRoute = ({
   children, 
   allowEveryone = false, 
   allowDuty = false, 
+  allowAdmin = false,
   allowManagement = false 
 }) => {
   const role = Cookies.get("role");
@@ -13,6 +14,7 @@ export const RoleProtectedRoute = ({
   const hasAccess =
     (role === import.meta.env.VITE_TOKEN_EMPLOYEE && allowEveryone) ||
     (role === import.meta.env.VITE_TOKEN_DUTY && allowDuty) ||
+    (role === import.meta.env.VITE_TOKEN_ADMIN && allowAdmin) ||
     (role === import.meta.env.VITE_TOKEN_MANAGER && allowManagement);
 
   if (!hasAccess) {

@@ -8,7 +8,7 @@ import { usePopup } from "../../../../context/PopupContext";
 import { TaskGridCell } from "../TaskGridCell/TaskGridCell";
 import { getTasksList } from "../../../../api/get/getTasksList";
 
-const REFRESH_INTERVAL_MS = 20000;
+const REFRESH_INTERVAL_MS = 30000;
 const LOCAL_STORAGE_KEY_TICKETS = "tickets_table_col_widths";
 const DEFAULT_WIDTHS = [5, 33, 14, 16, 11, 8, 7, 7];
 
