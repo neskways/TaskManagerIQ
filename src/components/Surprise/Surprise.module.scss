@@ -1,4 +1,3 @@
-
 .podarok {
     position: absolute;
     right: 20px;
@@ -6,4 +5,20 @@
     height: 120px;
     width: 120px;
     cursor: pointer;
+}
+
+.podarok2 {
+    display: none;
+    position: absolute;
+    top: calc(50% - 350px);
+    left: calc(50% - 350px);
+    height: 700px;
+    width: 700px;
+    z-index: 10000;
+    border-radius: 40px;
+    border: 3px solid black;
+}
+
+.show {
+    display: block;
 }
