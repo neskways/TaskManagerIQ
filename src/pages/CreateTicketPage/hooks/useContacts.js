@@ -29,9 +29,13 @@ export const useContacts = (client) => {
         const data = await getContacts(client.code);
         const list = Array.isArray(data) ? data : [];
 
-        setContactsList(list);
+        const sortedList = [...list].sort((a, b) =>
+          (a.name || "").localeCompare(b.name || "", "ru", { sensitivity: "base" })
+        );
 
-        const opts = list.map((c) => ({
+        setContactsList(sortedList);
+
+        const opts = sortedList.map((c) => ({
           id: String(c.id),
           name: [c.phone, c.name, c.post, c.mail].filter(Boolean).join(" | "),
           data: c,
@@ -42,9 +46,8 @@ export const useContacts = (client) => {
           { id: "new", name: "Создать новый контакт" },
         ]);
 
-        // ✅ КЛЮЧЕВАЯ ЛОГИКА
-        if (list.length > 0) {
-          const first = list[0];
+        if (sortedList.length > 0) {
+          const first = sortedList[0];
           setSelectedContactId(String(first.id));
           setContactDetails({
             n: first.id,
@@ -55,7 +58,6 @@ export const useContacts = (client) => {
           });
           setCreatingNewContact(false);
         } else {
-          // 🔥 ВОТ ЭТОГО ТЕБЕ НЕ ХВАТАЛО
           setSelectedContactId("new");
           setContactDetails({ n: "", name: "", post: "", phone: "", mail: "" });
           setCreatingNewContact(true);

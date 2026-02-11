@@ -1,6 +1,6 @@
 import s from "./TasksTable.module.scss";
 import Cookies from "js-cookie";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { headersTitleTask } from "./TitlesForTables";
 import { MESSAGES } from "../../../../modules/messages";
 import { Loading } from "../../../../UI/Loading/Loading";
@@ -25,6 +25,8 @@ export const TasksTable = ({
   const { showPopup } = usePopup();
   const userCode = Cookies.get("userCode");
 
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
+
   const [colWidths, setColWidths] = useState(
     JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_TICKETS)) || DEFAULT_WIDTHS
   );
@@ -39,11 +41,20 @@ export const TasksTable = ({
   const startWidths = useRef([0, 0]);
   const resizingColIndex = useRef(null);
   const pollingRef = useRef(null);
-
-  // ref чтобы открыть только один раз из URL
   const openedFromUrlRef = useRef(false);
 
   const gridTemplateColumns = colWidths.map((w) => `minmax(40px, ${w}%)`).join(" ");
+
+  const keyMap = [
+    "number",
+    "title",
+    "client",
+    "status",
+    "executor",
+    "priority",
+    "timeSpent",
+    "createdDate",
+  ];
 
   useEffect(() => {
     localStorage.setItem(LOCAL_STORAGE_KEY_TICKETS, JSON.stringify(colWidths));
@@ -65,7 +76,8 @@ export const TasksTable = ({
         executor: item.executor,
         createdDate: item.createdDate?.split(" ")[0] || "",
         priority: item.priority,
-        timeSpent: `${String(Math.floor(item.timeSpent / 3600)).padStart(2, "0")}:${String(
+        timeSpent: item.timeSpent, // храним число для сортировки
+        timeSpentFormatted: `${String(Math.floor(item.timeSpent / 3600)).padStart(2, "0")}:${String(
           Math.floor((item.timeSpent % 3600) / 60)
         ).padStart(2, "0")}:${String(item.timeSpent % 60).padStart(2, "0")}`,
       }));
@@ -81,27 +93,14 @@ export const TasksTable = ({
     }
   };
 
-  useEffect(() => {
-    loadTasks();
-  }, []);
-
-  useEffect(() => {
-    if (refetchKey != null) loadTasks();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refetchKey]);
+  useEffect(() => { loadTasks(); }, []);
+  useEffect(() => { if (refetchKey != null) loadTasks(); }, [refetchKey]);
 
   useEffect(() => {
     if (isTaskOpen) return;
-
     if (pollingRef.current) clearInterval(pollingRef.current);
-
-    const intervalTime = REFRESH_INTERVAL_MS;
-
-    pollingRef.current = setInterval(loadTasks, intervalTime);
-
-    return () => {
-      if (pollingRef.current) clearInterval(pollingRef.current);
-    };
+    pollingRef.current = setInterval(loadTasks, REFRESH_INTERVAL_MS);
+    return () => clearInterval(pollingRef.current);
   }, [isTaskOpen, userCode, queryParams]);
 
   useEffect(() => {
@@ -126,78 +125,63 @@ export const TasksTable = ({
     setTasks(filtered);
   }, [selectedStatuses, selectedEmployees, selectedClient, rawTasks]);
 
-  useEffect(() => {
-    if (openedFromUrlRef.current) return;
+  // 🔥 СОРТИРОВКА
+  const sortedTasks = useMemo(() => {
+    if (!sortConfig.key) return tasks;
 
-    const params = new URLSearchParams(window.location.search);
-    const openParam = params.get("open");
-    if (!openParam) return;
+    return [...tasks].sort((a, b) => {
+      let valA = a[sortConfig.key];
+      let valB = b[sortConfig.key];
 
-    const num = parseInt(openParam, 10);
-    if (Number.isNaN(num)) return;
-
-    // ищем в rawTasks (приоритет — потому что rawTasks — полный список)
-    const inRaw = rawTasks.some((t) => t.number === num);
-    const inTasks = tasks.some((t) => t.number === num);
-
-    if (inRaw || inTasks) {
-      openedFromUrlRef.current = true;
-      try {
-        onOpenTask(num);
-      } catch (e) {
-        console.error("onOpenTask error:", e);
+      // спец для времени
+      if (sortConfig.key === "timeSpent") {
+        valA = a.timeSpent;
+        valB = b.timeSpent;
       }
 
-      // Удаляем параметр open из URL, чтобы не сработало повторно
-      try {
-        const url = new URL(window.location.href);
-        url.searchParams.delete("open");
-        // сохраняем без параметра
-        window.history.replaceState(null, "", url.toString());
-      } catch (e) {
-        const rawUrl = window.location.href.replace(/[?&]open=[^&]*/i, "");
-        window.history.replaceState(null, "", rawUrl);
+      const emptyA = valA === null || valA === undefined || valA === "";
+      const emptyB = valB === null || valB === undefined || valB === "";
+
+      if (emptyA && emptyB) return 0;
+      if (emptyA) return 1;
+      if (emptyB) return -1;
+
+      const numA = parseFloat(valA);
+      const numB = parseFloat(valB);
+      const bothNumbers = !isNaN(numA) && !isNaN(numB);
+
+      if (bothNumbers) {
+        return sortConfig.direction === "asc" ? numA - numB : numB - numA;
       }
-    }
-    // проверяем, когда rawTasks или tasks изменятся
-  }, [rawTasks, tasks, onOpenTask]);
 
-  const handleMouseDown = (e, index) => {
-    e.preventDefault();
-    isResizing.current = true;
-    startX.current = e.clientX;
-    resizingColIndex.current = index;
-    startWidths.current = [colWidths[index], colWidths[index + 1]];
-    document.body.style.cursor = "col-resize";
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
+      valA = String(valA).toLowerCase();
+      valB = String(valB).toLowerCase();
+
+      if (valA < valB) return sortConfig.direction === "asc" ? -1 : 1;
+      if (valA > valB) return sortConfig.direction === "asc" ? 1 : -1;
+      return 0;
+    });
+  }, [tasks, sortConfig]);
+
+  const handleHeaderClick = (index) => {
+    const key = keyMap[index];
+    if (!key) return;
+
+    setSortConfig((prev) => {
+      if (prev.key === key) {
+        return { key, direction: prev.direction === "asc" ? "desc" : "asc" };
+      }
+      return { key, direction: "asc" };
+    });
   };
 
-  const handleMouseMove = (e) => {
-    if (!isResizing.current || !tableRef.current) return;
-
-    const dx = e.clientX - startX.current;
-    const deltaPercent = (dx / tableRef.current.offsetWidth) * 100;
-
-    let left = startWidths.current[0] + deltaPercent;
-    let right = startWidths.current[1] - deltaPercent;
-
-    if (left < 5 || right < 5) return;
-
-    const newWidths = [...colWidths];
-    newWidths[resizingColIndex.current] = left;
-    newWidths[resizingColIndex.current + 1] = right;
-
-    setColWidths(newWidths);
+  const getSortArrow = (index) => {
+    return sortConfig.key === keyMap[index]
+      ? sortConfig.direction === "asc"
+        ? "▲"
+        : "▼"
+      : null;
   };
-
-  const handleMouseUp = () => {
-    isResizing.current = false;
-    document.body.style.cursor = "default";
-    document.removeEventListener("mousemove", handleMouseMove);
-    document.removeEventListener("mouseup", handleMouseUp);
-  };
-
 
   if (loading && !rawTasks.length)
     return (
@@ -215,38 +199,39 @@ export const TasksTable = ({
       </div>
 
       <div className={s.gridTableWrapper}>
-        <div
-          className={s.gridHeaderRow}
-          style={{ gridTemplateColumns }}
-        >
+        <div className={s.gridHeaderRow} style={{ gridTemplateColumns }}>
           {headersTitleTask.map((header, i) => (
-            <div key={i} className={s.gridHeader}>
+            <div
+              key={i}
+              className={s.gridHeader}
+              onClick={() => handleHeaderClick(i)}
+              style={{ cursor: "pointer", userSelect: "none" }}
+            >
               <span>
                 {header}
-                {header === "Заголовок" && tasks.length
-                  ? `〔 ${tasks.length} 〕`
+                <span className={s.sortArrow}>{getSortArrow(i)}</span>
+                {header === "Заголовок" && sortedTasks.length
+                  ? `〔 ${sortedTasks.length} 〕`
                   : ""}
               </span>
-
-              {i < headersTitleTask.length - 1 && (
-                <div
-                  className={s.resizer}
-                  onMouseDown={(e) => handleMouseDown(e, i)}
-                />
-              )}
             </div>
           ))}
         </div>
 
         <div className={s.gridBody} ref={tableRef}>
-          {tasks.map((task) => (
+          {sortedTasks.map((task) => (
             <div
               key={task.number}
               className={s.gridRow}
               style={{ gridTemplateColumns }}
               onClick={() => onOpenTask(task.number)}
             >
-              <TaskGridCell taskData={task} />
+              <TaskGridCell
+                taskData={{
+                  ...task,
+                  timeSpent: task.timeSpentFormatted,
+                }}
+              />
             </div>
           ))}
         </div>

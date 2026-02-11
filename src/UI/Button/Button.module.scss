@@ -20,3 +20,8 @@
 .button:active {
     background-color: var(--accent-color);
 }
+
+.button_small {
+    padding: 10px 15px;
+    font-size: 15px;
+}

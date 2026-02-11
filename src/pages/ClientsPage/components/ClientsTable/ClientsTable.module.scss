@@ -3,8 +3,6 @@
   height: 100%;
 }
 
-
-/* 🔹 Шапка — фиксируется при скролле */
 .gridHeaderRow {
   display: grid;
   grid-auto-flow: column;
@@ -16,7 +14,6 @@
   border-bottom: 1px solid var(--border-color);
 }
 
-/* 🔹 Тело таблицы со скроллом */
 .gridBody {
   display: grid;
   grid-auto-rows: 50px;
@@ -28,7 +25,6 @@
   background: var(--bg-color);
 }
 
-/* 🔹 Отдельная ячейка заголовка */
 .gridHeader {
   font-size: 16px;
   padding: 0 8px;

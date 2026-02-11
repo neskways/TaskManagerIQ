@@ -191,6 +191,16 @@ export const TimerTasks = () => {
     showPopup,
   ]);
 
+  useEffect(() => {
+    if (activeTaskId) return;
+
+    const timer = setTimeout(() => {
+      setIdleModal(true);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [activeTaskId]);
+
   // -------------------------------------------------
   // Старт / пауза
   const startPauseTask = useCallback(async () => {
@@ -320,9 +330,8 @@ export const TimerTasks = () => {
       )}
 
       <div
-        className={`${s.wrapper} ${
-          isExpanded ? s.expandedWrapper : ""
-        } ${showExpanded ? s.show : ""}`}
+        className={`${s.wrapper} ${isExpanded ? s.expandedWrapper : ""
+          } ${showExpanded ? s.show : ""}`}
       >
         <ExpandButton expanded={isExpanded} onToggle={toggleExpand} />
 

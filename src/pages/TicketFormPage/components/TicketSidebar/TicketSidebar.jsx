@@ -1,13 +1,13 @@
 import s from "./TicketSidebar.module.scss";
 import Cookies from "js-cookie";
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Contacts } from "../Contacts/Contacts";
 import { Button } from "../../../../UI/Button/Button";
 import { Selector } from "../../../../UI/Selector/Selector";
 import { usePopup } from "../../../../context/PopupContext";
 import { TaskNotification } from "../../../../components/TaskNotification/TaskNotification";
-import { taskStatuses } from "../../../../modules/taskStatuses";
+import { taskStatuses, statusTransitions } from "../../../../modules/taskStatuses";
 import { updateTaskInfo } from "../../../../api/update/updateTaskInfo";
 import { curentTaskManage } from "../../../../api/curentTaskManage";
 import { useTaskNotifications } from "../../../../hooks/useTaskNotifications";
@@ -38,7 +38,6 @@ export const TicketSidebar = ({
   const [selectedStatus, setSelectedStatus] = useState(currentStatus ?? "");
   const [selectedExecutor, setSelectedExecutor] = useState(currentExecutor ?? "");
 
-  // 🔥 последнее сохранённое состояние
   const [savedStatus, setSavedStatus] = useState(currentStatus ?? "");
   const [savedExecutor, setSavedExecutor] = useState(currentExecutor ?? "");
 
@@ -48,7 +47,7 @@ export const TicketSidebar = ({
   const [confirmPause, setConfirmPause] = useState(false);
   const [pendingSave, setPendingSave] = useState(null);
 
-  // синхронизация при открытии/смене задачи
+  // синхронизация при смене задачи
   useEffect(() => {
     setSelectedStatus(currentStatus ?? "");
     setSelectedExecutor(currentExecutor ?? "");
@@ -113,7 +112,7 @@ export const TicketSidebar = ({
 
       await updateTaskInfo(formattedTaskId, selectedStatus, selectedExecutor);
 
-      // 🔥 фикс: обновляем базу сравнения
+      // обновляем базовое состояние
       setSavedStatus(selectedStatus);
       setSavedExecutor(selectedExecutor);
 
@@ -141,15 +140,32 @@ export const TicketSidebar = ({
     (e) => e?.id && e.id !== "-" && typeof e.name === "string" && e.name.trim() !== "-"
   );
 
-  const statusItems = Object.values(taskStatuses)
-    .map(({ code, name }) => ({ id: code, name }))
-    .filter((item) => item?.id && item.name?.trim() !== "-");
+  // 🔥 ВСЕ статусы
+  const allStatusItems = useMemo(() => {
+    return Object.values(taskStatuses)
+      .map(({ code, name }) => ({ id: code, name }))
+      .filter((item) => item?.id && item.name?.trim() !== "-");
+  }, []);
+
+  // 🔥 разрешённые переходы от сохранённого статуса
+  const allowedStatuses = statusTransitions[savedStatus] ?? [];
+
+  // 🔥 итоговый список для селектора
+  const statusItems = useMemo(() => {
+    if (!savedStatus) return allStatusItems;
+
+    return allStatusItems.filter(
+      (status) =>
+        status.id === savedStatus || // текущий статус всегда показываем
+        allowedStatuses.includes(status.id)
+    );
+  }, [allStatusItems, savedStatus, allowedStatuses]);
 
   const selectedExecutorName =
     validEmployeeOptions.find((e) => e.id === selectedExecutor)?.name ?? selectedExecutor ?? "";
 
   const selectedStatusName =
-    statusItems.find((e) => e.id === selectedStatus)?.name ?? selectedStatus ?? "";
+    allStatusItems.find((e) => e.id === selectedStatus)?.name ?? selectedStatus ?? "";
 
   const isEmployee = role === import.meta.env.VITE_TOKEN_EMPLOYEE;
   const isManagerOrDuty =
@@ -195,6 +211,7 @@ export const TicketSidebar = ({
             onChange={setSelectedExecutor}
             disabled={employeesLoading}
           />
+
           <Selector
             title="Статус задачи"
             alignTitle="center"

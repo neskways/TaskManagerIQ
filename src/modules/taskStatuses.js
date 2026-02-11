@@ -33,3 +33,51 @@ export const statusesList = [
   { code: "000000008", name: "Передана на выполнение" },
   { code: "000000009", name: "Ожидаем ответ клиента" },
 ];
+
+export const statusTransitions = {
+  [taskStatuses.NEW.code]: [
+    taskStatuses.ON_REVIEW.code,
+    taskStatuses.TRANSFERRED.code,
+    taskStatuses.CANCELED.code,
+    taskStatuses.WATING.code,
+  ],
+
+  [taskStatuses.ON_REVIEW.code]: [
+    taskStatuses.TRANSFERRED.code,
+    taskStatuses.CANCELED.code,
+    taskStatuses.WATING.code,
+  ],
+
+  [taskStatuses.TRANSFERRED.code]: [
+    taskStatuses.IN_PROGRESS.code,
+    taskStatuses.WATING.code,
+    taskStatuses.CANCELED.code,
+  ],
+
+  [taskStatuses.PAUSED.code]: [
+    taskStatuses.IN_PROGRESS.code,
+    taskStatuses.WATING.code,
+    taskStatuses.CANCELED.code,
+  ],
+
+  [taskStatuses.IN_PROGRESS.code]: [
+    taskStatuses.PAUSED.code,
+    taskStatuses.READY.code,
+  ],
+
+  [taskStatuses.WATING.code]: Object.values(taskStatuses)
+    .map(s => s.code)
+    .filter(code =>
+      code !== taskStatuses.NEW.code &&
+      code !== taskStatuses.ON_REVIEW.code
+    ),
+
+  [taskStatuses.READY.code]: [
+    taskStatuses.DONE.code,
+    taskStatuses.CANCELED.code,
+  ],
+
+  [taskStatuses.DONE.code]: [],
+
+  [taskStatuses.CANCELED.code]: [],
+};

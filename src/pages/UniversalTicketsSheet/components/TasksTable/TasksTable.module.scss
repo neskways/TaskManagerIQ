@@ -215,3 +215,16 @@
   opacity: 1;
   visibility: visible;
 }
+
+.gridHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+
+  .sortArrow {
+    font-size: 12px;
+    margin-left: 4px;
+    margin-right: 8px;
+  }
+}

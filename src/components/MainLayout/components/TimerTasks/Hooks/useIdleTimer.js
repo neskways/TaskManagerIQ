@@ -1,21 +1,27 @@
 import { useEffect, useRef } from "react";
 
-export const useIdleTimer = (onIdle, idleTimeout = 300000, activeTaskId, idleModal) => {
-  const idleRef = useRef(null);
-
-  const resetIdle = () => {
-    clearTimeout(idleRef.current);
-    if (idleModal || activeTaskId) return;
-    idleRef.current = setTimeout(onIdle, idleTimeout);
-  };
+export const useIdleTimer = (onIdle, delay, activeTaskId) => {
+  const timerRef = useRef(null);
+  const wasActiveRef = useRef(false);
 
   useEffect(() => {
-    const events = ["mousemove", "keydown", "click", "scroll"];
-    events.forEach((e) => window.addEventListener(e, resetIdle));
-    resetIdle();
-    return () => {
-      events.forEach((e) => window.removeEventListener(e, resetIdle));
-      clearTimeout(idleRef.current);
-    };
-  }, [activeTaskId, idleModal]);
+    const isActive = Boolean(activeTaskId);
+
+    // если задача только что остановилась
+    if (!isActive && wasActiveRef.current) {
+      timerRef.current = setTimeout(() => {
+        onIdle();
+      }, delay);
+    }
+
+    // если задача стала активной — сбрасываем таймер
+    if (isActive && timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+
+    wasActiveRef.current = isActive;
+
+    return () => {};
+  }, [activeTaskId, delay, onIdle]);
 };

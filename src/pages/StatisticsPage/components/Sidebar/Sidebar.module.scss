@@ -1,0 +1,21 @@
+.block {
+    border-right:  1px solid var(--border-color);
+    height: 100%;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+}
+
+.item {
+    border-bottom: 1px solid var(--border-color);
+    padding: 14px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: var(--transition);
+}
+
+.item:hover {
+    background: var(--bg-color-hover);
+}
