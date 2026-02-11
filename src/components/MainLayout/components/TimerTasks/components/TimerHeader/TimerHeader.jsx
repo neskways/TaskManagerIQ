@@ -1,6 +1,6 @@
+import { memo, useEffect, useState } from "react";
 import s from "./TimerHeader.module.scss";
 import { secToHHMMSS } from "../../../../../../utils/secToHHMMSS";
-import { memo } from "react";
 
 export const TimerHeader = memo(({
   selectedTask,
@@ -10,6 +10,24 @@ export const TimerHeader = memo(({
   onFinish,
   isExpanded,
 }) => {
+  const [localSec, setLocalSec] = useState(displaySec);
+
+  // синхронизация при смене выбранной задачи или обновлении секунд
+  useEffect(() => {
+    setLocalSec(displaySec);
+  }, [displaySec]);
+
+  // локальный таймер
+  useEffect(() => {
+    if (!isRunning) return;
+
+    const interval = setInterval(() => {
+      setLocalSec((s) => s + 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [isRunning]);
+
   return (
     <div className={`${s.headerBox} ${isExpanded ? s.expanded : ""}`}>
       <div className={s.headerInner}>
@@ -29,7 +47,7 @@ export const TimerHeader = memo(({
             </button>
           </div>
 
-          <div className={s.timerBig}>{secToHHMMSS(displaySec)}</div>
+          <div className={s.timerBig}>{secToHHMMSS(localSec)}</div>
         </div>
       </div>
     </div>

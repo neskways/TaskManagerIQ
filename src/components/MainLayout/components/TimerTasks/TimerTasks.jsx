@@ -1,5 +1,5 @@
 import s from "./TimerTasks.module.scss";
-import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import Cookies from "js-cookie";
 
 import { TaskList } from "./components/TaskList/TaskList";
@@ -22,6 +22,7 @@ import { taskStatuses } from "../../../../modules/taskStatuses";
 const COOKIE_LAST_SELECTED = "lastSelectedTaskId";
 
 export const TimerTasks = () => {
+
   const { showPopup } = usePopup();
   const { play } = useTaskAudio();
   const { activeTask, startTask, clearActiveTask } = useActiveTask();
@@ -37,7 +38,8 @@ export const TimerTasks = () => {
   const [pendingTaskId, setPendingTaskId] = useState(null);
   const [taskToFinish, setTaskToFinish] = useState(null);
 
-  const { notifications, addNotification, removeNotification } = useTaskNotifications();
+  const { notifications, addNotification, removeNotification } =
+    useTaskNotifications();
 
   const {
     tasks,
@@ -50,48 +52,53 @@ export const TimerTasks = () => {
     refreshTasks,
   } = useTasks(showPopup, play);
 
-  const firstLoadRef = useRef(true);
+  // -------------------------------------------------
+  // Выбранная задача
+  const selectedTask = useMemo(
+    () => tasks.find((t) => t.id === selectedTaskId) ?? null,
+    [tasks, selectedTaskId]
+  );
 
-  useIdleTimer(() => setIdleModal(true), 600000, activeTaskId, idleModal);
+  const currentActiveTask = useMemo(
+    () => tasks.find((t) => t.id === activeTaskId) ?? null,
+    [tasks, activeTaskId]
+  );
 
-  // ----------------------------
-  // Выбираем выбранную и активную задачу
-  const selectedTask = useMemo(() => tasks.find((t) => t.id === selectedTaskId) ?? null, [
-    tasks,
-    selectedTaskId,
-  ]);
+  const pendingTask = useMemo(
+    () => tasks.find((t) => t.id === pendingTaskId) ?? null,
+    [tasks, pendingTaskId]
+  );
 
-  const currentActiveTask = useMemo(() => tasks.find((t) => t.id === activeTaskId) ?? null, [
-    tasks,
-    activeTaskId,
-  ]);
-
-  // ----------------------------
-  // При первом заходе синхронизируем selectedTask с cookie и activeTask
+  // -------------------------------------------------
+  // Синхронизация selectedTask с cookie
   useEffect(() => {
     const lastSelectedId = Cookies.get(COOKIE_LAST_SELECTED);
+
     if (activeTaskId) {
       setSelectedTaskId(activeTaskId);
       return;
     }
+
     if (lastSelectedId) {
       const id = Number(lastSelectedId);
       if (tasks.some((t) => t.id === id)) {
         setSelectedTaskId(id);
+        return;
       }
-    } else if (tasks.length > 0) {
+    }
+
+    if (tasks.length > 0) {
       setSelectedTaskId(tasks[0].id);
     }
   }, [tasks, activeTaskId, setSelectedTaskId]);
 
-  // ----------------------------
-  // Синхронизация activeTask в контексте при обновлении списка задач
+  // -------------------------------------------------
+  // Синхронизация activeTask с контекстом
   useEffect(() => {
     if (!activeTaskId || tasks.length === 0) return;
 
     const taskInList = tasks.find((t) => t.id === activeTaskId);
 
-    // Если активная задача отличается от контекста — обновляем контекст
     if (taskInList && (!activeTask || activeTask.id !== taskInList.id)) {
       startTask({ id: taskInList.id, title: taskInList.title });
     } else if (!taskInList && activeTask) {
@@ -99,17 +106,7 @@ export const TimerTasks = () => {
     }
   }, [tasks, activeTaskId, activeTask, startTask, clearActiveTask]);
 
-  // ----------------------------
-  // Авто-обновление задач раз в 15 секунд (без бесконечных циклов)
-  useEffect(() => {
-    if (firstLoadRef.current) {
-      firstLoadRef.current = false;
-      return;
-    }
-    refreshTasks().catch(() => showPopup("Не удалось обновить задачи", "error"));
-  }, [refreshTasks, showPopup]);
-
-  // ----------------------------
+  // -------------------------------------------------
   // Раскрытие панели
   const toggleExpand = useCallback(() => {
     if (!isExpanded) {
@@ -121,7 +118,7 @@ export const TimerTasks = () => {
     }
   }, [isExpanded]);
 
-  // ----------------------------
+  // -------------------------------------------------
   // Выбор задачи
   const onSelectTask = useCallback(
     (taskId) => {
@@ -138,8 +135,8 @@ export const TimerTasks = () => {
     [activeTaskId, setSelectedTaskId]
   );
 
-  // ----------------------------
-  // Пауза текущей задачи и старт новой
+  // -------------------------------------------------
+  // Пауза и переключение
   const pauseAndSwitchTask = useCallback(async () => {
     if (!pendingTaskId || !activeTaskId) return;
 
@@ -149,31 +146,42 @@ export const TimerTasks = () => {
     setPendingTaskId(null);
 
     try {
-      // Ставим текущую задачу на паузу
       await manageTaskState(activeTaskId, taskStatuses.PAUSED.code);
-      addNotification(`Задача "${currentActiveTask?.title}" на паузе`, "info", 3000);
 
-      // Ставим новую задачу в работу
+      if (currentActiveTask) {
+        addNotification(
+          `Задача "${currentActiveTask.title}" на паузе`,
+          "info",
+          3000
+        );
+      }
+
       await manageTaskState(nextTaskId, taskStatuses.IN_PROGRESS.code);
-      const nextTask = tasks.find((t) => t.id === nextTaskId);
 
       setActiveTaskId(nextTaskId);
       setSelectedTaskId(nextTaskId);
 
-      if (nextTask) startTask({ id: nextTask.id, title: nextTask.title });
-      addNotification(`Задача "${nextTask?.title}" запущена`, "success", 3000);
+      if (pendingTask) {
+        startTask({ id: pendingTask.id, title: pendingTask.title });
+        addNotification(
+          `Задача "${pendingTask.title}" запущена`,
+          "success",
+          3000
+        );
+      }
 
-      // Обновляем список задач после переключения
+      // больше не обновляем secondsMap каждую секунду
+      // refreshTasks можно оставить для синхронизации с сервером при смене задачи
       await refreshTasks();
     } catch (err) {
       console.error(err);
-      showPopup("Ошибка при переключении задачи", "error");
+      showPopup("Ошибка при переключении задачи", { type: "error" });
     }
   }, [
     pendingTaskId,
     activeTaskId,
     currentActiveTask,
-    tasks,
+    pendingTask,
     manageTaskState,
     addNotification,
     setActiveTaskId,
@@ -183,32 +191,57 @@ export const TimerTasks = () => {
     showPopup,
   ]);
 
-  // ----------------------------
-  // Старт/пауза выбранной задачи
+  // -------------------------------------------------
+  // Старт / пауза
   const startPauseTask = useCallback(async () => {
     if (!selectedTaskId) return;
 
-    if (activeTaskId === selectedTaskId) {
-      await manageTaskState(selectedTaskId, taskStatuses.PAUSED.code);
-      addNotification(`Задача "${selectedTask?.title}" на паузе`, "info", 3000);
-      setActiveTaskId(null);
-      clearActiveTask();
-      return;
+    try {
+      if (activeTaskId === selectedTaskId) {
+        await manageTaskState(selectedTaskId, taskStatuses.PAUSED.code);
+
+        if (selectedTask) {
+          addNotification(
+            `Задача "${selectedTask.title}" на паузе`,
+            "info",
+            3000
+          );
+        }
+
+        setActiveTaskId(null);
+        clearActiveTask();
+        return;
+      }
+
+      if (activeTaskId && currentActiveTask) {
+        await manageTaskState(activeTaskId, taskStatuses.PAUSED.code);
+
+        addNotification(
+          `Задача "${currentActiveTask.title}" на паузе`,
+          "info",
+          3000
+        );
+      }
+
+      await manageTaskState(selectedTaskId, taskStatuses.IN_PROGRESS.code);
+
+      if (selectedTask) {
+        addNotification(
+          `Задача "${selectedTask.title}" запущена`,
+          "success",
+          5000
+        );
+
+        startTask({ id: selectedTask.id, title: selectedTask.title });
+      }
+
+      setActiveTaskId(selectedTaskId);
+
+      await refreshTasks();
+    } catch (err) {
+      console.error(err);
+      showPopup("Ошибка при смене статуса задачи", { type: "error" });
     }
-
-    if (activeTaskId && currentActiveTask) {
-      await manageTaskState(activeTaskId, taskStatuses.PAUSED.code);
-      addNotification(`Задача "${currentActiveTask.title}" на паузе`, "info", 3000);
-    }
-
-    await manageTaskState(selectedTaskId, taskStatuses.IN_PROGRESS.code);
-    addNotification(`Задача "${selectedTask?.title}" запущена`, "success", 5000);
-    setActiveTaskId(selectedTaskId);
-
-    if (selectedTask) startTask({ id: selectedTask.id, title: selectedTask.title });
-
-    // Обновляем список задач после старта
-    await refreshTasks();
   }, [
     selectedTaskId,
     activeTaskId,
@@ -220,13 +253,14 @@ export const TimerTasks = () => {
     startTask,
     clearActiveTask,
     refreshTasks,
+    showPopup,
   ]);
 
-  // ----------------------------
-  // Завершение задачи
+  // -------------------------------------------------
+  // Завершение
   const handleFinishClick = useCallback(() => {
     if (!activeTaskId) {
-      showPopup("Нет активной задачи", "warning");
+      showPopup("Нет активной задачи", { type: "warning" });
       return;
     }
     setTaskToFinish(currentActiveTask);
@@ -236,36 +270,60 @@ export const TimerTasks = () => {
   const finishTask = useCallback(async () => {
     if (!taskToFinish) return;
 
-    await manageTaskState(taskToFinish.id, taskStatuses.READY.code);
-    addNotification(`Задача "${taskToFinish.title}" завершена`, "success", 5000);
+    try {
+      await manageTaskState(taskToFinish.id, taskStatuses.READY.code);
 
-    setActiveTaskId(null);
-    clearActiveTask();
-    setConfirmFinish(false);
-    setTaskToFinish(null);
+      addNotification(
+        `Задача "${taskToFinish.title}" завершена`,
+        "success",
+        5000
+      );
 
-    // Обновляем список после завершения
-    await refreshTasks();
-  }, [taskToFinish, manageTaskState, addNotification, setActiveTaskId, clearActiveTask, refreshTasks]);
+      setActiveTaskId(null);
+      clearActiveTask();
+      setConfirmFinish(false);
+      setTaskToFinish(null);
 
-  // ----------------------------
-  // Модалка с тикетом
+      await refreshTasks();
+    } catch (err) {
+      console.error(err);
+      showPopup("Ошибка при завершении задачи", { type: "error" });
+    }
+  }, [
+    taskToFinish,
+    manageTaskState,
+    addNotification,
+    setActiveTaskId,
+    clearActiveTask,
+    refreshTasks,
+    showPopup,
+  ]);
+
+  // -------------------------------------------------
+  // Модалка
   useEffect(() => {
     if (!modalTaskId) return;
     const task = tasks.find((t) => t.id === modalTaskId);
     setModalTask(task ?? null);
   }, [modalTaskId, tasks]);
 
-  // ----------------------------
+  // -------------------------------------------------
   return (
     <div className={`${s.full_block} ${showExpanded ? s.showF : ""}`}>
       {idleModal && <IdleWarning onClose={() => setIdleModal(false)} />}
 
       {isExpanded && (
-        <div className={`${s.overlay} ${showExpanded ? s.show : ""}`} onClick={toggleExpand} />
+        <div
+          className={`${s.overlay} ${showExpanded ? s.show : ""}`}
+          onClick={toggleExpand}
+        />
       )}
 
-      <div className={`${s.wrapper} ${isExpanded ? s.expandedWrapper : ""} ${showExpanded ? s.show : ""}`}>
+      <div
+        className={`${s.wrapper} ${
+          isExpanded ? s.expandedWrapper : ""
+        } ${showExpanded ? s.show : ""}`}
+      >
         <ExpandButton expanded={isExpanded} onToggle={toggleExpand} />
 
         <TimerHeader
@@ -279,7 +337,7 @@ export const TimerTasks = () => {
 
         <TaskList
           tasks={tasks}
-          secondsMap={secondsMap}
+          secondsMap={secondsMap} // только начальные значения, без постоянного обновления
           selectedTaskId={selectedTaskId}
           isExpanded={isExpanded}
           onSelectTask={onSelectTask}
@@ -296,7 +354,7 @@ export const TimerTasks = () => {
 
       <PopupConfirm
         isOpen={confirmPause}
-        text={`Поставить активную задачу на паузу и переключиться на "${tasks.find((t) => t.id === pendingTaskId)?.title}"?`}
+        text={`Поставить активную задачу на паузу и переключиться на "${pendingTask?.title}"?`}
         onConfirm={pauseAndSwitchTask}
         onCancel={() => {
           setConfirmPause(false);
@@ -305,10 +363,17 @@ export const TimerTasks = () => {
       />
 
       {notifications.map((n) => (
-        <TaskNotification key={n.id} {...n} onClose={() => removeNotification(n.id)} />
+        <TaskNotification
+          key={n.id}
+          {...n}
+          onClose={() => removeNotification(n.id)}
+        />
       ))}
 
-      <ModelWindow isOpen={!!modalTaskId} onClose={() => setModalTaskId(null)}>
+      <ModelWindow
+        isOpen={!!modalTaskId}
+        onClose={() => setModalTaskId(null)}
+      >
         <TicketFormPage
           modal
           taskId={modalTaskId}

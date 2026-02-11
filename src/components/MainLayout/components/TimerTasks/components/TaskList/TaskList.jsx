@@ -1,9 +1,9 @@
 import s from "./TaskList.module.scss";
-import { secToHHMMSS } from "../../../../../../utils/secToHHMMSS";
+import { memo } from "react";
+import { TaskItem } from "../TaskItem/TaskItem";
 
-export const TaskList = ({
+export const TaskList = memo(({
   tasks,
-  secondsMap,
   selectedTaskId,
   isExpanded,
   loading,
@@ -19,28 +19,17 @@ export const TaskList = ({
 
         <div className={s.items}>
           {tasks.map((task) => (
-            <div
+            <TaskItem
               key={task.id}
-              className={`${s.taskItem} ${
-                task.id === selectedTaskId ? s.selected : ""
-              }`}
-              onClick={() => onSelectTask(task.id)}
-              onDoubleClick={() => onOpenModal(task.id)}
-            >
-              <div className={s.taskId}>{task.id}</div>
-              <div className={s.taskTitle}>{task.title}</div>
-
-              {isExpanded && (
-                <div className={s.taskClient}>{task.client ?? "—"}</div>
-              )}
-
-              <div className={s.taskTime}>
-                {secToHHMMSS(secondsMap[task.id] || 0)}
-              </div>
-            </div>
+              task={task}
+              selected={task.id === selectedTaskId}
+              isExpanded={isExpanded}
+              onSelect={onSelectTask}
+              onOpenModal={onOpenModal}
+            />
           ))}
         </div>
       </div>
     </div>
   );
-};
+});

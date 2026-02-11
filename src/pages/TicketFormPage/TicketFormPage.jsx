@@ -54,7 +54,7 @@ export const TicketFormPage = ({ modal = false, taskId, onClose }) => {
       if (!data) {
         return;
       }
-      console.log(data)
+      
       setTask({
         taskId: parseInt(data.taskId, 10),
         client: data.client,
