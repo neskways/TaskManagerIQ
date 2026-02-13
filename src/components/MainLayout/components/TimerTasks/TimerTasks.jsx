@@ -191,15 +191,15 @@ export const TimerTasks = () => {
     showPopup,
   ]);
 
-  useEffect(() => {
-    if (activeTaskId) return;
+  // useEffect(() => {
+  //   if (activeTaskId) return;
 
-    const timer = setTimeout(() => {
-      setIdleModal(true);
-    }, 1000);
+  //   const timer = setTimeout(() => {
+  //     setIdleModal(true);
+  //   }, 1000);
 
-    return () => clearTimeout(timer);
-  }, [activeTaskId]);
+  //   return () => clearTimeout(timer);
+  // }, [activeTaskId]);
 
   // -------------------------------------------------
   // Старт / пауза

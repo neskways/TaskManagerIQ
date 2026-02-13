@@ -18,7 +18,7 @@ export const MainLayout = () => {
 
       {/* Приколы ниже */}
       <ScreamerBlock />
-      <Surprise />
+      {/* <Surprise /> */}
     </div>
   );
 };
