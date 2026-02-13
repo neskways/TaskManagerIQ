@@ -171,7 +171,7 @@ export const AppRoutes = () => {
         //Страница задачи
         <Route path="/ticket/:id" element={<TicketFormPage />} />
         //Страница статистики пользователя по выполненым задачам
-        <Route path="/statistics" element={<StatisticsPage />}></Route>
+        <Route path="/reports" element={<StatisticsPage />}></Route>
         //Страница со списком всех клиентов
         <Route path="/clients" element={<ClientsPage />}></Route>
         //Страница профиля
