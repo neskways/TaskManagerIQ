@@ -1,8 +1,8 @@
 import { api } from "../axios";
 import Cookies from "js-cookie";
 
-export const updateTaskInfo = async (taskId, state, ownerId) => {
-  
+export const updateTaskInfo = async (taskId, state, ownerId, timeInMinutes, mileage) => {
+
   try {
     const token = Cookies.get("token");
     const userId = Cookies.get("userCode");
@@ -15,6 +15,8 @@ export const updateTaskInfo = async (taskId, state, ownerId) => {
         taskid: String(taskId).padStart(9, "0"),
         state,
         owner: ownerId,
+        time: timeInMinutes,
+        mileage
       },
       {
         transformResponse: [(data) => data], 

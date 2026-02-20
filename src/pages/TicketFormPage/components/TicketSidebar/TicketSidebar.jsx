@@ -14,6 +14,7 @@ import { useTaskNotifications } from "../../../../hooks/useTaskNotifications";
 import { useClientsAndEmployees } from "../../../CreateTicketPage/hooks/useClientsAndEmployees";
 import { PopupConfirm } from "../../../../UI/PopupConfirm/PopupConfirm";
 import { useActiveTask } from "../../../../context/ActiveTaskContext";
+import { NumberInput } from "./components/NumberInput/NumberInput";
 
 export const TicketSidebar = ({
   taskId,
@@ -23,8 +24,11 @@ export const TicketSidebar = ({
   currentExecutor,
   contacts,
   returnId,
+  firstline,
+  outoffice,
   returnName,
-  timeSpent,
+  timeSpent = "00:00:00",
+  currentMileage = 0,
   isFirstLineTask,
 }) => {
   const { employeeOptions, loading: employeesLoading } = useClientsAndEmployees();
@@ -35,11 +39,34 @@ export const TicketSidebar = ({
   const role = Cookies.get("role");
   const currentUserCode = Cookies.get("userCode");
 
+  const timeStringToMinutes = (time) => {
+    if (!time || typeof time !== "string") return 0;
+    const [hours = "0", minutes = "0"] = time.split(":");
+    return Number(hours) * 60 + Number(minutes);
+  };
+
+  const minutesToTimeString = (minutes) => {
+    const hrs = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${String(hrs).padStart(2, "0")}:${String(mins).padStart(2, "0")}:00`;
+  };
+
+
   const [selectedStatus, setSelectedStatus] = useState(currentStatus ?? "");
   const [selectedExecutor, setSelectedExecutor] = useState(currentExecutor ?? "");
 
   const [savedStatus, setSavedStatus] = useState(currentStatus ?? "");
   const [savedExecutor, setSavedExecutor] = useState(currentExecutor ?? "");
+
+  const [timeInMinutes, setTimeInMinutes] = useState(
+    timeStringToMinutes(timeSpent)
+  );
+  const [savedTime, setSavedTime] = useState(
+    timeStringToMinutes(timeSpent)
+  );
+
+  const [mileage, setMileage] = useState(currentMileage ?? 0);
+  const [savedMileage, setSavedMileage] = useState(currentMileage ?? 0);
 
   const [hasChanges, setHasChanges] = useState(false);
   const [isFirstLineTaskState, setIsFirstLineTask] = useState(isFirstLineTask ?? false);
@@ -53,15 +80,34 @@ export const TicketSidebar = ({
     setSelectedExecutor(currentExecutor ?? "");
     setSavedStatus(currentStatus ?? "");
     setSavedExecutor(currentExecutor ?? "");
-  }, [currentStatus, currentExecutor, taskId]);
+
+    const minutes = timeStringToMinutes(timeSpent);
+    setTimeInMinutes(minutes);
+    setSavedTime(minutes);
+
+    setMileage(currentMileage ?? 0);
+    setSavedMileage(currentMileage ?? 0);
+
+  }, [currentStatus, currentExecutor, taskId, timeSpent, currentMileage]);
 
   // индикатор изменений
   useEffect(() => {
     setHasChanges(
       selectedStatus !== savedStatus ||
-      selectedExecutor !== savedExecutor
+      selectedExecutor !== savedExecutor ||
+      timeInMinutes !== savedTime ||
+      mileage !== savedMileage
     );
-  }, [selectedStatus, selectedExecutor, savedStatus, savedExecutor]);
+  }, [
+    selectedStatus,
+    selectedExecutor,
+    savedStatus,
+    savedExecutor,
+    timeInMinutes,
+    savedTime,
+    mileage,
+    savedMileage,
+  ]);
 
   // активная задача
   useEffect(() => {
@@ -80,7 +126,9 @@ export const TicketSidebar = ({
 
     if (
       selectedStatus === savedStatus &&
-      selectedExecutor === savedExecutor
+      selectedExecutor === savedExecutor &&
+      timeInMinutes === savedTime &&
+      mileage === savedMileage
     ) {
       showPopup("Данные не были изменены", { type: "info" });
       return;
@@ -91,30 +139,57 @@ export const TicketSidebar = ({
     const isMyTask = String(selectedExecutor) === String(currentUserCode);
 
     if (isInProgress && isMyTask && activeTask?.id && activeTask.id !== taskId) {
-      setPendingSave({ formattedTaskId, selectedStatus, selectedExecutor });
+      setPendingSave({
+        formattedTaskId,
+        selectedStatus,
+        selectedExecutor,
+        timeInMinutes,
+        mileage,
+      });
       setConfirmPause(true);
       return;
     }
 
-    await executeSave({ formattedTaskId, selectedStatus, selectedExecutor });
+    await executeSave({
+      formattedTaskId,
+      selectedStatus,
+      selectedExecutor,
+      timeInMinutes,
+      mileage,
+    });
   };
 
-  const executeSave = async ({ formattedTaskId, selectedStatus, selectedExecutor }) => {
+  const executeSave = async ({
+    formattedTaskId,
+    selectedStatus,
+    selectedExecutor,
+    timeInMinutes,
+    mileage,
+  }) => {
     try {
       const isInProgress = selectedStatus === taskStatuses.IN_PROGRESS.code;
       const isMyTask = String(selectedExecutor) === String(currentUserCode);
+      console.log(isInProgress);
+      console.log(isMyTask);
 
-      if (isInProgress && isMyTask) {
-        await curentTaskManage(formattedTaskId, taskStatuses.IN_PROGRESS.code);
-        startTask({ id: taskId, title: taskTitle });
-        addNotification(`Задача "${taskTitle}" запущена`, "success", 3000);
-      }
+      // if (isInProgress && isMyTask) {
+      //   await curentTaskManage(formattedTaskId, taskStatuses.IN_PROGRESS.code);
+      //   startTask({ id: taskId, title: taskTitle });
+      //   addNotification(`Задача "${taskTitle}" запущена`, "success", 3000);
+      // }
 
-      await updateTaskInfo(formattedTaskId, selectedStatus, selectedExecutor);
+      await updateTaskInfo(
+        formattedTaskId,
+        selectedStatus,
+        selectedExecutor,
+        timeInMinutes,
+        mileage
+      );
 
-      // обновляем базовое состояние
       setSavedStatus(selectedStatus);
       setSavedExecutor(selectedExecutor);
+      setSavedTime(timeInMinutes);
+      setSavedMileage(mileage);
 
       showPopup("Изменения успешно сохранены", { type: "success" });
     } catch (err) {
@@ -137,40 +212,48 @@ export const TicketSidebar = ({
   };
 
   const validEmployeeOptions = (employeeOptions || []).filter(
-    (e) => e?.id && e.id !== "-" && typeof e.name === "string" && e.name.trim() !== "-"
+    (e) =>
+      e?.id &&
+      e.id !== "-" &&
+      typeof e.name === "string" &&
+      e.name.trim() !== "-"
   );
 
-  // 🔥 ВСЕ статусы
   const allStatusItems = useMemo(() => {
     return Object.values(taskStatuses)
       .map(({ code, name }) => ({ id: code, name }))
       .filter((item) => item?.id && item.name?.trim() !== "-");
   }, []);
 
-  // 🔥 разрешённые переходы от сохранённого статуса
   const allowedStatuses = statusTransitions[savedStatus] ?? [];
 
-  // 🔥 итоговый список для селектора
   const statusItems = useMemo(() => {
     if (!savedStatus) return allStatusItems;
 
     return allStatusItems.filter(
       (status) =>
-        status.id === savedStatus || // текущий статус всегда показываем
+        status.id === savedStatus ||
         allowedStatuses.includes(status.id)
     );
   }, [allStatusItems, savedStatus, allowedStatuses]);
 
   const selectedExecutorName =
-    validEmployeeOptions.find((e) => e.id === selectedExecutor)?.name ?? selectedExecutor ?? "";
+    validEmployeeOptions.find((e) => e.id === selectedExecutor)?.name ??
+    selectedExecutor ??
+    "";
 
   const selectedStatusName =
-    allStatusItems.find((e) => e.id === selectedStatus)?.name ?? selectedStatus ?? "";
+    allStatusItems.find((e) => e.id === selectedStatus)?.name ??
+    selectedStatus ??
+    "";
 
   const isEmployee = role === import.meta.env.VITE_TOKEN_EMPLOYEE;
   const isManagerOrDuty =
     role === import.meta.env.VITE_TOKEN_MANAGER ||
     role === import.meta.env.VITE_TOKEN_DUTY;
+  const isManagerOrAdmin =
+    role === import.meta.env.VITE_TOKEN_MANAGER ||
+    role === import.meta.env.VITE_TOKEN_ADMIN;
 
   return (
     <div className={s.wrapper}>
@@ -225,10 +308,32 @@ export const TicketSidebar = ({
         </>
       )}
 
-      <div className={s.block}>
-        <h4 className={s.title}>Время</h4>
-        <p className={s.text}>{timeSpent ?? "00:00:00"}</p>
-      </div>
+      {isManagerOrAdmin && (
+        <div className={s.block}>
+          <h4 className={s.title}>Время</h4>
+          <NumberInput
+            value={timeInMinutes}
+            onChange={setTimeInMinutes}
+          />
+        </div>
+      )}
+
+      {isManagerOrAdmin && (
+        <div className={s.block}>
+          <h4 className={s.title}>Километраж</h4>
+          <NumberInput
+            value={mileage}
+            onChange={setMileage}
+          />
+        </div>
+      )}
+
+      {isEmployee && (
+        <div className={s.block}>
+          <h4 className={s.title}>Время</h4>
+          <p className={s.text}>{timeSpent ?? "00:00:00"}</p>
+        </div>
+      )}
 
       <Contacts contacts={contacts} />
 
@@ -255,7 +360,11 @@ export const TicketSidebar = ({
       />
 
       {notifications.map((n) => (
-        <TaskNotification key={n.id} {...n} onClose={() => removeNotification(n.id)} />
+        <TaskNotification
+          key={n.id}
+          {...n}
+          onClose={() => removeNotification(n.id)}
+        />
       ))}
     </div>
   );

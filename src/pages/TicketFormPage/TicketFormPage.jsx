@@ -54,7 +54,7 @@ export const TicketFormPage = ({ modal = false, taskId, onClose }) => {
       if (!data) {
         return;
       }
-      
+      console.log(data)
       setTask({
         taskId: parseInt(data.taskId, 10),
         client: data.client,
@@ -68,6 +68,8 @@ export const TicketFormPage = ({ modal = false, taskId, onClose }) => {
         timeSpent: data.timeSpent,
         returnId: data.return || null,
         returnName: data.returnName,
+        firstline: data.firstline,
+        outoffice: data.outoffice,
         contacts: data.contacts,
         comments: data.comments.map((c) => ({
           user: c.user,
@@ -76,10 +78,9 @@ export const TicketFormPage = ({ modal = false, taskId, onClose }) => {
           date: new Date(c.date),
         })),
       });
+
     } catch (err) {
-      if (err?.response?.status !== 401) {
         showPopup("Не удалось загрузить заявку.", { type: "error" });
-      }
     } finally {
       setLoading(false);
     }
@@ -232,6 +233,8 @@ export const TicketFormPage = ({ modal = false, taskId, onClose }) => {
           returnName={task.returnName}
           timeSpent={task.timeSpent}
           theme={theme}
+          firstline={task.firstline}
+          outoffice={task.outoffice}
         />
       </div>
     </div>

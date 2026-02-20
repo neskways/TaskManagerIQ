@@ -39,7 +39,7 @@ export const CreateTicketPage = () => {
   const [isFirstLineTask, setIsFirstLineTask] = useState(
     role === import.meta.env.VITE_TOKEN_DUTY
   );
-  const [isDeparture, setIsDeparture] = useState(false);
+  const [isOutoffice, setisOutoffice] = useState(false);
   const [submitting, setSubmitting] = useState(false); // блокировка
 
   const {
@@ -202,7 +202,7 @@ export const CreateTicketPage = () => {
               : isFirstLineTask
                 ? "true"
                 : null,
-          departure: isDeparture ? "true" : "false",
+          outoffice: isOutoffice ? "true" : "false",
         },
       };
 
@@ -303,8 +303,8 @@ export const CreateTicketPage = () => {
 
               <div className={s.checkbox}>
                 <Checkbox
-                  checked={isDeparture}
-                  onChange={(e) => setIsDeparture(e.target.checked)}
+                  checked={isOutoffice}
+                  onChange={(e) => setisOutoffice(e.target.checked)}
                   disabled={role === import.meta.env.VITE_TOKEN_DUTY}
                 />
                 <p>Выезд к клиенту</p>
