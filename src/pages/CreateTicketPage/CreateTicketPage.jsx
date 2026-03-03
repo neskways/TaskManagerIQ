@@ -36,9 +36,7 @@ export const CreateTicketPage = () => {
   const [isReturnTask, setIsReturnTask] = useState(false);
   const [tasksList, setTasksList] = useState([]);
   const [selectedReturnTask, setSelectedReturnTask] = useState("");
-  const [isFirstLineTask, setIsFirstLineTask] = useState(
-    role === import.meta.env.VITE_TOKEN_DUTY
-  );
+  const [isFirstLineTask, setIsFirstLineTask] = useState(true);
   const [isOutoffice, setisOutoffice] = useState(false);
   const [submitting, setSubmitting] = useState(false); // блокировка
 
