@@ -4,15 +4,13 @@ import s from "./NumberInput.module.scss";
 export const NumberInput = ({ value = 0, onChange }) => {
   const [inputValue, setInputValue] = useState(String(value ?? ""));
 
-  useEffect(() => {
-    setInputValue(String(value ?? ""));
-  }, [value]);
 
   const handleChange = (e) => {
     // разрешаем только цифры
     const onlyNumbers = e.target.value.replace(/[^\d]/g, "");
 
     setInputValue(onlyNumbers);
+    onChange(onlyNumbers);
 
   };
 

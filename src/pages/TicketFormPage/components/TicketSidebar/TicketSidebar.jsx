@@ -123,7 +123,7 @@ export const TicketSidebar = ({
       showPopup("Выберите статус и исполнителя", { type: "warning" });
       return;
     }
-
+    console.log(mileage)
     if (
       selectedStatus === savedStatus &&
       selectedExecutor === savedExecutor &&
@@ -167,17 +167,6 @@ export const TicketSidebar = ({
     mileage,
   }) => {
     try {
-      const isInProgress = selectedStatus === taskStatuses.IN_PROGRESS.code;
-      const isMyTask = String(selectedExecutor) === String(currentUserCode);
-      console.log(isInProgress);
-      console.log(isMyTask);
-
-      // if (isInProgress && isMyTask) {
-      //   await curentTaskManage(formattedTaskId, taskStatuses.IN_PROGRESS.code);
-      //   startTask({ id: taskId, title: taskTitle });
-      //   addNotification(`Задача "${taskTitle}" запущена`, "success", 3000);
-      // }
-
       await updateTaskInfo(
         formattedTaskId,
         selectedStatus,

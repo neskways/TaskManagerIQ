@@ -32,6 +32,7 @@ export const CreateTicketPage = () => {
   const [selectedClient, setSelectedClient] = useState(null);
   const [selectedEmployee, setSelectedEmployee] = useState("");
   const [title, setTitle] = useState("");
+  const [agreedTime, setAgreedTime] = useState("");
   const [description, setDescription] = useState("");
   const [isReturnTask, setIsReturnTask] = useState(false);
   const [tasksList, setTasksList] = useState([]);
@@ -193,6 +194,7 @@ export const CreateTicketPage = () => {
           confId: selectedConfig,
           contacts: { ...contactDetails },
           owner: selectedEmployee,
+          agreedTime: agreedTime,
           return: isReturnTask ? selectedReturnTask : null,
           firstline:
             role === import.meta.env.VITE_TOKEN_DUTY
@@ -229,7 +231,6 @@ export const CreateTicketPage = () => {
       <PageTitle titleText="Новая заявка" center />
 
       <form onSubmit={handleSubmit}>
-        <Input text="Заголовок" value={title} setUserData={setTitle} onBlur={handleTitleBlur}/>
 
         <div className={s.filling_data_inner}>
           <ClientSearch
@@ -248,15 +249,24 @@ export const CreateTicketPage = () => {
             valueKey="id"
           />
         </div>
+
+        <Input text="Заголовок" value={title} setUserData={setTitle} onBlur={handleTitleBlur} />
+
         <MultipleInput
-          text="Текст"
+          text="Описание"
           rows={6}
           value={description}
           setUserData={setDescription}
         />
 
         <div className={s.filling_data_inner_2}>
-          { role !== import.meta.env.VITE_TOKEN_ADMIN && 
+          {role === import.meta.env.VITE_TOKEN_ADMIN || role === import.meta.env.VITE_TOKEN_MANAGER &&
+            <div className={s.time}>
+              <Input type={"number"} text="Согласованное время (в минутах)" value={agreedTime} setUserData={setAgreedTime} />
+            </div>
+          }
+
+          {role !== import.meta.env.VITE_TOKEN_ADMIN &&
             <Selector
               items={configOptions}
               value={selectedConfig}
@@ -321,16 +331,18 @@ export const CreateTicketPage = () => {
               <p>Возврат к задаче</p>
             </div>
 
-            {isReturnTask && (
-              <Selector
-                items={tasksList}
-                value={selectedReturnTask}
-                onChange={setSelectedReturnTask}
-                disabled={tasksList.length === 0}
-                labelKey="name"
-                valueKey="id"
-              />
-            )}
+            <div className={s.wrapper_v}>
+              {isReturnTask && (
+                <Selector
+                  items={tasksList}
+                  value={selectedReturnTask}
+                  onChange={setSelectedReturnTask}
+                  disabled={tasksList.length === 0}
+                  labelKey="name"
+                  valueKey="id"
+                />
+              )}
+            </div>
           </div>
         </div>
 
