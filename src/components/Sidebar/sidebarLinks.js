@@ -38,8 +38,9 @@ export const sidebarItems = [
   },
   {
     label: "База знаний",
-    path: "/knowledge_base",
-    isActive: (currentPath) => currentPath.startsWith("/knowledge_base"),
+    path: "https://wiki.iqprog.ru",
+    external: true,
+    isActive: () => false,
     Icon: BookIcon,
   },
 ];

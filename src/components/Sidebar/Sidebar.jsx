@@ -25,17 +25,29 @@ export const Sidebar = () => {
         <HeaderSidebar />
         <nav className={s.menu}>
           <ul className={s.menu_list}>
-            {sidebarItems.map(({ label, path, isActive, Icon }) => (
+            {sidebarItems.map(({ label, path, isActive, Icon, external }) => (
               <li className={s.menu_item} key={label}>
-                <NavLink
-                  to={path}
-                  onClick={() => handleLinkClick(path)}
-                  className={`${s.menu_link} ${isActive(currentPath) ? s.active : ""
-                    }`}
-                >
-                  <Icon isActive={isActive(currentPath)} theme={theme} />
-                  {label}
-                </NavLink>
+                {external ? (
+                  <a
+                    href={path}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={s.menu_link}
+                  >
+                    <Icon theme={theme} />
+                    {label}
+                  </a>
+                ) : (
+                  <NavLink
+                    to={path}
+                    onClick={() => handleLinkClick(path)}
+                    className={`${s.menu_link} ${isActive(currentPath) ? s.active : ""
+                      }`}
+                  >
+                    <Icon isActive={isActive(currentPath)} theme={theme} />
+                    {label}
+                  </NavLink>
+                )}
               </li>
             ))}
           </ul>
