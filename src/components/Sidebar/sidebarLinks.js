@@ -38,7 +38,7 @@ export const sidebarItems = [
   },
   {
     label: "База знаний",
-    path: "https://wiki.iqprog.ru",
+    path: "http://wiki.iqprog.ru",
     external: true,
     isActive: () => false,
     Icon: BookIcon,
