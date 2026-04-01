@@ -8,23 +8,18 @@ export const getClientsForSearch = async () => {
 
   try {
     const response = await api.post(
-      `${BASE_URL}/ClientGetList`,
+      `${BASE_URL}/GetClientListForSearch`,
       { Token: token },
       { responseType: "text" }
     );
 
     const fixed = (response.data || "").replace(/'/g, '"');
     const parsed = JSON.parse(fixed);
-    
+
     const clients = Array.isArray(parsed)
       ? parsed.map((c) => ({
           name: c.Name,
           code: c.Code,
-          priority: c.Priority,
-          department: c.department, 
-          card: c.card, 
-          cardbalance: c.cardbalance, 
-          activities: c.Activities || [],
         }))
       : [];
 
