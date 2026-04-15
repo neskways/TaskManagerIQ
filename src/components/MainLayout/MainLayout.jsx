@@ -1,7 +1,6 @@
 import s from "./MainLayout.module.scss";
 import { Outlet } from "react-router-dom";
 import { Sidebar } from "../Sidebar/Sidebar";
-import { Surprise } from "../Surprise/Surprise";
 import { TimerTasks } from "./components/TimerTasks/TimerTasks";
 import { ScreamerBlock } from "../ScreamerBlock/ScreamerBlock";
 
@@ -18,7 +17,6 @@ export const MainLayout = () => {
 
       {/* Приколы ниже */}
       <ScreamerBlock />
-      <Surprise />
-    </div>
+   </div>
   );
 };

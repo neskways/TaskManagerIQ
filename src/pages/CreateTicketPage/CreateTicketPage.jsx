@@ -217,7 +217,7 @@ export const CreateTicketPage = () => {
 
       const cleanId = parseInt(result.taskid, 10);
       showPopup(MESSAGES.createTaskSuccess, { type: "success" });
-      setTimeout(() => navigate(`/tasks/my_assigned?open=${cleanId}`), 10);
+      setTimeout(() => navigate(`/tickets/my_assigned?open=${cleanId}`), 10);
     } catch (error) {
       console.error("Ошибка при создании заявки:", error);
       showPopup(MESSAGES.createTaskError, { type: "error" });
