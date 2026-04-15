@@ -15,17 +15,16 @@ import { StatisticsPage } from "../pages/StatisticsPage/StatisticsPage";
 import { ParametersPage } from "../pages/ParametersPage/ParametersPage";
 import { CreateTicketPage } from "../pages/CreateTicketPage/CreateTicketPage";
 import { RoleProtectedRoute } from "../components/RoleProtectedRoute/RoleProtectedRoute";
-import { UniversalTicketsSheet } from "../pages/UniversalTicketsSheet/UniversalTicketsSheet";
 import { MainPage } from "../pages/MainPage/MainPage";
-import { MyAssignedTasks } from "../pages/TicketsSheetPages/MyAssignedTasks";
-import { CurrentTasks } from "../pages/TicketsSheetPages/CurrentTasks";
+import { MyAssignedTickets } from "../pages/TicketsSheetPages/MyAssignedTickets";
+import { CurrenеtTickets } from "../pages/TicketsSheetPages/CurrenеtTickets";
 import { AllTickets } from "../pages/TicketsSheetPages/AllTickets";
 import { BackToTickets } from "../pages/TicketsSheetPages/BackToTickets";
 import { ClosedToday } from "../pages/TicketsSheetPages/ClosedToday";
 import { OpenTickets } from "../pages/TicketsSheetPages/OpenTickets";
 import { OverdueTickets } from "../pages/TicketsSheetPages/OverdueTickets";
 import { ClosedTickets } from "../pages/TicketsSheetPages/ClosedTickets";
-import { FirstLineTask } from "../pages/TicketsSheetPages/FirstLineTask";
+import { FirstLineTickets } from "../pages/TicketsSheetPages/FirstLineTickets";
 
 const PrivateRoute = ({ children }) => {
   const token = Cookies.get("token");
@@ -40,7 +39,7 @@ const NavigateFromLogin = ({ children }) => {
 
   if (!isAuthenticated) return children;
 
-  const defaultPath = "/tasks/my_assigned";
+  const defaultPath = "/tickets/my_assigned";
   const saved = getFromLocalStorage("last_tasks_path", defaultPath);
 
   return <Navigate to={saved} replace />;
@@ -75,14 +74,14 @@ export const AppRoutes = () => {
           }
         />
         {/* Главный редирект со слеша */}
-        <Route index element={<Navigate to="/tasks" />} />
+        <Route index element={<Navigate to="/tickets" />} />
         {/* Блок задач */}
-        <Route path="/tasks" element={<TicketPage />}>
+        <Route path="/tickets" element={<TicketPage />}>
           <Route index element={<TaskRedirect />} />
 
           <Route
             path="my_assigned"
-            element={<MyAssignedTasks titleText="Назначенные мне" />}
+            element={<MyAssignedTickets titleText="Назначенные мне" />}
           />
 
           <Route
@@ -95,10 +94,10 @@ export const AppRoutes = () => {
           />
 
           <Route
-            path="current_tasks"
+            path="current_tickets"
             element={
               <RoleProtectedRoute allowEveryone allowDuty allowManagement>
-                <CurrentTasks titleText="Текущие задачи сотрудников" />
+                <CurrenеtTickets titleText="Текущие задачи сотрудников" />
               </RoleProtectedRoute>
             }
           />
@@ -122,7 +121,7 @@ export const AppRoutes = () => {
           />
 
           <Route
-            path="closed_tickets"
+            path="closed"
             element={
               <RoleProtectedRoute allowManagement>
                 <ClosedTickets titleText="Закрытые заявки" />
@@ -131,10 +130,10 @@ export const AppRoutes = () => {
           />
 
           <Route
-            path="first_line_task"
+            path="first_line_tickets"
             element={
               <RoleProtectedRoute allowManagement allowDuty>
-                <FirstLineTask titleText="Задачи первой линии" />
+                <FirstLineTickets titleText="Задачи первой линии" />
               </RoleProtectedRoute>
             }
           />

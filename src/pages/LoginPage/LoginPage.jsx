@@ -15,7 +15,7 @@ export const LoginPage = () => {
   const darkLogo = "/images/logo/logo_dark.png";
   const lightLogo = "/images/logo/logo.png";
 
-  const savedPath = getFromLocalStorage("last_tasks_path", "/tasks/my_assigned");
+  const savedPath = getFromLocalStorage("last_tasks_path", "/tickets/my_assigned");
 
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");

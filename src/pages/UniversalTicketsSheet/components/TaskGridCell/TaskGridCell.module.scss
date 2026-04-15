@@ -1,12 +1,16 @@
 .gridCell {
   display: flex;
   align-items: center;
+
   padding: 6px 10px;
+
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  transition: background-color 0.15s ease;
+
   font-size: 14px;
+
+  transition: background-color 0.15s ease;
 }
 
 .hovered {
@@ -14,21 +18,11 @@
 }
 
 .first_column {
-  color: var(text-color-secondary);
+  color: var(--text-color-secondary);
+  font-weight: 500;
 }
 
 .second_column {
   color: var(--accent-color-secondary);
-
+  font-weight: 500;
 }
-
-.gridCell {
-  display: flex;
-  align-items: center;
-  padding: 6px 10px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  transition: background-color 0.15s ease;
-}
-

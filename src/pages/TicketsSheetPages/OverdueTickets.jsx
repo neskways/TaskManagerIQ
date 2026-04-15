@@ -1,14 +1,16 @@
+import { taskStatuses } from "../../modules/taskStatuses";
 import { UniversalTicketsSheet } from "../UniversalTicketsSheet/UniversalTicketsSheet";
-import { taskStatuses } from "../../modules/TaskStatuses";
 
 export const OverdueTickets = ({ titleText }) => {
 
-  const queryParams = {};
+  const params = {
+    states: [taskStatuses.IN_PROGRESS.code],
+  };
 
   return (
     <UniversalTicketsSheet
       titleText={titleText || "Просроченные заявки"}
-      queryParams={queryParams}
+      queryParams={params}
     />
   );
 };

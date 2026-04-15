@@ -1,15 +1,16 @@
+import { taskStatuses } from "../../modules/taskStatuses";
 import { UniversalTicketsSheet } from "../UniversalTicketsSheet/UniversalTicketsSheet";
-import { taskStatuses } from "../../modules/TaskStatuses";
 
 export const ClosedToday = ({ titleText }) => {
-  const queryParams = {
-    states: [taskStatuses.DONE.code],
+
+  const params = {
+    states: [taskStatuses.IN_PROGRESS.code],
   };
 
   return (
     <UniversalTicketsSheet
       titleText={titleText || "Закрытые заявки"}
-      queryParams={queryParams}
+      queryParams={params}
     />
   );
 };

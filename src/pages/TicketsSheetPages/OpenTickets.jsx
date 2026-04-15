@@ -1,5 +1,5 @@
+import { taskStatuses } from "../../modules/taskStatuses";
 import { UniversalTicketsSheet } from "../UniversalTicketsSheet/UniversalTicketsSheet";
-import { taskStatuses } from "../../modules/TaskStatuses";
 
 export const OpenTickets = ({ titleText }) => {
   const queryParams = {

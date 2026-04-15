@@ -1,7 +1,7 @@
-import { taskStatuses } from "../../modules/TaskStatuses";
+import { taskStatuses } from "../../modules/taskStatuses";
 import { UniversalTicketsSheet } from "../UniversalTicketsSheet/UniversalTicketsSheet";
 
-export const FirstLineTask = () => {
+export const FirstLineTickets = () => {
   const params = {
     states: [
       taskStatuses.PAUSED.code,
@@ -15,7 +15,7 @@ export const FirstLineTask = () => {
 
   return (
     <UniversalTicketsSheet
-      titleText="Текущие задачи первой линии"
+      titleText="Заявки первой линии"
       queryParams={params}
     />
   );

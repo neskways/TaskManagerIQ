@@ -14,8 +14,8 @@ export const sidebarItems = [
   },
   {
     label: "Задачи",
-    path: "/tasks",
-    isActive: (currentPath) => currentPath.startsWith("/tasks"),
+    path: "/tickets",
+    isActive: (currentPath) => currentPath.startsWith("/tickets"),
     Icon: ListIcon,
   },
   {

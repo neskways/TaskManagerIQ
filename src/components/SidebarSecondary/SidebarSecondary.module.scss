@@ -17,16 +17,28 @@
 }
 
 .menu_link {
+    border-radius: 5px;
     display: inline-block;
     width: 100%;
     padding: 12px 10px;
     font-size: 14px;
     color: var(--text-color);
     transition: var(--transition);
-    border-bottom: 1px solid var(--border-color-secondary);
     text-decoration: none;
     display: flex;
     justify-content: space-between;
+    position: relative;
+}
+
+.menu_link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: calc(50% - 48%);
+    display: block;
+    width: 96%;
+    height: 1px;
+    background-color: var(--border-color);
 }
 
 .menu_link:hover:not(.active) {

@@ -1,8 +1,8 @@
 import Cookies from "js-cookie";
-import { taskStatuses } from "../../modules/TaskStatuses";
+import { taskStatuses } from "../../modules/taskStatuses";
 import { UniversalTicketsSheet } from "../UniversalTicketsSheet/UniversalTicketsSheet";
 
-export const MyAssignedTasks = () => {
+export const MyAssignedTickets = () => {
 
   const userCode = Cookies.get("userCode");
 
