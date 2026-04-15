@@ -1,0 +1,29 @@
+.table {
+  width: 100%;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  color: var(--text-color);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--border-color);
+  }
+}
+
+.cell {
+  padding: 8px 12px;
+
+  &:not(:last-child) {
+    border-right: 1px solid var(--border-color);
+  }
+}
+
+.header {
+  font-weight: 600;
+  background: var(--hover-color);
+}
