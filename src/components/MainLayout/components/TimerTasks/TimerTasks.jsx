@@ -5,7 +5,6 @@ import Cookies from "js-cookie";
 import { TaskList } from "./components/TaskList/TaskList";
 import { TimerHeader } from "./components/TimerHeader/TimerHeader";
 import { ExpandButton } from "./components/ExpandButton/ExpandButton";
-import { IdleWarning } from "./components/IdleWarning/IdleWarning";
 import { TaskNotification } from "../../../TaskNotification/TaskNotification";
 import { PopupConfirm } from "../../../../UI/PopupConfirm/PopupConfirm";
 import { ModelWindow } from "../../../../components/ModelWindow/ModelWindow";
@@ -190,16 +189,6 @@ export const TimerTasks = () => {
     refreshTasks,
     showPopup,
   ]);
-
-  // useEffect(() => {
-  //   if (activeTaskId) return;
-
-  //   const timer = setTimeout(() => {
-  //     setIdleModal(true);
-  //   }, 1000);
-
-  //   return () => clearTimeout(timer);
-  // }, [activeTaskId]);
 
   // -------------------------------------------------
   // Старт / пауза

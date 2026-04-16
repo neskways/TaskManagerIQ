@@ -6,6 +6,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { TicketPage } from "../pages/TicketPage/TicketPage";
 import { ProfilePage } from "../pages/ProfilePage/ProfilePage";
 import { ClientsPage } from "../pages/ClientsPage/ClientsPage";
+import { ReportsPage } from "../pages/ReportsPage/ReportsPage";
 import { MainLayout } from "../components/MainLayout/MainLayout";
 import { SchedulePage } from "../pages/SchedulePage/SchedulePage";
 import { AllTickets } from "../pages/TicketsSheetPages/AllTickets";
@@ -14,7 +15,6 @@ import { OpenTickets } from "../pages/TicketsSheetPages/OpenTickets";
 import { ClosedToday } from "../pages/TicketsSheetPages/ClosedToday";
 import { TaskRedirect } from "../components/TaskRedirect/TaskRedirect";
 import { TicketFormPage } from "../pages/TicketFormPage/TicketFormPage";
-import { StatisticsPage } from "../pages/StatisticsPage/StatisticsPage";
 import { ParametersPage } from "../pages/ParametersPage/ParametersPage";
 import { ClosedTickets } from "../pages/TicketsSheetPages/ClosedTickets";
 import { BackToTickets } from "../pages/TicketsSheetPages/BackToTickets";
@@ -169,7 +169,7 @@ export const AppRoutes = () => {
         //Страница задачи
         <Route path="/ticket/:id" element={<TicketFormPage />} />
         //Страница статистики пользователя по выполненым задачам
-        <Route path="/reports" element={<StatisticsPage />}></Route>
+        <Route path="/reports" element={<ReportsPage />}></Route>
         //Страница со списком всех клиентов
         <Route path="/clients" element={<ClientsPage />}></Route>
         //Страница профиля

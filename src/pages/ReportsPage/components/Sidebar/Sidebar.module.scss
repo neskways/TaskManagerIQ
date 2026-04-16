@@ -19,3 +19,16 @@
 .item:hover {
     background: var(--bg-color-hover);
 }
+
+.item.active {
+    background: var(--accent-color);  
+    color: var(--text-color); 
+}
+
+.item:first-child {
+    border-radius: var(--border-radius) 0 0 0;
+}
+
+.item:last-child {
+    border-radius: 0 0 0 var(--border-radius);
+}
