@@ -1,4 +1,5 @@
 import Cookies from "js-cookie";
+import { MainPage } from "../pages/MainPage/MainPage";
 import { LoginPage } from "../pages/LoginPage/LoginPage";
 import { ErrorPage } from "../pages/ErrorPage/ErrorPage";
 import { Routes, Route, Navigate } from "react-router-dom";
@@ -7,24 +8,22 @@ import { ProfilePage } from "../pages/ProfilePage/ProfilePage";
 import { ClientsPage } from "../pages/ClientsPage/ClientsPage";
 import { MainLayout } from "../components/MainLayout/MainLayout";
 import { SchedulePage } from "../pages/SchedulePage/SchedulePage";
+import { AllTickets } from "../pages/TicketsSheetPages/AllTickets";
 import { getFromLocalStorage } from "../modules/localStorageUtils";
-import { KnowledgeBase } from "../pages/KnowledgeBase/KnowledgeBase";
+import { OpenTickets } from "../pages/TicketsSheetPages/OpenTickets";
+import { ClosedToday } from "../pages/TicketsSheetPages/ClosedToday";
 import { TaskRedirect } from "../components/TaskRedirect/TaskRedirect";
 import { TicketFormPage } from "../pages/TicketFormPage/TicketFormPage";
 import { StatisticsPage } from "../pages/StatisticsPage/StatisticsPage";
 import { ParametersPage } from "../pages/ParametersPage/ParametersPage";
-import { CreateTicketPage } from "../pages/CreateTicketPage/CreateTicketPage";
-import { RoleProtectedRoute } from "../components/RoleProtectedRoute/RoleProtectedRoute";
-import { MainPage } from "../pages/MainPage/MainPage";
-import { MyAssignedTickets } from "../pages/TicketsSheetPages/MyAssignedTickets";
-import { CurrenеtTickets } from "../pages/TicketsSheetPages/CurrenеtTickets";
-import { AllTickets } from "../pages/TicketsSheetPages/AllTickets";
-import { BackToTickets } from "../pages/TicketsSheetPages/BackToTickets";
-import { ClosedToday } from "../pages/TicketsSheetPages/ClosedToday";
-import { OpenTickets } from "../pages/TicketsSheetPages/OpenTickets";
-import { OverdueTickets } from "../pages/TicketsSheetPages/OverdueTickets";
 import { ClosedTickets } from "../pages/TicketsSheetPages/ClosedTickets";
+import { BackToTickets } from "../pages/TicketsSheetPages/BackToTickets";
+import { OverdueTickets } from "../pages/TicketsSheetPages/OverdueTickets";
+import { CurrenеtTickets } from "../pages/TicketsSheetPages/CurrenеtTickets";
+import { CreateTicketPage } from "../pages/CreateTicketPage/CreateTicketPage";
 import { FirstLineTickets } from "../pages/TicketsSheetPages/FirstLineTickets";
+import { MyAssignedTickets } from "../pages/TicketsSheetPages/MyAssignedTickets";
+import { RoleProtectedRoute } from "../components/RoleProtectedRoute/RoleProtectedRoute";
 
 const PrivateRoute = ({ children }) => {
   const token = Cookies.get("token");
@@ -179,8 +178,6 @@ export const AppRoutes = () => {
         <Route path="/parameters" element={<ParametersPage />}></Route>
         //Страница графиков обновлений и дежурств
         <Route path="/shedules" element={<SchedulePage />}></Route>
-        //Страница база знаний
-        <Route path="/knowledge_base" element={<KnowledgeBase />}></Route>
       </Route>
     </Routes>
   );

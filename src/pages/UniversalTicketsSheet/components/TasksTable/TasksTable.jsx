@@ -125,7 +125,6 @@ export const TasksTable = ({
     setTasks(filtered);
   }, [selectedStatuses, selectedEmployees, selectedClient, rawTasks]);
 
-  // 🔥 СОРТИРОВКА
   const sortedTasks = useMemo(() => {
     if (!sortConfig.key) return tasks;
 
@@ -133,10 +132,23 @@ export const TasksTable = ({
       let valA = a[sortConfig.key];
       let valB = b[sortConfig.key];
 
-      // спец для времени
+      // Сортировка времени
       if (sortConfig.key === "timeSpent") {
         valA = a.timeSpent;
         valB = b.timeSpent;
+      }
+
+      // Сортировка даты dd.mm.yyyy
+      if (sortConfig.key === "createdDate") {
+        const parseDate = (dateStr) => {
+          if (!dateStr) return 0;
+
+          const [day, month, year] = dateStr.split(".");
+          return new Date(year, month - 1, day).getTime();
+        };
+
+        valA = parseDate(valA);
+        valB = parseDate(valB);
       }
 
       const emptyA = valA === null || valA === undefined || valA === "";
@@ -151,7 +163,9 @@ export const TasksTable = ({
       const bothNumbers = !isNaN(numA) && !isNaN(numB);
 
       if (bothNumbers) {
-        return sortConfig.direction === "asc" ? numA - numB : numB - numA;
+        return sortConfig.direction === "asc"
+          ? numA - numB
+          : numB - numA;
       }
 
       valA = String(valA).toLowerCase();
@@ -159,6 +173,7 @@ export const TasksTable = ({
 
       if (valA < valB) return sortConfig.direction === "asc" ? -1 : 1;
       if (valA > valB) return sortConfig.direction === "asc" ? 1 : -1;
+
       return 0;
     });
   }, [tasks, sortConfig]);

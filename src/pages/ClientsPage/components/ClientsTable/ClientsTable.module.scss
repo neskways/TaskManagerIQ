@@ -4,6 +4,7 @@
 }
 
 .gridHeaderRow {
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
   display: grid;
   grid-auto-flow: column;
   grid-auto-rows: 50px;
