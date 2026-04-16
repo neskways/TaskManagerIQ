@@ -1,16 +1,52 @@
 import s from "./ClientModal.module.scss";
 import { ModelWindow } from "../../../../components/ModelWindow/ModelWindow";
+import { useContacts } from "./useContacts";
+import { Loading } from "../../../../UI/Loading/Loading";
 
 export const ClientModal = ({ clientData, onClose }) => {
-  
+  const {
+    loading,
+    contactOptions,
+  } = useContacts(clientData);
+
+  console.log(contactOptions)
+
   return (
     <ModelWindow isOpen={!!clientData} onClose={onClose}>
       <div className={s.modalContent}>
-        <h2>Данные клиента</h2>
+        {loading ? (
+          <div className={s.loadingWrapper}>
+            <Loading />
+          </div>
+        ) : (
+          <>
+            <h2 className={s.title}>{clientData?.Name}</h2>
 
-        <p><strong>Имя:</strong> {clientData?.name}</p>
-        <p><strong>Статус:</strong> {clientData?.status}</p>
-        <p><strong>Телефон:</strong> {clientData?.phone}</p>
+            <h3 className={s.subtitle}>Контакты</h3>
+
+            {contactOptions.length > 0 ? (
+              <div className={s.contactsTable}>
+                <div className={`${s.row} ${s.header}`}>
+                  <div>Имя</div>
+                  <div>Должность</div>
+                  <div>Телефон</div>
+                  <div>Email</div>
+                </div>
+
+                {contactOptions.map((contact) => (
+                  <div key={contact.id} className={s.row}>
+                    <div>{contact.data?.name || "-"}</div>
+                    <div>{contact.data?.post || "-"}</div>
+                    <div>{contact.data?.phone || "-"}</div>
+                    <div>{contact.data?.mail || "-"}</div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p>Контакты не найдены</p>
+            )}
+          </>
+        )}
       </div>
     </ModelWindow>
   );
