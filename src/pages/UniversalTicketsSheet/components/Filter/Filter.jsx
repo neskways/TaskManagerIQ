@@ -1,4 +1,4 @@
-import s from "./SidebarFilter.module.scss";
+import s from "./Filter.module.scss";
 import { useEffect, useState } from "react";
 import { CloseIcon } from "../../../../UI/CloseIcon/CloseIcon";
 import { Button } from "../../../../UI/Button/Button";
@@ -7,7 +7,7 @@ import { getEmployees } from "../../../../api/get/getEmployee";
 import { ClientSearch } from "../../../CreateTicketPage/components/ClientSearch/ClientSearch";
 import { statusesList } from "../../../../modules/TaskStatuses";
 
-export const SidebarFilter = ({
+export const Filter = ({
   showFilter,
   setShowFilter,
   selectedStatuses,
@@ -37,7 +37,6 @@ export const SidebarFilter = ({
       />
       <div className={`${s.sidebar} ${showFilter ? s.show_filter : ""}`}>
         <div className={s.header}>
-          <h3 className={s.title}>Все фильтры</h3>
           <button className={s.close_btn} onClick={() => setShowFilter(false)}>
             <CloseIcon />
           </button>

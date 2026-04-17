@@ -5,7 +5,7 @@ import { TasksTable } from "./components/TasksTable/TasksTable";
 import { PageTitle } from "../../components/PageTitle/PageTitle";
 import { TicketFormPage } from "../TicketFormPage/TicketFormPage";
 import { ModelWindow } from "../../components/ModelWindow/ModelWindow";
-import { SidebarFilter } from "./components/SidebarFilter/SidebarFilter";
+import { Filter } from "./components/Filter/Filter";
 import { useClientsAndEmployees } from "../CreateTicketPage/hooks/useClientsAndEmployees";
 
 export const UniversalTicketsSheet = ({ titleText, queryParams }) => {
@@ -55,7 +55,7 @@ export const UniversalTicketsSheet = ({ titleText, queryParams }) => {
         onShowFilter={() => setShowFilter(true)}
       />
 
-      <SidebarFilter
+      <Filter
         showFilter={showFilter}
         setShowFilter={setShowFilter}
         selectedStatuses={selectedStatuses}

@@ -1,7 +1,7 @@
 import s from "./ClientSearch.module.scss";
 import { useState, useRef, useEffect } from "react";
 
-export const ClientSearch = ({ clients = [], onSelect, text }) => {
+export const ClientSearch = ({ clients = [], onSelect, text, hide }) => {
   const [query, setQuery] = useState("");
   const [filtered, setFiltered] = useState([]);
   const [showList, setShowList] = useState(false);
@@ -137,7 +137,7 @@ export const ClientSearch = ({ clients = [], onSelect, text }) => {
 
   return (
     <div className={s.wrapper} ref={wrapperRef}>
-      <p className={s.text}>{text}</p>
+      { !hide && <p className={s.text}>{text}</p> }
 
       <input
         ref={inputRef}

@@ -4,6 +4,7 @@ import s from "./MultiSelector.module.scss";
 export const MultiSelector = ({
   title,
   items,
+  hide,
   value = [],
   onChange,
   keyField = "id",
@@ -39,7 +40,7 @@ export const MultiSelector = ({
 
   return (
     <div className={s.selectorWrapper} ref={ref}>
-      {title && <h4 className={s.title}>{title}</h4>}
+      {title && !hide && <h4 className={s.title}>{title}</h4>}
       <div className={`${s.selectorHeader} ${open ? s.open : ""}`} onClick={() => setOpen(!open)}>
         <span className={value.length ? s.selectedText : ""}>{getTitle()}</span>
         <div className={s.arrow} />
