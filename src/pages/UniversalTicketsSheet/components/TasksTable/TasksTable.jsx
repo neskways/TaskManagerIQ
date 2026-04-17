@@ -27,7 +27,7 @@ export const TasksTable = ({
 
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
 
-  const [colWidths, setColWidths] = useState(
+  const [colWidths] = useState(
     JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_TICKETS)) || DEFAULT_WIDTHS
   );
 
@@ -36,12 +36,7 @@ export const TasksTable = ({
   const [loading, setLoading] = useState(true);
 
   const tableRef = useRef(null);
-  const startX = useRef(0);
-  const isResizing = useRef(false);
-  const startWidths = useRef([0, 0]);
-  const resizingColIndex = useRef(null);
   const pollingRef = useRef(null);
-  const openedFromUrlRef = useRef(false);
 
   const gridTemplateColumns = colWidths.map((w) => `minmax(40px, ${w}%)`).join(" ");
 
@@ -61,6 +56,8 @@ export const TasksTable = ({
   }, [colWidths]);
 
   const loadTasks = async () => {
+    setLoading(true);
+
     try {
       const data = await getTasksList(
         queryParams.states,
@@ -76,7 +73,7 @@ export const TasksTable = ({
         executor: item.executor,
         createdDate: item.createdDate?.split(" ")[0] || "",
         priority: item.priority,
-        timeSpent: item.timeSpent, // храним число для сортировки
+        timeSpent: item.timeSpent,
         timeSpentFormatted: `${String(Math.floor(item.timeSpent / 3600)).padStart(2, "0")}:${String(
           Math.floor((item.timeSpent % 3600) / 60)
         ).padStart(2, "0")}:${String(item.timeSpent % 60).padStart(2, "0")}`,
@@ -93,13 +90,21 @@ export const TasksTable = ({
     }
   };
 
-  useEffect(() => { loadTasks(); }, []);
-  useEffect(() => { if (refetchKey != null) loadTasks(); }, [refetchKey]);
+  useEffect(() => {
+    loadTasks();
+  }, []);
+
+  useEffect(() => {
+    if (refetchKey != null) loadTasks();
+  }, [refetchKey]);
 
   useEffect(() => {
     if (isTaskOpen) return;
+
     if (pollingRef.current) clearInterval(pollingRef.current);
+
     pollingRef.current = setInterval(loadTasks, REFRESH_INTERVAL_MS);
+
     return () => clearInterval(pollingRef.current);
   }, [isTaskOpen, userCode, queryParams]);
 
@@ -107,6 +112,7 @@ export const TasksTable = ({
     const filtered = rawTasks.filter((t) => {
       const statusOk =
         selectedStatuses.length ? selectedStatuses.includes(t.status) : true;
+
       const employeeOk =
         selectedEmployees.length ? selectedEmployees.includes(t.executor) : true;
 
@@ -132,17 +138,14 @@ export const TasksTable = ({
       let valA = a[sortConfig.key];
       let valB = b[sortConfig.key];
 
-      // Сортировка времени
       if (sortConfig.key === "timeSpent") {
         valA = a.timeSpent;
         valB = b.timeSpent;
       }
 
-      // Сортировка даты dd.mm.yyyy
       if (sortConfig.key === "createdDate") {
         const parseDate = (dateStr) => {
           if (!dateStr) return 0;
-
           const [day, month, year] = dateStr.split(".");
           return new Date(year, month - 1, day).getTime();
         };
@@ -151,8 +154,8 @@ export const TasksTable = ({
         valB = parseDate(valB);
       }
 
-      const emptyA = valA === null || valA === undefined || valA === "";
-      const emptyB = valB === null || valB === undefined || valB === "";
+      const emptyA = valA == null || valA === "";
+      const emptyB = valB == null || valB === "";
 
       if (emptyA && emptyB) return 0;
       if (emptyA) return 1;
@@ -184,7 +187,10 @@ export const TasksTable = ({
 
     setSortConfig((prev) => {
       if (prev.key === key) {
-        return { key, direction: prev.direction === "asc" ? "desc" : "asc" };
+        return {
+          key,
+          direction: prev.direction === "asc" ? "desc" : "asc",
+        };
       }
       return { key, direction: "asc" };
     });
@@ -197,13 +203,6 @@ export const TasksTable = ({
         : "▼"
       : null;
   };
-
-  if (loading && !rawTasks.length)
-    return (
-      <div className={s.centerWrapper}>
-        <Loading />
-      </div>
-    );
 
   return (
     <div className={s.wrapper}>
@@ -220,20 +219,24 @@ export const TasksTable = ({
               key={i}
               className={s.gridHeader}
               onClick={() => handleHeaderClick(i)}
-              style={{ cursor: "pointer", userSelect: "none" }}
             >
               <span>
                 {header}
-                <span className={s.sortArrow}>{getSortArrow(i)}</span>
-                {header === "Заголовок" && sortedTasks.length
-                  ? `〔 ${sortedTasks.length} 〕`
-                  : ""}
+                <span className={s.sortArrow}>
+                  {getSortArrow(i)}
+                </span>
               </span>
             </div>
           ))}
         </div>
 
         <div className={s.gridBody} ref={tableRef}>
+          {loading && (
+            <div className={s.loadingOverlay}>
+              <Loading />
+            </div>
+          )}
+
           {sortedTasks.map((task) => (
             <div
               key={task.number}
