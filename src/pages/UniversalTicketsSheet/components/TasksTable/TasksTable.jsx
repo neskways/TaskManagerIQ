@@ -242,6 +242,13 @@ export const TasksTable = ({
             >
               <span>
                 {header}
+
+                {header === "Заголовок" && sortedTasks.length > 0 && (
+                  <span className={s.count}>
+                    〔 {sortedTasks.length} 〕
+                  </span>
+                )}
+
                 <span className={s.sortArrow}>
                   {getSortArrow(i)}
                 </span>
