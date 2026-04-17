@@ -20,25 +20,31 @@ export const TasksTable = ({
   onOpenTask,
   refetchKey,
   isTaskOpen,
-  onShowFilter
+  onShowFilter,
 }) => {
   const { showPopup } = usePopup();
   const userCode = Cookies.get("userCode");
 
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
+  const [sortConfig, setSortConfig] = useState({
+    key: null,
+    direction: "asc",
+  });
 
   const [colWidths] = useState(
-    JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_TICKETS)) || DEFAULT_WIDTHS
+    JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_TICKETS)) ||
+      DEFAULT_WIDTHS
   );
 
   const [rawTasks, setRawTasks] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const tableRef = useRef(null);
   const pollingRef = useRef(null);
+  const firstLoadRef = useRef(true);
 
-  const gridTemplateColumns = colWidths.map((w) => `minmax(40px, ${w}%)`).join(" ");
+  const gridTemplateColumns = colWidths
+    .map((w) => `minmax(40px, ${w}%)`)
+    .join(" ");
 
   const keyMap = [
     "number",
@@ -52,13 +58,18 @@ export const TasksTable = ({
   ];
 
   useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_KEY_TICKETS, JSON.stringify(colWidths));
+    localStorage.setItem(
+      LOCAL_STORAGE_KEY_TICKETS,
+      JSON.stringify(colWidths)
+    );
   }, [colWidths]);
 
-  const loadTasks = async () => {
-    setLoading(true);
-
+  const loadTasks = async (isSilent = false) => {
     try {
+      if (!isSilent && firstLoadRef.current) {
+        setLoading(true);
+      }
+
       const data = await getTasksList(
         queryParams.states,
         queryParams.userCode,
@@ -74,47 +85,63 @@ export const TasksTable = ({
         createdDate: item.createdDate?.split(" ")[0] || "",
         priority: item.priority,
         timeSpent: item.timeSpent,
-        timeSpentFormatted: `${String(Math.floor(item.timeSpent / 3600)).padStart(2, "0")}:${String(
+        timeSpentFormatted: `${String(
+          Math.floor(item.timeSpent / 3600)
+        ).padStart(2, "0")}:${String(
           Math.floor((item.timeSpent % 3600) / 60)
-        ).padStart(2, "0")}:${String(item.timeSpent % 60).padStart(2, "0")}`,
+        ).padStart(2, "0")}:${String(item.timeSpent % 60).padStart(
+          2,
+          "0"
+        )}`,
       }));
 
       setRawTasks(mapped);
+      firstLoadRef.current = false;
     } catch (err) {
       console.error(err);
       if (err.response?.status !== 401) {
         showPopup(MESSAGES.loadTaskError, { type: "error" });
       }
     } finally {
-      setLoading(false);
+      if (!isSilent) {
+        setLoading(false);
+      }
     }
   };
 
+  // ===== INITIAL LOAD =====
   useEffect(() => {
-    loadTasks();
+    loadTasks(false);
   }, []);
 
+  // ===== MANUAL REFETCH =====
   useEffect(() => {
-    if (refetchKey != null) loadTasks();
+    if (refetchKey != null) loadTasks(false);
   }, [refetchKey]);
 
+  // ===== POLLING (SILENT UPDATE) =====
   useEffect(() => {
     if (isTaskOpen) return;
 
     if (pollingRef.current) clearInterval(pollingRef.current);
 
-    pollingRef.current = setInterval(loadTasks, REFRESH_INTERVAL_MS);
+    pollingRef.current = setInterval(() => {
+      loadTasks(true); // 🔥 silent update
+    }, REFRESH_INTERVAL_MS);
 
     return () => clearInterval(pollingRef.current);
   }, [isTaskOpen, userCode, queryParams]);
 
+  // ===== FILTER =====
   useEffect(() => {
     const filtered = rawTasks.filter((t) => {
-      const statusOk =
-        selectedStatuses.length ? selectedStatuses.includes(t.status) : true;
+      const statusOk = selectedStatuses.length
+        ? selectedStatuses.includes(t.status)
+        : true;
 
-      const employeeOk =
-        selectedEmployees.length ? selectedEmployees.includes(t.executor) : true;
+      const employeeOk = selectedEmployees.length
+        ? selectedEmployees.includes(t.executor)
+        : true;
 
       const clientName =
         typeof selectedClient === "string"
@@ -131,6 +158,7 @@ export const TasksTable = ({
     setTasks(filtered);
   }, [selectedStatuses, selectedEmployees, selectedClient, rawTasks]);
 
+  // ===== SORT =====
   const sortedTasks = useMemo(() => {
     if (!sortConfig.key) return tasks;
 
@@ -144,9 +172,9 @@ export const TasksTable = ({
       }
 
       if (sortConfig.key === "createdDate") {
-        const parseDate = (dateStr) => {
-          if (!dateStr) return 0;
-          const [day, month, year] = dateStr.split(".");
+        const parseDate = (d) => {
+          if (!d) return 0;
+          const [day, month, year] = d.split(".");
           return new Date(year, month - 1, day).getTime();
         };
 
@@ -154,25 +182,17 @@ export const TasksTable = ({
         valB = parseDate(valB);
       }
 
-      const emptyA = valA == null || valA === "";
-      const emptyB = valB == null || valB === "";
-
-      if (emptyA && emptyB) return 0;
-      if (emptyA) return 1;
-      if (emptyB) return -1;
-
       const numA = parseFloat(valA);
       const numB = parseFloat(valB);
-      const bothNumbers = !isNaN(numA) && !isNaN(numB);
 
-      if (bothNumbers) {
+      if (!isNaN(numA) && !isNaN(numB)) {
         return sortConfig.direction === "asc"
           ? numA - numB
           : numB - numA;
       }
 
-      valA = String(valA).toLowerCase();
-      valB = String(valB).toLowerCase();
+      valA = String(valA || "").toLowerCase();
+      valB = String(valB || "").toLowerCase();
 
       if (valA < valB) return sortConfig.direction === "asc" ? -1 : 1;
       if (valA > valB) return sortConfig.direction === "asc" ? 1 : -1;
@@ -230,9 +250,9 @@ export const TasksTable = ({
           ))}
         </div>
 
-        <div className={s.gridBody} ref={tableRef}>
+        <div className={s.gridBody}>
           {loading && (
-            <div className={s.loadingOverlay}>
+            <div className={s.centerWrapper}>
               <Loading />
             </div>
           )}
