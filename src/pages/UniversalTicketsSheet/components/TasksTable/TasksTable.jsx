@@ -7,6 +7,8 @@ import { Loading } from "../../../../UI/Loading/Loading";
 import { usePopup } from "../../../../context/PopupContext";
 import { TaskGridCell } from "../TaskGridCell/TaskGridCell";
 import { getTasksList } from "../../../../api/get/getTasksList";
+import { Filter } from "./Components/Filter/Filter";
+import { useClientsAndEmployees } from "../../../CreateTicketPage/hooks/useClientsAndEmployees";
 
 const REFRESH_INTERVAL_MS = 30000;
 const LOCAL_STORAGE_KEY_TICKETS = "tickets_table_col_widths";
@@ -14,13 +16,9 @@ const DEFAULT_WIDTHS = [5, 33, 14, 16, 11, 8, 7, 7];
 
 export const TasksTable = ({
   queryParams,
-  selectedStatuses = [],
-  selectedEmployees = [],
-  selectedClient = null,
   onOpenTask,
   refetchKey,
-  isTaskOpen,
-  onShowFilter,
+  isTaskOpen
 }) => {
   const { showPopup } = usePopup();
   const userCode = Cookies.get("userCode");
@@ -34,7 +32,13 @@ export const TasksTable = ({
     JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY_TICKETS)) ||
       DEFAULT_WIDTHS
   );
+const [showFilter, setShowFilter] = useState(false);
 
+const [selectedStatuses, setSelectedStatuses] = useState([]);
+const [selectedEmployees, setSelectedEmployees] = useState([]);
+const [selectedClient, setSelectedClient] = useState(null);
+
+const { clients, loading: clientsLoading } = useClientsAndEmployees();
   const [rawTasks, setRawTasks] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -225,9 +229,10 @@ export const TasksTable = ({
   };
 
   return (
+    <>
     <div className={s.wrapper}>
       <div className={s.btn_wrapper}>
-        <button className={s.filter_btn} onClick={onShowFilter}>
+        <button className={s.filter_btn} onClick={() => setShowFilter(true)}>
           Фильтр
         </button>
       </div>
@@ -282,5 +287,23 @@ export const TasksTable = ({
         </div>
       </div>
     </div>
+    <Filter
+  showFilter={showFilter}
+  setShowFilter={setShowFilter}
+  selectedStatuses={selectedStatuses}
+  setSelectedStatuses={setSelectedStatuses}
+  selectedEmployees={selectedEmployees}
+  setSelectedEmployees={setSelectedEmployees}
+  clients={clients}
+  clientsLoading={clientsLoading}
+  selectedClient={selectedClient}
+  setSelectedClient={setSelectedClient}
+  onReset={() => {
+    setSelectedStatuses([]);
+    setSelectedEmployees([]);
+    setSelectedClient(null);
+  }}
+/>
+</>
   );
 };

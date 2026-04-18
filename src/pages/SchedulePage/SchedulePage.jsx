@@ -18,7 +18,7 @@ export const SchedulePage = () => {
     String(import.meta.env.VITE_TOKEN_MANAGER) !== role
       ? settings.censorship
         ? "График дежурств"
-        : "Пидарасы мученики"
+        : "Позорища"
       : "График дежурств";
 
   return (

@@ -1,5 +1,5 @@
 import s from "./LoginPage.module.scss";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "../../UI/Input/Input";
 import { Button } from "../../UI/Button/Button";
 import { loginUser } from "../../api/loginUser";
@@ -7,11 +7,12 @@ import { useTheme } from "../../context/ThemeContext";
 import { useNavigate } from "react-router-dom";
 import { usePopup } from "../../context/PopupContext";
 import { getFromLocalStorage } from "../../modules/localStorageUtils";
+import { nietzscheQuotes } from "../../modules/nietzscheQuotes";
 
 export const LoginPage = () => {
   const navigate = useNavigate();
   const { theme } = useTheme();
-  const { showPopup } = usePopup(); 
+  const { showPopup } = usePopup();
   const darkLogo = "/images/logo/logo_dark.png";
   const lightLogo = "/images/logo/logo.png";
 
@@ -20,6 +21,12 @@ export const LoginPage = () => {
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [isErrorIn, setIsErrorIn] = useState(false);
+  const [quote, setQuote] = useState("");
+
+  useEffect(() => {
+    const randomIndex = Math.floor(Math.random() * nietzscheQuotes.length);
+    setQuote(nietzscheQuotes[randomIndex]);
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -45,7 +52,6 @@ export const LoginPage = () => {
   return (
     <div className={s.inner}>
       <div className={s.wrapper}>
-        <h2 className={s.title}>Вход в TaskManagerIQ</h2>
         <form className={s.form} onSubmit={handleLogin}>
           <div className={s.img_wrap}>
             <img
@@ -73,6 +79,14 @@ export const LoginPage = () => {
             <Button name="Войти" type="submit" />
           </div>
         </form>
+      </div>
+
+      {/* Новый блок с цитатой */}
+      <div className={s.quoteBox}>
+        <p className={s.quote}>
+          "{quote}"
+        </p>
+        <span className={s.author}>— Фридрих Ницше</span>
       </div>
 
       <div className={s.pashalka}>
