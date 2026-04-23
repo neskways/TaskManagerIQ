@@ -1,11 +1,11 @@
 import s from "./Filter.module.scss";
 import { useEffect, useState } from "react";
-import { CloseIcon } from "../../../../UI/CloseIcon/CloseIcon";
-import { Button } from "../../../../UI/Button/Button";
-import { MultiSelector } from "../../../../UI/MultiSelector/MultiSelector";
-import { getEmployees } from "../../../../api/get/getEmployee";
-import { ClientSearch } from "../../../CreateTicketPage/components/ClientSearch/ClientSearch";
-import { statusesList } from "../../../../modules/TaskStatuses";
+import { CloseIcon } from "../../../../../../UI/CloseIcon/CloseIcon";
+import { Button } from "../../../../../../UI/Button/Button";
+import { MultiSelector } from "../../../../../../UI/MultiSelector/MultiSelector";
+import { getEmployees } from "../../../../../../api/get/getEmployee";
+import { ClientSearch } from "../../../../../CreateTicketPage/components/ClientSearch/ClientSearch";
+import { statusesList } from "../../../../../../modules/taskStatuses";
 
 export const Filter = ({
   showFilter,

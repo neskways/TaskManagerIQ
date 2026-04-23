@@ -21,20 +21,20 @@ export const ClientGridCell = ({ clientData, setSelectedClient }) => {
 
   return (
     <>
-      <div onMouseEnter={onEnter} onMouseLeave={onLeave} className={cellClass} onClick={() => setSelectedClient(clientData)}>
+      <div onMouseEnter={onEnter} onMouseLeave={onLeave} className={`${cellClass} ${s.left}`} onClick={() => setSelectedClient(clientData)}>
         {clientData.Name}
       </div>
       <div onMouseEnter={onEnter} onMouseLeave={onLeave} className={cellClass} onClick={() => setSelectedClient(clientData)}>
         {clientData.Priority}
       </div>
       <div onMouseEnter={onEnter} onMouseLeave={onLeave} className={cellClass} onClick={() => setSelectedClient(clientData)}>
-        {clientData.Activities[0]?.Fee}
+       -
       </div>
       <div onMouseEnter={onEnter} onMouseLeave={onLeave} className={cellClass} onClick={() => setSelectedClient(clientData)}>
-        {clientData.Activities[1]?.Fee}
+       -
       </div>
 
-      <div className={cellClass} onMouseEnter={onEnter} onMouseLeave={onLeave} onClick={() => setSelectedClient(clientData)}>{1}</div>
+      <div className={cellClass} onMouseEnter={onEnter} onMouseLeave={onLeave} onClick={() => setSelectedClient(clientData)}>-</div>
 
       <div 
         className={cellClass} 
@@ -42,7 +42,7 @@ export const ClientGridCell = ({ clientData, setSelectedClient }) => {
         onMouseLeave={onLeave} 
         onClick={handleClick} 
       >
-        {6}
+        -
       </div>
     </>
   );

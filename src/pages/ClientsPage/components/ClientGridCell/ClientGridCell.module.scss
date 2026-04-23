@@ -1,14 +1,16 @@
 
 .gridCell {
   padding: 0 7px;
+  text-align: center;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
   display: flex;
-  align-items: center;
   min-height: 42px;
   font-size: 14px;
+  justify-content: center;
   cursor: pointer;
+  align-items: center;
   border-bottom: 1px solid var(--border-color);
   transition: var(--transition);
 }
@@ -17,3 +19,8 @@
   background-color: var(--bg-color-hover-second);
   cursor: pointer;
 }
+
+.left {
+  justify-content: left;
+}
+

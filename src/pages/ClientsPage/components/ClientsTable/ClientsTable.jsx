@@ -96,7 +96,7 @@ export const ClientsTable = ({
         {headersTitle.map((header, i) => (
           <div
             key={i}
-            className={s.gridHeader}
+            className={`${s.gridHeader}  ${(header == "Клиент") ? s.headerCellLeft : ""}`}
             onClick={() => handleHeaderClick(i)}
             style={{ cursor: "pointer", userSelect: "none" }}
           >

@@ -1,0 +1,95 @@
+Обработка истёкшего токена (401) в приложении
+1️⃣ Настройка глобального Axios
+
+В приложении у тебя есть экземпляр axios, настроенный так:
+
+import axios from "axios";
+
+const IP = import.meta.env.VITE_IP;
+
+export const api = axios.create({
+  baseURL: IP,
+  timeout: 600000,
+});
+
+
+baseURL берется из переменной окружения.
+
+timeout увеличен, чтобы длительные запросы не падали.
+
+2️⃣ Регистрация обработчиков (Handlers)
+
+Ты можешь зарегистрировать три обработчика, которые будут срабатывать при ошибках авторизации:
+
+let logoutHandler = null;
+let navigateHandler = null;
+let popupHandler = null;
+
+export const registerAuthHandlers = ({ logout, navigate, popup }) => {
+  logoutHandler = logout;         // функция выхода из аккаунта
+  navigateHandler = navigate;     // функция для редиректа на /login
+  popupHandler = popup;           // функция для показа сообщения пользователю
+};
+
+
+logout → удаляет токен из Cookies / localStorage.
+
+navigate → перенаправляет на страницу логина.
+
+popup → показывает уведомление пользователю.
+
+Эти функции обычно передаются из контекста приложения (usePopup, useNavigate, logoutUserWithoutToken).
+
+3️⃣ Интерцептор Axios для 401 ошибок
+
+Интерцептор позволяет глобально обрабатывать все ответы с ошибкой 401 (токен недействителен):
+
+api.interceptors.response.use(
+  (response) => response, // если успешный ответ → возвращаем как есть
+  (error) => {
+    const status = error.response?.status;
+
+    if (status === 401) {
+      if (popupHandler) popupHandler("Сессия истекла. Пожалуйста, войдите снова.", { type: false, marginNone: true });
+      if (logoutHandler) logoutHandler();
+      if (navigateHandler) navigateHandler("/login");
+
+      return Promise.reject(error); // ошибка всё ещё прокидывается, чтобы ее можно было поймать локально
+    }
+
+    return Promise.reject(error); // все остальные ошибки прокидываем дальше
+  }
+);
+
+
+Любой запрос, который вернёт 401, автоматически вызовет эти функции.
+
+Интерцептор гарантирует единое поведение везде: не нужно дублировать проверку токена в каждом компоненте.
+
+4️⃣ Локальные коллбэки на 401 (по желанию)
+
+Если на конкретной странице нужно показать своё сообщение или сделать что-то специфическое:
+
+const data = await getTaskInfo(taskId, () => {
+  logoutUserWithoutToken();
+  navigate("/login", { replace: true });
+  showPopup("Сессия истекла. Пожалуйста, войдите снова.", { type: false });
+});
+
+
+getTaskInfo может принимать коллбэк для 401.
+
+Этот коллбэк срабатывает только для конкретного запроса.
+
+Если коллбэк не передан → срабатывает глобальный interceptor.
+
+Используй коллбэк только если нужен кастомный попап или спец-логика для конкретного компонента.
+
+5️⃣ Как использовать в компонентах
+Вариант A — доверяем глобальному interceptor:
+const data = await getTaskInfo(taskId); // interceptor сам обработает 401
+
+
+Проще и безопаснее.
+
+Любая 401 ошибка на любом запросе → автоматически logout + redirect + pop-up.

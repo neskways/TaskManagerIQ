@@ -23,8 +23,16 @@
   background-color: var(--bg-color-tertiary);
   font-weight: bold;
   padding: 6px 0;
-  
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
   border-bottom: 1px solid var(--border-color);
+}
+
+.row:last-child .cell:last-child {
+  border-radius: 0 0 var(--border-radius) 0;
+}
+
+.row:last-child .cell:first-child {
+  border-radius: 0 0 0 var(--border-radius);
 }
 
 .dayName {

@@ -11,8 +11,13 @@
   position: sticky;
   top: 0;
   z-index: 5;
+  text-align: center;
   background: var(--bg-color-tertiary);
   border-bottom: 1px solid var(--border-color);
+}
+
+.headerCellLeft {
+  text-align: left;
 }
 
 .gridBody {

@@ -6,7 +6,7 @@ export const ProfileTasksTable = ({ tasks }) => {
     <div className={s.scrollWrapper}>
       <div className={s.tableWrapper}>
         <div className={s.tableHeader}>
-          <div>Номер</div>
+          <div>№</div>
           <div>Название</div>
           <div>Клиент</div>
           <div>Статус</div>

@@ -27,7 +27,7 @@ export const ClientsPage = () => {
   const { colWidths, tableRef, handleMouseDown } = useResizableTable();
 
   const settings = getFromLocalStorage("secret_settings", {});
-  const titleMem = (userCode === "000000007" || userCode === "000000054") || String(import.meta.env.VITE_TOKEN_MANAGER) != role ? settings.censorship ? "Список клиентов" : "Список пидарасов (Кроме АйКю Компани)" : "Список клиентов";
+  const titleMem = (userCode === "000000007" || userCode === "000000054") || String(import.meta.env.VITE_TOKEN_MANAGER) != role ? settings.censorship ? "Список клиентов" : "Список пидарасов (кроме АйКю Компани)" : "Список клиентов";
   
   const cachedClients = useMemo(() => getFromLocalStorage(CACHE_KEY, null), []);
   const [clients, setClients] = useState(cachedClients || []);
