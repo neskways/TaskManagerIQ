@@ -40,6 +40,7 @@ export const Filter = ({
             onSelect={setSelectedClient}
             disabled={clientsLoading}
             smallStyle={true}
+            value={selectedClient}  
             hide={true}
           />
         </div>

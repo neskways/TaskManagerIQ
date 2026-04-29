@@ -1,7 +1,7 @@
 import s from "./ClientSearch.module.scss";
 import { useState, useRef, useEffect } from "react";
 
-export const ClientSearch = ({ clients = [], onSelect, text, hide, smallStyle = false }) => {
+export const ClientSearch = ({ clients = [], onSelect, text, hide, smallStyle = false, value }) => {
   const [query, setQuery] = useState("");
   const [filtered, setFiltered] = useState([]);
   const [showList, setShowList] = useState(false);
@@ -134,6 +134,19 @@ export const ClientSearch = ({ clients = [], onSelect, text, hide, smallStyle = 
       el.scrollIntoView({ block: "nearest" });
     }
   }, [highlightIndex, showList]);
+
+  useEffect(() => {
+    if (value) {
+      const name = value?.name ?? value?.Name ?? "";
+      setQuery(name);
+      setSelectedClient(value);
+      setActiveCode(value?.code ?? value?.Code ?? null);
+    } else {
+      setQuery("");
+      setSelectedClient(null);
+      setActiveCode(null);
+    }
+  }, [value]);
 
   return (
     <div className={`${s.wrapper} ${smallStyle ? s.smallStyle : ""}`} ref={wrapperRef}>
