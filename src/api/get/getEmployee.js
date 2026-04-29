@@ -16,7 +16,20 @@ export const getEmployees = async () => {
     const fixed = (response.data || "").replace(/'/g, '"');
     const parsed = JSON.parse(fixed);
 
-    return Array.isArray(parsed) ? parsed : [];
+    // Исключаем сотрудников + сортировка по фамилии от А до Я
+    const result = Array.isArray(parsed)
+      ? parsed
+          .filter(
+            (employee) =>
+              employee.Name !== "Ященко Евгений" &&
+              employee.Name !== "Хабохов Артур"
+          )
+          .sort((a, b) =>
+            a.Name.localeCompare(b.Name, "ru", { sensitivity: "base" })
+          )
+      : [];
+
+    return result;
   } catch (error) {
     console.error("Ошибка при загрузке сотрудников:", error);
     return [];

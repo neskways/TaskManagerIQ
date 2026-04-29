@@ -129,3 +129,42 @@
   align-items: center;
   height: 100%;
 }
+
+.btn_wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filter_badge {
+  background: var(--green);
+  color: #fff;
+  font-size: 12px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 6px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 999px;
+
+  position: absolute;
+  top: calc(50% - 9px);
+  left: 90px;
+
+  animation: pop 0.2s ease;
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

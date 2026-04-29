@@ -25,3 +25,13 @@
     padding: 10px 15px;
     font-size: 15px;
 }
+
+.color_red {
+    background: var(--false);
+    opacity: 0.8;
+}
+
+.color_red:hover {  
+    background: var(--false);  
+    opacity: 1;
+}

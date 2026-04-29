@@ -32,7 +32,9 @@ export const UniversalTicketsSheet = ({ titleText, queryParams }) => {
 
   return (
     <div className={s.wrapper}>
-      <PageTitle titleText={titleText} />
+      <div className={s.titleWrap}>
+        <PageTitle titleText={titleText} />
+      </div>
 
       <TasksTable
         queryParams={queryParams}

@@ -9,6 +9,8 @@ export const MultiSelector = ({
   onChange,
   keyField = "id",
   labelField = "name",
+  smallStyle= false,
+  showTitle=true,
 }) => {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
@@ -40,8 +42,8 @@ export const MultiSelector = ({
 
   return (
     <div className={s.selectorWrapper} ref={ref}>
-      {title && !hide && <h4 className={s.title}>{title}</h4>}
-      <div className={`${s.selectorHeader} ${open ? s.open : ""}`} onClick={() => setOpen(!open)}>
+      {showTitle && title && !hide && <h4 className={s.title}>{title}</h4>}
+      <div className={`${s.selectorHeader} ${open ? s.open : ""} ${smallStyle ? s.smallStyle : ""}`} onClick={() => setOpen(!open)}>
         <span className={value.length ? s.selectedText : ""}>{getTitle()}</span>
         <div className={s.arrow} />
       </div>

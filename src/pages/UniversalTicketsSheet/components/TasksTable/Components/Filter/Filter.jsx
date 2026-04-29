@@ -1,6 +1,5 @@
 import s from "./Filter.module.scss";
 import { useEffect, useState } from "react";
-import { CloseIcon } from "../../../../../../UI/CloseIcon/CloseIcon";
 import { Button } from "../../../../../../UI/Button/Button";
 import { MultiSelector } from "../../../../../../UI/MultiSelector/MultiSelector";
 import { getEmployees } from "../../../../../../api/get/getEmployee";
@@ -9,76 +8,76 @@ import { statusesList } from "../../../../../../modules/taskStatuses";
 
 export const Filter = ({
   showFilter,
-  setShowFilter,
   selectedStatuses,
   setSelectedStatuses,
   selectedEmployees,
   setSelectedEmployees,
-  clients = [],                 
-  clientsLoading = false,       
+  clients = [],
+  clientsLoading = false,
   selectedClient,
   setSelectedClient,
-  onReset
+  onReset,
 }) => {
   const [employeesList, setEmployeesList] = useState([]);
 
   useEffect(() => {
     getEmployees().then((data) => {
-      const list = data.map((emp) => ({ id: emp.Name, name: emp.Name }));
+      const list = data.map((emp) => ({
+        id: emp.Name,
+        name: emp.Name,
+      }));
+
       setEmployeesList(list);
     });
   }, []);
 
   return (
-    <>
-      <div
-        className={`${s.overlay} ${showFilter ? s.show : ""}`}
-        onClick={() => setShowFilter(false)}
-      />
-      <div className={`${s.sidebar} ${showFilter ? s.show_filter : ""}`}>
-        <div className={s.header}>
-          <button className={s.close_btn} onClick={() => setShowFilter(false)}>
-            <CloseIcon />
-          </button>
+    <div className={`${s.filterWrapper} ${showFilter ? s.open : ""}`}>
+      <div className={s.row}>
+        <div className={s.field}>
+          <ClientSearch
+            clients={clients}
+            onSelect={setSelectedClient}
+            disabled={clientsLoading}
+            smallStyle={true}
+            hide={true}
+          />
         </div>
 
-        <div className={s.block}>
-          <div className={s.selecter_wrap}>
-              <ClientSearch
-                clients={clients}
-                onSelect={setSelectedClient}
-                text="Клиент"
-                disabled={clientsLoading}
-              />
-          </div>
-
-          <div className={s.selecter_wrap}>
-            <MultiSelector
-              title="Статус"
-              items={statusesList}
-              value={selectedStatuses || []}
-              onChange={setSelectedStatuses}
-              keyField="name"
-              labelField="name"
-            />
-          </div>
-
-          <div className={s.selecter_wrap}>
-            <MultiSelector
-              title="Исполнитель"
-              items={employeesList}
-              value={selectedEmployees || []}
-              onChange={setSelectedEmployees}
-              keyField="id"
-              labelField="name"
-            />
-          </div>
+        <div className={s.field}>
+          <MultiSelector
+            title="Статус"
+            items={statusesList}
+            value={selectedStatuses || []}
+            onChange={setSelectedStatuses}
+            keyField="name"
+            labelField="name"
+            smallStyle={true}
+            showTitle={false}
+          />
         </div>
 
-        <div className={s.footer}>
-          <Button name="Сбросить" color="secondary" onClick={onReset} />
+        <div className={s.field}>
+          <MultiSelector
+            title="Исполнитель"
+            items={employeesList}
+            value={selectedEmployees || []}
+            onChange={setSelectedEmployees}
+            keyField="id"
+            labelField="name"
+            smallStyle={true}
+            showTitle={false}
+          />
+        </div>
+
+        <div className={s.reset}>
+          <Button
+            name="R"
+            color="red"
+            onClick={onReset}
+          />
         </div>
       </div>
-    </>
+    </div>
   );
 };
