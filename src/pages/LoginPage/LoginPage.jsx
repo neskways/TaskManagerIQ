@@ -84,9 +84,9 @@ export const LoginPage = () => {
       {/* Новый блок с цитатой */}
       <div className={s.quoteBox}>
         <p className={s.quote}>
-          "{quote}"
+          "{quote.quote}"
         </p>
-        <span className={s.author}>— Фридрих Ницше</span>
+        <span className={s.author}>— {quote.author}</span>
       </div>
 
       <div className={s.pashalka}>
