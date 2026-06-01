@@ -11,7 +11,7 @@ export const TimerHeader = memo(({
   isExpanded,
 }) => {
   const [localSec, setLocalSec] = useState(displaySec);
-
+  const canRun = isRunning && selectedTask;
   // синхронизация при смене выбранной задачи или обновлении секунд
   useEffect(() => {
     setLocalSec(displaySec);
@@ -19,14 +19,15 @@ export const TimerHeader = memo(({
 
   // локальный таймер
   useEffect(() => {
-    if (!isRunning) return;
+    // если задача не выбрана или таймер не запущен — ничего не делаем
+    if (!isRunning || !selectedTask) return;
 
     const interval = setInterval(() => {
       setLocalSec((s) => s + 1);
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isRunning]);
+  }, [isRunning, selectedTask]);
 
   return (
     <div className={`${s.headerBox} ${isExpanded ? s.expanded : ""}`}>
@@ -40,14 +41,17 @@ export const TimerHeader = memo(({
         <div className={s.bottomRow}>
           <div className={s.controls}>
             <button className={s.btn} onClick={onStartPause}>
-              {isRunning ? "⏸ Пауза" : "▶ Старт"}
+              {canRun ? "⏸ Пауза" : "▶ Старт"}
             </button>
+
             <button className={s.btnEnd} onClick={onFinish}>
               ⏹ Завершить
             </button>
           </div>
 
-          <div className={s.timerBig}>{secToHHMMSS(localSec)}</div>
+          <div className={s.timerBig}>
+            {secToHHMMSS(localSec)}
+          </div>
         </div>
       </div>
     </div>

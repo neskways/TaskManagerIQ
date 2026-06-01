@@ -1,7 +1,7 @@
 .filterWrapper {
   position: relative;
   width: 100%;
-  z-index: 1000;
+  z-index: 0;
 
   max-height: 0;
   opacity: 0;
@@ -12,6 +12,7 @@
     opacity 0.3s ease,
     transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
   &.open {
+    z-index: 1000 !important;
     max-height: 140px;
     opacity: 1;
     transform: translateY(0);

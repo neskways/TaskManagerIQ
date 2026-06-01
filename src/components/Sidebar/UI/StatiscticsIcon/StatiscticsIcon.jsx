@@ -13,14 +13,14 @@ export const StatiscticsIcon = ({ isActive, theme }) => {
       <path
         d="M25.875 7.25L15.1875 18.7292L9.5625 12.6875L1.125 21.75"
         stroke={color}
-        strokeWidth="1.5"
+        strokeWidth="1.3"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path
         d="M19.125 7.25H25.875V14.5"
         stroke={color}
-        strokeWidth="1.5"
+        strokeWidth="1.3"
         strokeLinecap="round"
         strokeLinejoin="round"
       />

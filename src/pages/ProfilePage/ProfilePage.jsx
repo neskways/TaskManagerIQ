@@ -145,22 +145,28 @@ export const ProfilePage = () => {
             </div>
           </div>
 
+
           <h4 className={s.second_title}>Текущие задачи</h4>
 
           <div className={s.tasks_table_wrapper}>
-            {loading ? (
-              <div className={s.loading_wrap}>
-                <Loading />
-              </div>
-            ) : tasks.length === 0 ? (
-              <p>Нет текущих задач</p>
-            ) : (
-              <ProfileTasksTable tasks={tasks} theme={theme} />
+            {(loading || tasks.length > 0) && (
+              <>
+                {loading ? (
+                  <div className={s.loading_wrap}>
+                    <Loading />
+                  </div>
+                ) : (
+                  <ProfileTasksTable tasks={tasks} theme={theme} />
+                )}
+              </>
+            )}
+            {(!loading && tasks.length === 0) && (
+              <div className={s.no_tasks}>У вас нет ни одной задачи!</div>
             )}
           </div>
+
         </div>
 
-        {/* Тайная ссылка по двойному клику */}
         <img
           className={s.logo_opacity}
           src={theme === "light" ? lightLogo : darkLogo}

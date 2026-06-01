@@ -307,7 +307,7 @@ export const TicketSidebar = ({
         </div>
       )}
 
-      {isManagerOrAdmin && (
+      {/* {isManagerOrAdmin && (
         <div className={s.block}>
           <h4 className={s.title}>Километраж</h4>
           <NumberInput
@@ -315,7 +315,7 @@ export const TicketSidebar = ({
             onChange={setMileage}
           />
         </div>
-      )}
+      )} */}
 
       {isEmployee && (
         <div className={s.block}>

@@ -13,14 +13,14 @@ export const MainIcon = ({ isActive, theme }) => {
       <path
         d="M3.75 11.25L15 2.5L26.25 11.25V25C26.25 25.663 25.9866 26.2989 25.5178 26.7678C25.0489 27.2366 24.413 27.5 23.75 27.5H6.25C5.58696 27.5 4.95107 27.2366 4.48223 26.7678C4.01339 26.2989 3.75 25.663 3.75 25V11.25Z"
         stroke={color}
-        strokeWidth="1.2"
+        strokeWidth="1.3"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path
         d="M11.25 27.5V15H18.75V27.5"
         stroke={color}
-        strokeWidth="1.2"
+        strokeWidth="1.3"
         strokeLinecap="round"
         strokeLinejoin="round"
       />

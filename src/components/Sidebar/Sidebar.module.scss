@@ -19,16 +19,13 @@
 }
 
 .menu_item {
-    border-bottom: 1px solid var(--border-color);
     text-decoration: none;
     list-style: none;
-}
-
-.menu_item:first-of-type {
-    border-top: 1px solid var(--border-color);
+    padding: 0 10px;
 }
 
 .menu_link {
+    border-bottom: 1px solid var(--border-color);
     text-decoration: none;
     display: block;
     padding: 10px 20px 10px 15px;
@@ -39,6 +36,7 @@
     font-weight: 400;
     align-items: center;
     gap: 10px;
+    border-radius: 5px;
 }
 
 .menu_link img {

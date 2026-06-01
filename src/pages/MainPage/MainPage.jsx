@@ -8,7 +8,22 @@ export const MainPage = () => {
     <ContentWrapper>
       <PageTitle titleText="Главная" center />
       <div className={s.inner}>
-        <div className=""></div>
+         <p></p>
+        <div className={s.video}>
+
+          <video
+            src="/video/mem.mp4"
+            autoPlay
+            preload="metadata"
+            style={{
+              width: "380px",
+              maxWidth: "380px",
+              borderRadius: "12px",
+            }}
+          >
+            Ваш браузер не поддерживает видео.
+          </video>
+        </div>
         <ContactsTable />
       </div>
     </ContentWrapper>

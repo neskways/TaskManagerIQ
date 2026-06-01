@@ -13,28 +13,28 @@ export const ListIcon = ({ isActive, theme }) => {
       <path
         d="M21.25 12.5H3.75"
         stroke={color}
-        strokeWidth="1.2"
+        strokeWidth="1.3"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path
         d="M26.25 7.5H3.75"
         stroke={color}
-        strokeWidth="1.2"
+        strokeWidth="1.3"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path
         d="M26.25 17.5H3.75"
         stroke={color}
-        strokeWidth="1.2"
+        strokeWidth="1.3"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
       <path
         d="M21.25 22.5H3.75"
         stroke={color}
-        strokeWidth="1.2"
+        strokeWidth="1.3"
         strokeLinecap="round"
         strokeLinejoin="round"
       />

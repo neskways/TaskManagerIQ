@@ -16,21 +16,31 @@ import { ReloadIcon } from "../../UI/ReloadIcon/ReloadIcon";
 import { Loading } from "../../UI/Loading/Loading";
 import { useTheme } from "../../context/ThemeContext";
 import { MESSAGES } from "../../modules/messages";
+import { Input } from "../../UI/Input/Input";
 
 const CACHE_KEY = "clientsCache";
 
 export const ClientsPage = () => {
   const { theme } = useTheme();
   const { showPopup } = usePopup();
-  const role     = Cookies.get("role");
+  const role = Cookies.get("role");
   const userCode = Cookies.get("userCode");
   const { colWidths, tableRef, handleMouseDown } = useResizableTable();
-
+  const [search, setSearch] = useState("");
   const settings = getFromLocalStorage("secret_settings", {});
   const titleMem = (userCode === "000000007" || userCode === "000000054") || String(import.meta.env.VITE_TOKEN_MANAGER) != role ? settings.censorship ? "Список клиентов" : "Список пидарасов (кроме АйКю Компани)" : "Список клиентов";
-  
+
   const cachedClients = useMemo(() => getFromLocalStorage(CACHE_KEY, null), []);
   const [clients, setClients] = useState(cachedClients || []);
+  const filteredClients = useMemo(() => {
+    if (!search.trim()) return clients;
+
+    const query = search.toLowerCase().trim();
+
+    return clients.filter((client) =>
+      (client.Name || "").toLowerCase().includes(query)
+    );
+  }, [clients, search]);
   const [selectedClient, setSelectedClient] = useState(null);
   const [initialLoading, setInitialLoading] = useState(!cachedClients);
   const [spinning, setSpinning] = useState(false);
@@ -87,14 +97,22 @@ export const ClientsPage = () => {
           <ReloadIcon theme={theme} spinning={spinning} />
         </button>
       </div>
-
+      <div className={s.searchWrapper}>
+        <Input
+          value={search}
+          setUserData={setSearch}
+          placeholder="Поиск клиента"
+          type="text"
+          showTitle={false}
+        />
+      </div>
       {initialLoading ? (
         <div className={s.centerWrapper}>
           <Loading className={s.loading} />
         </div>
       ) : (
         <ClientsTable
-          clients={clients}
+          clients={filteredClients}
           colWidths={colWidths}
           tableRef={tableRef}
           handleMouseDown={handleMouseDown}

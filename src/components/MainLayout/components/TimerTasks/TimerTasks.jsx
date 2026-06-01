@@ -193,7 +193,12 @@ export const TimerTasks = () => {
   // -------------------------------------------------
   // Старт / пауза
   const startPauseTask = useCallback(async () => {
-    if (!selectedTaskId) return;
+    if (!selectedTaskId) {
+      showPopup("Выберите задачу для запуска таймера", {
+        type: "warning",
+      });
+      return;
+    };
 
     try {
       if (activeTaskId === selectedTaskId) {
