@@ -24,16 +24,6 @@ export const ScreamerBlock = () => {
       );
     }
 
-    if (settings.screamer_hard && String(import.meta.env.VITE_TOKEN_MANAGER) !== role) {
-      timers.push(
-        setInterval(() => {
-          setScreamerType("hard");
-          setShowScreamer(true);
-          setTimeout(() => setShowScreamer(false), 300);
-        }, 360000)
-      );
-    }
-
     return () => timers.forEach(clearInterval);
   }, [role]);
 

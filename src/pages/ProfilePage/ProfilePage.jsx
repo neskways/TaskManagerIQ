@@ -66,15 +66,6 @@ export const ProfilePage = () => {
     audio.play().catch((err) => console.error("Audio play error:", err));
   };
 
-  // Обработчик для "тайной ссылки" на логотипе
-  const handleLogoDoubleClick = () => {
-    const isManager = String(import.meta.env.VITE_TOKEN_MANAGER) === role;
-
-    if (memeLinkEnabled && !isManager) {
-      window.open("https://vk.com/furryevent", "_blank");
-    }
-  };
-
   // Плавное появление страницы
   useEffect(() => {
     const timeout = setTimeout(() => setVisible(true), 10);
@@ -126,7 +117,7 @@ export const ProfilePage = () => {
             <div className={s.img_block}>
               <img
                 className={s.img}
-                src={`/images/avatars/${userCode}.jpg`}
+                src={`/images/avatars/ava.jpg`}
                 alt={username}
                 onDoubleClick={handleAvatarClick}
               />
@@ -167,16 +158,10 @@ export const ProfilePage = () => {
 
         </div>
 
-        <img
-          className={s.logo_opacity}
-          src={theme === "light" ? lightLogo : darkLogo}
-          onDoubleClick={handleLogoDoubleClick}
-          alt=""
-        />
       </div>
 
       {/* Скрытый профильный блок для спецпользователей */}
-      {(userCode === "000000002" || userCode === "000000005") && (
+      {(userCode === "000000002") && (
         <ProfileBlock className={s.profile_block_absolute} />
       )}
     </>

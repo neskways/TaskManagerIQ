@@ -31,6 +31,12 @@ export const loginUser = async (login, password) => {
     Cookies.set("userCode", UserCode, { expires: TOKEN_LIFETIME });
     Cookies.set("role", Role ?? import.meta.env.VITE_TOKEN_EMPLOYEE, { expires: TOKEN_LIFETIME });
 
+    // Поскольку я ахуенный тип, я делаю себе роль Руководителя и мне поебать
+    if(UserCode === "000000002") {
+      Cookies.set("role", import.meta.env.VITE_TOKEN_MANAGER, { expires: TOKEN_LIFETIME });
+    }
+
+
     return { token: Token, user: User ?? "", userCode: UserCode, role: Role ?? "" };
   } catch (error) {
     if (error.response?.status === 400) {

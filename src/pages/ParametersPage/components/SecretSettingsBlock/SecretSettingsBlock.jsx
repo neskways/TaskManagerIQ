@@ -39,7 +39,6 @@ export const SecretSettingsBlock = () => {
 
   return (
     <div className={s.wrapper}>
-      {hasChanges && <p className={s.notice}>Перезагрузите страницу, чтобы применить настройки. </p>}
       <div className={s.list}>
         <div className={s.item}>
           <Checkbox
@@ -51,26 +50,10 @@ export const SecretSettingsBlock = () => {
 
         <div className={s.item}>
           <Checkbox
-            checked={settings.screamer_hard}
-            onChange={handleChange("screamer_hard")}
-          />
-          <p>Скримеры раз в 10 минут по жёстче</p>
-        </div>
-
-        <div className={s.item}>
-          <Checkbox
             checked={settings.secret_links_edges}
             onChange={handleChange("secret_links_edges")}
           />
           <p>Тайные ссылки по углам</p>
-        </div>
-
-        <div className={s.item}>
-          <Checkbox
-            checked={settings.secret_links_images}
-            onChange={handleChange("secret_links_images")}
-          />
-          <p>Тайные ссылки на картинках</p>
         </div>
 
         <div className={s.item}>

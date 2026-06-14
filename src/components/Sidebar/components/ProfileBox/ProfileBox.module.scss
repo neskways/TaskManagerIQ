@@ -5,11 +5,13 @@
     left: calc(50% - 87px);
     border-radius: var(--border-radius);
     background-color: var(--bg-color);
+    overflow: hidden;
 }
 
 .list_item {
+    text-align: center;
     width: 100%;
-    font-size: 16px;
+    font-size: 15px;
 }
 
 .list_item:not(:last-child) {
@@ -21,7 +23,6 @@
     display: inline-block;
     width: 100%;
     transition: var(--transition);
-    border-radius: var(--border-radius);
 }
 
 .menu_link:hover {

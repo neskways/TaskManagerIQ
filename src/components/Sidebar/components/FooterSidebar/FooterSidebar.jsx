@@ -18,7 +18,7 @@ export const FooterSidebar = React.memo(({ isActiveBox, setIsActiveBox }) => {
         }`}
         onClick={() => setIsActiveBox(!isActiveBox)}
       >
-        <img className={s.img} src={`/images/avatars/${userCode}.jpg`} alt="" />
+        <img className={s.img} src={`/images/avatars/ava.jpg`} alt="" />
       </button>
       {role !== import.meta.env.VITE_TOKEN_EMPLOYEE && 
       <div className={s.link_wrap}>

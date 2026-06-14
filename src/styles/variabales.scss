@@ -1,6 +1,6 @@
 :root {
   --border-radius: 8px;
-  --accent-color: hsl(203, 77%, 57%);
+  --accent-color: hsl(203, 70%, 48%);
   --accent-color-secondary: hsl(202, 88%, 55%);
   --false: hsl(0, 71%, 57%);
   --true: hsl(145, 63%, 40%); 
@@ -16,8 +16,8 @@
   --bg-color-primary: #f9fafb;
   --text-color: #1e1e1e; 
   --text-color-secondary: #5a5f66;
-  --border-color: #d8dce1;
-  --border-color-secondary: #c3c8cf;
+  --border-color: #d8dce1a9;
+  --border-color-secondary: #c3c8cfab;
 }
 
 [data-theme='dark'] {
@@ -31,6 +31,6 @@
   --bg-color-primary: hsl(230, 5%, 22%);
   --text-color: #e0e0e0;
   --text-color-secondary: hsl(198, 5%, 73%);
-  --border-color: hsla(0, 0%, 0%, 0.17);
-  --border-color-secondary: rgb(49, 49, 49);
+  --border-color: hsla(0, 0%, 0%, 0.116);
+  --border-color-secondary: rgba(49, 49, 49, 0.753);
 }

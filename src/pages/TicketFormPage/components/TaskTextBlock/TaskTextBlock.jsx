@@ -42,7 +42,7 @@ export const TaskTextBlock = ({ text, user, userId, date, min }) => {
     return `${day}.${month}.${year} ${hours}:${minutes}`;
   };
 
-  const avatarSrc = commentUserId ? `/images/avatars/${commentUserId}.jpg` : null;
+  const avatarSrc = `/images/avatars/ava.jpg`;
 
   return (
     <div className={`${s.wrapper} ${isMyMessage ? s.my_message : s.other_message}`}>
