@@ -4,11 +4,8 @@ import { ThemeToggle } from "../../UI/ThemeToggle/ThemeToggle";
 import { PageTitle } from "../../components/PageTitle/PageTitle";
 import { DeleteButton } from "../../UI/DeleteButton/DeleteButton";
 import { ContentWrapper } from "../../components/ContentWrapper/ContentWrapper";
-import { SecretSettingsBlock } from "./components/SecretSettingsBlock/SecretSettingsBlock";
 
 export const ParametersPage = () => {
-  
-  const role = Cookies.get("role");
 
   return (
     <ContentWrapper>
@@ -21,21 +18,6 @@ export const ParametersPage = () => {
           </div>
         </div>
       </div>
-
-      {role !== import.meta.env.VITE_TOKEN_MANAGER && (
-        <div className={s.parameters_block}>
-          <div className={s.parameters_wrap}>
-            <h4 className={s.parameters_title}>Настройка пасхалок</h4>
-            <div className={s.parameters_item}>
-              <SecretSettingsBlock />
-            </div>
-          </div>
-
-          <div className={s.img_block}>
-            <img src="/images/memes/spotti.png" alt="" />
-          </div>
-        </div>
-      )}
 
       <div className={s.parameters_block}>
         <div className="">

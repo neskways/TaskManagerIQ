@@ -41,31 +41,6 @@ export const ProfilePage = () => {
   const darkLogo = "/images/logo/logo_dark.png";
   const lightLogo = "/images/logo/logo.png";
 
-  const [memeSoundsEnabled, setMemeSoundsEnabled] = useState(false);
-  const [memeLinkEnabled, setMemeLinkEnabled] = useState(false);
-
-  // Загружаем сохранённые настройки
-  useEffect(() => {
-    const settings = getFromLocalStorage("secret_settings", {});
-    setMemeSoundsEnabled(settings.meme_sounds);
-    setMemeLinkEnabled(settings.secret_links_images);
-  }, []);
-
-  // Воспроизведение звука при двойном клике по аватарке
-  const handleAvatarClick = () => {
-    if (
-      !memeSoundsEnabled ||
-      String(import.meta.env.VITE_TOKEN_MANAGER) === role
-    )
-      return;
-
-    const randomSound =
-      memeSounds[Math.floor(Math.random() * memeSounds.length)];
-    const audio = new Audio(randomSound);
-    audio.volume = 0.4;
-    audio.play().catch((err) => console.error("Audio play error:", err));
-  };
-
   // Плавное появление страницы
   useEffect(() => {
     const timeout = setTimeout(() => setVisible(true), 10);
@@ -119,7 +94,6 @@ export const ProfilePage = () => {
                 className={s.img}
                 src={`/images/avatars/ava.jpg`}
                 alt={username}
-                onDoubleClick={handleAvatarClick}
               />
             </div>
             <div className={s.text_block}>

@@ -28,7 +28,7 @@ export const ClientsPage = () => {
   const { colWidths, tableRef, handleMouseDown } = useResizableTable();
   const [search, setSearch] = useState("");
   const settings = getFromLocalStorage("secret_settings", {});
-  const titleMem = (userCode === "000000007" || userCode === "000000054") || String(import.meta.env.VITE_TOKEN_MANAGER) != role ? settings.censorship ? "Список клиентов" : "Список пидарасов (кроме АйКю Компани)" : "Список клиентов";
+  const titleMem = "Список клиентов";
 
   const cachedClients = useMemo(() => getFromLocalStorage(CACHE_KEY, null), []);
   const [clients, setClients] = useState(cachedClients || []);

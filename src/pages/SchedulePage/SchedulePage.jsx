@@ -13,13 +13,7 @@ export const SchedulePage = () => {
 
   const { theme } = useTheme();
 
-  const titleMem =
-    (userCode === "000000007" || userCode === "000000054") ||
-    String(import.meta.env.VITE_TOKEN_MANAGER) !== role
-      ? settings.censorship
-        ? "График дежурств"
-        : "Позорища ебанные"
-      : "График дежурств";
+  const titleMem = "График дежурств";
 
   return (
     <ContentWrapper reletive={true}>

@@ -78,7 +78,7 @@ export const TicketFormPage = ({ modal = false, taskId, onClose }) => {
           date: new Date(c.date),
         })),
       });
-
+      console.log(data)
     } catch (err) {
         showPopup("Не удалось загрузить заявку.", { type: "error" });
     } finally {

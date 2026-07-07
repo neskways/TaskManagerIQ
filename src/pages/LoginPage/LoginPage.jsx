@@ -7,7 +7,6 @@ import { useTheme } from "../../context/ThemeContext";
 import { useNavigate } from "react-router-dom";
 import { usePopup } from "../../context/PopupContext";
 import { getFromLocalStorage } from "../../modules/localStorageUtils";
-import { nietzscheQuotes } from "../../modules/nietzscheQuotes";
 
 export const LoginPage = () => {
   const navigate = useNavigate();
@@ -21,12 +20,6 @@ export const LoginPage = () => {
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [isErrorIn, setIsErrorIn] = useState(false);
-  const [quote, setQuote] = useState("");
-
-  useEffect(() => {
-    const randomIndex = Math.floor(Math.random() * nietzscheQuotes.length);
-    setQuote(nietzscheQuotes[randomIndex]);
-  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -58,7 +51,6 @@ export const LoginPage = () => {
               className={s.img}
               src={theme === "light" ? lightLogo : darkLogo}
               alt="IQProg"
-              onDoubleClick={() => window.open("./images/mem.jpg", "_blank")}
             />
           </div>
 
@@ -79,23 +71,6 @@ export const LoginPage = () => {
             <Button name="Войти" type="submit" />
           </div>
         </form>
-      </div>
-
-      {/* Новый блок с цитатой */}
-      <div className={s.quoteBox}>
-        <p className={s.quote}>
-          "{quote.quote}"
-        </p>
-        <span className={s.author}>— {quote.author}</span>
-      </div>
-
-      <div className={s.pashalka}>
-        <a
-          href="https://pornhub.com"
-          className={s.pashalka}
-          target="_blank"
-          rel="noreferrer"
-        ></a>
       </div>
     </div>
   );
