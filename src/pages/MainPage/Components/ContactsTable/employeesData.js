@@ -9,7 +9,6 @@ export const employeesData = [
   { internalNumber: 206, employee: "Абдурахманов Тимур" },
   { internalNumber: 207, employee: "Бальных Евгений" },
   { internalNumber: 208, employee: "Борзилов Александр" },
-  { internalNumber: 209, employee: "Троцкова Виктория" },
   { internalNumber: 210, employee: "Ксенофонтов Никита" },
   { internalNumber: 211, employee: "Абиш-тон Никита" },
   { internalNumber: 302, employee: "Праток Айдамир" },
