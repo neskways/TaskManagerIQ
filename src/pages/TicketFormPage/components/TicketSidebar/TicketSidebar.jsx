@@ -297,7 +297,7 @@ export const TicketSidebar = ({
         </>
       )}
 
-      {isManagerOrAdmin && (
+      {/* {isManagerOrAdmin && (
         <div className={s.block}>
           <h4 className={s.title}>Время</h4>
           <NumberInput
@@ -305,7 +305,7 @@ export const TicketSidebar = ({
             onChange={setTimeInMinutes}
           />
         </div>
-      )}
+      )} */}
 
       {/* {isManagerOrAdmin && (
         <div className={s.block}>
@@ -317,12 +317,10 @@ export const TicketSidebar = ({
         </div>
       )} */}
 
-      {isEmployee && (
         <div className={s.block}>
           <h4 className={s.title}>Время</h4>
-          <p className={s.text}>{timeSpent ?? "00:00:00"}</p>
+          <p className={`${s.text} ${s.text_time}`}>{timeSpent ?? "00:00:00"}</p>
         </div>
-      )}
 
       <Contacts contacts={contacts} />
 

@@ -260,11 +260,11 @@ export const CreateTicketPage = () => {
         />
 
         <div className={s.filling_data_inner_2}>
-          {role === import.meta.env.VITE_TOKEN_ADMIN || role === import.meta.env.VITE_TOKEN_MANAGER &&
+          {/* {role === import.meta.env.VITE_TOKEN_ADMIN || role === import.meta.env.VITE_TOKEN_MANAGER &&
             <div className={s.time}>
               <Input type={"number"} text="Согласованное время (в минутах)" value={agreedTime} setUserData={setAgreedTime} />
             </div>
-          }
+          } */}
 
           {role !== import.meta.env.VITE_TOKEN_ADMIN &&
             <Selector
@@ -309,18 +309,18 @@ export const CreateTicketPage = () => {
                 <p>Задача первой линии</p>
               </div>
 
-              <div className={s.checkbox}>
+              {/* <div className={s.checkbox}>
                 <Checkbox
                   checked={isOutoffice}
                   onChange={(e) => setisOutoffice(e.target.checked)}
                   disabled={role === import.meta.env.VITE_TOKEN_DUTY}
                 />
                 <p>Выезд к клиенту</p>
-              </div>
+              </div> */}
             </>
           )}
 
-          <div className={s.return_task}>
+          {/* <div className={s.return_task}>
             <div className={s.checkbox}>
               <Checkbox
                 checked={isReturnTask}
@@ -343,7 +343,7 @@ export const CreateTicketPage = () => {
                 />
               )}
             </div>
-          </div>
+          </div> */}
         </div>
 
         <div className={s.button_wrap}>
